@@ -83,8 +83,6 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 
-<span class="co">#file &lt;- system.file("shapes/NY8_bna_utm18.gpkg", package = "spData", mustWork = TRUE)</span>
-<span class="co">## might need "GPKG:https://github.com/Nowosad/spData/raw/master/inst/shapes/NY8_bna_utm18.gpkg"</span>
 <span class="va">url</span> <span class="op">&lt;-</span> <span class="st">"https://github.com/Nowosad/spData/raw/master/inst/shapes/NY8_bna_utm18.gpkg"</span>
 <span class="op">(</span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lazysf.html">lazysf</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; # Source:   table&lt;sf_bna2_utm18&gt; [?? x 13]</span>
@@ -136,7 +134,7 @@
 <li>geometry is not automatic (it <em>is</em> automatic for non-DB formats, with DB-formats it depends on your SQL)</li>
 <li>non-DB formats without a geometry column name will be called <code>_ogr_geometry_</code>, other non-DB formats like ESRI’s geodatabase have other names like <code>SHAPE</code>
 </li>
-<li>non-DB formats have access to special variable names and functions, listed on the <a href="https://gdal.org/user/ogr_sql_dialect.html">OGRSQL page</a>. Readl DBs don’t have these, but they do have their own.</li>
+<li>non-DB formats have access to special variable names and functions, listed on the <a href="https://gdal.org/user/ogr_sql_dialect.html">OGRSQL page</a>. Real DBs don’t have these special OGRSQL features, but they do have their own.</li>
 </ul>
 <p>When using dplyr verbs (<code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/mutate.html">transmute()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join()</a></code>, …) we are also subject to the rules of SQL translation. There are no specific ones provided by lazysf but that might change.</p>
 <p>Wrappers around lazysf could provide more specific tools for particular formats.</p>
@@ -285,7 +283,7 @@
 <span class="co">#&gt; 7  3680. 03102         (((-70.9699 -27.24161, -70.97552 -27.2499, -70.9782 -27.…</span>
 <span class="co">#&gt; 8  1601. 03304         (((-71.14553 -27.96365, -71.13859 -27.96908, -71.12689 -…</span>
 <span class="co">#&gt; 9 11260. 03103         (((-68.98753 -27.52457, -68.98356 -27.53234, -68.97817 -…</span></pre></div>
-<p>You can construct the database connection string yourself and provide it directly to lazysf() if you want. See <a href="https://gdal.org/drivers/vector/pg.html">GDAL Postgres</a> for details.</p>
+<p>You can construct the database connection string yourself and provide it directly to lazysf() if you want. See <a href="https://gdal.org/drivers/vector/pg.html">GDAL Postgres</a> for details on this format, and this capability is available for any of the GDAL formats (see limitations above).</p>
 <hr>
 </div>
 <div id="code-of-conduct" class="section level2">
