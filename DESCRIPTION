@@ -1,0 +1,26 @@
+Package: lazysf
+Title: Delayed Read for 'GDAL' Vector Data Sources
+Version: 0.0.1
+Authors@R: 
+    person(given = "Michael",
+           family = "Sumner",
+           role = c("aut", "cre"),
+           email = "mdsumner@gmail.com",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: A 'dplyr' back end for data sources supported by 'GDAL' vector drivers, 
+    that allows you to work with local or remote sources as if they are in-memory data 
+    frames. Basic features works with any 'GDAL' vector data source supported by the
+    'sf' package. 
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports: 
+    sf (>= 0.7-0),
+    DBI,
+    methods,
+    tibble,
+    dbplyr,
+    magrittr, 
+    dplyr

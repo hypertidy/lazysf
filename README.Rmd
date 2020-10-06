@@ -1,0 +1,131 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# lazysf
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of lazysf is to provide interactive delayed read of GDAL vector data sources (a.k.a. "shapefiles")
+using the dbplyr 'tbl_lazy' mechanism. 
+
+
+## Limitations
+
+These are big promises!  It's very largely format dependent.  
+
+We make no claims about performance or convenience, it will be affected by your system and your sf installation - lazysf just takes you closer the GDAL capabilities. 
+
+For example, a query on a CSV, GeoJSON, or KML file local or remote is entirely
+subject to the performance of the matching [GDAL driver](https://gdal.org/drivers/vector/index.html).
+
+* big text files will be slow, they aren't a format suitable for database-like access
+* geometry is not automatic (it *is* automatic for non-DB formats, with DB-formats it depends on your SQL)
+* non-DB formats without a geometry column name will be called `_ogr_geometry_`, other non-DB formats like
+ESRI's geodatabase have other names like `SHAPE`
+* non-DB formats have access to special variable names and functions, listed on the [OGRSQL page](https://gdal.org/user/ogr_sql_dialect.html). Readl DBs don't have these, but they do have their own. 
+
+When using dplyr verbs (`filter()`, `select()`, `mutate()`, `transmute()`,
+`arrange()`, `left_join()`, ...) we are also subject to the rules of SQL
+translation. There are no specific ones provided by lazysf but that might
+change.
+
+Wrappers around lazysf could provide more specific tools for particular formats. 
+
+### Can't we just do this with sf's query argument?
+
+Yes (actually that is what lazysf uses) but with sf alone you get a fully
+materialized sf data frame, so you better get that query right first time!
+
+With lazysf you get some control over intermediate steps, potentially expensive
+queries will only be run for a preview of the data until you are ready to fetch
+it.
+
+## Installation
+
+You can install the dev version of lazysf from [GitHub](https://github.com/mdsumner/lazysf) with:
+
+``` r
+remotes::install_github("mdsumner/lazysf")
+```
+
+## Example
+
+This is a basic example. 
+
+```{R basic}
+library(lazysf)
+f <- system.file("gpkg/nc.gpkg", package = "sf", mustWork = TRUE)
+
+## specify only the data source
+lazysf(f)
+
+## specify the data source and a query to run
+lazysf(f, query = "SELECT AREA, FIPS, geom FROM \"nc.gpkg\" WHERE AREA < 0.1")
+
+## specify the data source and the table/layer to access
+lazysf(f, layer = "nc.gpkg") %>% 
+  dplyr::select(AREA, FIPS, geom) %>% 
+  dplyr::filter(AREA < 0.1)
+
+shp <- lazysf(system.file("shape/nc.shp", package = "sf", mustWork = TRUE))
+library(dplyr)
+shp %>%
+ filter(NAME %LIKE% 'A%') %>%
+ mutate(abc = 1.3) %>%
+ select(abc, NAME, `_ogr_geometry_`) %>%
+ arrange(desc(NAME))  #%>% show_query()
+```
+
+Online sources can also work if your build of sf supports. 
+
+```{r online}
+# online sources can work
+geojson <- file.path("https://raw.githubusercontent.com/SymbolixAU",
+                      "geojsonsf/master/inst/examples/geo_melbourne.geojson")
+lazysf(geojson)
+```
+
+
+Also works on PostgreSQL with spatial PostGIS (or just normal postgres).  
+
+Note that the connection object is a transparent string so take care with your
+credentials and don't share in public (currently trying to work out if only the
+externalptr should be kept in this, or in all cases with GDAL sources).
+
+
+The `SFSQL_PG()` driver is a convenience wrapper around the `SFSQL()` driver. 
+
+```{r postgres}
+con <- dbConnect(SFSQL_PG(),
+          host = Sys.getenv("dbedu_host"),
+          dbname = Sys.getenv("dbedu_dbname"), 
+          user = Sys.getenv("dbedu_usr"), 
+          password = Sys.getenv("dbedu_pwd"))
+
+(sfx <- lazysf(con, query = "SELECT st_area(st_transform(geom, '+proj=laea +lon_0=-68 +lat_0=-25')) / 1e6 AS sq_km, 
+                                        codigo_comuna, geom FROM mapa_comunas WHERE codigo_region = '03'"))
+```
+
+You can construct the database connection string yourself and provide it
+directly to lazysf() if you want. See [GDAL Postgres](https://gdal.org/drivers/vector/pg.html) 
+for details.
+
+---
+## Code of Conduct
+
+Please note that the lazysf project is released with a [Contributor Code of
+Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html). By
+contributing to this project, you agree to abide by its terms.
