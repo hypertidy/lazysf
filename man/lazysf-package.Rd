@@ -11,6 +11,14 @@ A 'dplyr' back end for data sources supported by 'GDAL' vector drivers,
     frames. Basic features works with any 'GDAL' vector data source supported by the
     'sf' package.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/mdsumner/lazysf}
+  \item Report bugs at \url{https://github.com/mdsumner/lazysf/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Michael Sumner \email{mdsumner@gmail.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
 

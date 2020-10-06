@@ -1,0 +1,95 @@
+---
+title: "tas-stuff"
+author: "Michael Sumner"
+date: "10/6/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r thelist, eval=FALSE, include=FALSE}
+## For the Tasmanians
+##[TheList](https://services.thelist.tas.gov.au/) has a Web Feature Service. 
+
+library(dplyr)
+url <- "WFS:https://services.thelist.tas.gov.au/arcgis/services/Public/OpenDataWFS/MapServer/WFSServer?request=GetCapabilities&service=WFS"
+
+db <- dbConnect(SFSQL(), url)
+##dbListTables(db) don't run this,  SEE BELOW
+
+x <- tbl(db, "Public_OpenDataWFS:LIST_Marine_Nature_Reserves")
+sfx <- x %>% dplyr::filter(NAME == "Tinderbox Marine Nature Reserve")  %>% st_as_sf()
+
+#sfx <- x %>% st_as_sf()
+
+tbl(db, "SELECT CAST(OGR_GEOM_WKT AS POLYGON()) AS shp FROM \"Public_OpenDataWFS:LIST_Marine_Nature_Reserves\" WHERE NAME = \"Tinderbox Marine Nature Reserve\" ")
+```
+
+
+```{r thelist, eval=FALSE, include=FALSE}
+ogrinfo WFS:https://services.thelist.tas.gov.au/arcgis/services/Public/OpenDataWFS/MapServer/WFSServer?request=GetCapabilities&service=WFS
+INFO: Open of `WFS:https://services.thelist.tas.gov.au/arcgis/services/Public/OpenDataWFS/MapServer/WFSServer?request=GetCapabilities'
+      using driver `WFS' successful.
+Metadata:
+  TITLE=WFS
+
+1: Public_OpenDataWFS:Climate_Futures_Tasmania_-_Scenario_A2 (title: Climate_Futures_Tasmania_-_Scenario_A2) (Multi Surface)
+2: Public_OpenDataWFS:Climate_Futures_Tasmania_-_Scenario_B1 (title: Climate_Futures_Tasmania_-_Scenario_B1) (Multi Surface)
+3: Public_OpenDataWFS:Interim_Planning_Scheme_-_Overlays (title: Interim_Planning_Scheme_-_Overlays) (Multi Surface)
+4: Public_OpenDataWFS:Interim_Planning_Scheme_-_Zoning_Boundaries (title: Interim_Planning_Scheme_-_Zoning_Boundaries) (Multi Curve)
+5: Public_OpenDataWFS:Interim_Planning_Scheme_-__Zoning (title: Interim_Planning_Scheme_-__Zoning) (Multi Surface)
+6: Public_OpenDataWFS:LIDAR_Climate_Futures_Index (title: LIDAR_Climate_Futures_Index) (Multi Surface)
+7: Public_OpenDataWFS:LiDAR_Coal_Mines_Port_Arthur_Index (title: LiDAR_Coal_Mines_Port_Arthur_Index) (Multi Surface)
+8: Public_OpenDataWFS:LiDAR_DPAC_Coastal_Index (title: LiDAR_DPAC_Coastal_Index) (Multi Surface)
+9: Public_OpenDataWFS:LiDAR_Mt._Wellington_Index (title: LiDAR_Mt._Wellington_Index) (Multi Surface)
+10: Public_OpenDataWFS:LIST_Address_Points (title: LIST_Address_Points) (Point)
+11: Public_OpenDataWFS:LIST_Authority_Land (title: LIST_Authority_Land) (Multi Surface)
+12: Public_OpenDataWFS:LIST_Boundary_Segments (title: LIST_Boundary_Segments) (Multi Curve)
+13: Public_OpenDataWFS:LIST_Building_Points (title: LIST_Building_Points) (Point)
+14: Public_OpenDataWFS:LIST_Building_Polygons_2D (title: LIST_Building_Polygons_2D) (Multi Surface)
+15: Public_OpenDataWFS:LIST_Cadastral_Parcels (title: LIST_Cadastral_Parcels) (Multi Surface)
+16: Public_OpenDataWFS:LIST_Coastline__MHWM_ (title: LIST_Coastline__MHWM_) (Multi Curve)
+17: Public_OpenDataWFS:LIST_Contours_10m (title: LIST_Contours_10m) (Multi Curve)
+18: Public_OpenDataWFS:LIST_Contours_5m (title: LIST_Contours_5m) (Multi Curve)
+19: Public_OpenDataWFS:LIST_Crown_Leases (title: LIST_Crown_Leases) (Multi Surface)
+20: Public_OpenDataWFS:LIST_Crown_Licences (title: LIST_Crown_Licences) (Multi Surface)
+21: Public_OpenDataWFS:LIST_Easements__not_a_maintained_dataset_ (title: LIST_Easements__not_a_maintained_dataset_) (Multi Surface)
+22: Public_OpenDataWFS:LIST_Electoral_Divisions (title: LIST_Electoral_Divisions) (Multi Surface)
+23: Public_OpenDataWFS:LIST_Hydrographic_Areas (title: LIST_Hydrographic_Areas) (Multi Surface)
+24: Public_OpenDataWFS:LIST_Hydrographic_Lines (title: LIST_Hydrographic_Lines) (Multi Curve)
+25: Public_OpenDataWFS:LIST_Hydrographic_Points (title: LIST_Hydrographic_Points) (Point)
+26: Public_OpenDataWFS:LIST_Land_Districts (title: LIST_Land_Districts) (Multi Surface)
+27: Public_OpenDataWFS:LIST_Land_Tenure (title: LIST_Land_Tenure) (Multi Surface)
+28: Public_OpenDataWFS:LIST_Legislative_Council_Divisions (title: LIST_Legislative_Council_Divisions) (Multi Surface)
+29: Public_OpenDataWFS:LIST_Local_Government_Areas (title: LIST_Local_Government_Areas) (Multi Surface)
+30: Public_OpenDataWFS:LIST_Local_Government_Reserves (title: LIST_Local_Government_Reserves) (Multi Surface)
+31: Public_OpenDataWFS:LIST_Locality_and_Postcode_Areas (title: LIST_Locality_and_Postcode_Areas) (Multi Surface)
+32: Public_OpenDataWFS:LIST_Marine_Leases (title: LIST_Marine_Leases) (Multi Surface)
+33: Public_OpenDataWFS:LIST_Marine_Nature_Reserves (title: LIST_Marine_Nature_Reserves) (Multi Surface)
+34: Public_OpenDataWFS:LIST_Named_Feature_Extents (title: LIST_Named_Feature_Extents) (Multi Surface)
+35: Public_OpenDataWFS:LIST_Nomenclature (title: LIST_Nomenclature) (Point)
+36: Public_OpenDataWFS:LIST_Parish_and_Town_Boundaries (title: LIST_Parish_and_Town_Boundaries) (Multi Surface)
+37: Public_OpenDataWFS:LIST_Points_of_Interest (title: LIST_Points_of_Interest) (Point)
+38: Public_OpenDataWFS:LIST_Private_Reserves (title: LIST_Private_Reserves) (Multi Surface)
+39: Public_OpenDataWFS:LIST_Public_Land_Classification (title: LIST_Public_Land_Classification) (Multi Surface)
+40: Public_OpenDataWFS:LIST_Ramsar_Wetlands (title: LIST_Ramsar_Wetlands) (Multi Surface)
+41: Public_OpenDataWFS:LIST_Survey_Control (title: LIST_Survey_Control) (Point)
+42: Public_OpenDataWFS:LIST_Transport_Nodes (title: LIST_Transport_Nodes) (Point)
+43: Public_OpenDataWFS:LIST_Transport_Segments (title: LIST_Transport_Segments) (Multi Curve)
+44: Public_OpenDataWFS:LIST_Water_Districts (title: LIST_Water_Districts) (Multi Surface)
+45: Public_OpenDataWFS:LIST_Water_Management_Areas (title: LIST_Water_Management_Areas) (Multi Surface)
+46: Public_OpenDataWFS:Land_Tasmania_Aerial_Photography_Centres (title: Land_Tasmania_Aerial_Photography_Centres) (Point)
+47: Public_OpenDataWFS:Land_Tasmania_Aerial_Photography_Coverages (title: Land_Tasmania_Aerial_Photography_Coverages) (Multi Surface)
+48: Public_OpenDataWFS:TASMAP_1_to_100000_Map_Index (title: TASMAP_1_to_100000_Map_Index) (Multi Surface)
+49: Public_OpenDataWFS:TASMAP_1_to_25000_Map_Index (title: TASMAP_1_to_25000_Map_Index) (Multi Surface)
+50: Public_OpenDataWFS:TASMAP_1_to_250000_Map_Index (title: TASMAP_1_to_250000_Map_Index) (Multi Surface)
+51: Public_OpenDataWFS:TASMAP_1_to_5000_Orthophoto_Index (title: TASMAP_1_to_5000_Orthophoto_Index) (Multi Surface)
+52: Public_OpenDataWFS:TASMAP_1_to_50000_Map_Index (title: TASMAP_1_to_50000_Map_Index) (Multi Surface)
+53: Public_OpenDataWFS:TASMAP_Towns_Street_Atlas_Page_Index__v8_ (title: TASMAP_Towns_Street_Atlas_Page_Index__v8_) (Multi Surface)
+54: Public_OpenDataWFS:LIST_Water_Management_Plan_Areas (title: LIST_Water_Management_Plan_Areas) (Multi Surface)
+55: Public_OpenDataWFS:TASVEG_3.0 (title: TASVEG_3.0) (Multi Surface)
+56: Public_OpenDataWFS:TASVEG_4.0 (title: TASVEG_4.0) (Multi Surface)
+```

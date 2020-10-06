@@ -34,8 +34,6 @@ library(lazysf)
 library(sf)
 library(dplyr)
 
-#file <- system.file("shapes/NY8_bna_utm18.gpkg", package = "spData", mustWork = TRUE)
-## might need "GPKG:https://github.com/Nowosad/spData/raw/master/inst/shapes/NY8_bna_utm18.gpkg"
 url <- "https://github.com/Nowosad/spData/raw/master/inst/shapes/NY8_bna_utm18.gpkg"
 (x <- lazysf(url))
 x %>% distinct(AREANAME) %>% arrange(AREANAME) 
@@ -58,7 +56,7 @@ subject to the performance of the matching [GDAL driver](https://gdal.org/driver
 * geometry is not automatic (it *is* automatic for non-DB formats, with DB-formats it depends on your SQL)
 * non-DB formats without a geometry column name will be called `_ogr_geometry_`, other non-DB formats like
 ESRI's geodatabase have other names like `SHAPE`
-* non-DB formats have access to special variable names and functions, listed on the [OGRSQL page](https://gdal.org/user/ogr_sql_dialect.html). Readl DBs don't have these, but they do have their own. 
+* non-DB formats have access to special variable names and functions, listed on the [OGRSQL page](https://gdal.org/user/ogr_sql_dialect.html). Real DBs don't have these special OGRSQL features, but they do have their own. 
 
 When using dplyr verbs (`filter()`, `select()`, `mutate()`, `transmute()`,
 `arrange()`, `left_join()`, ...) we are also subject to the rules of SQL
@@ -146,7 +144,9 @@ con <- dbConnect(SFSQL_PG(),
 
 You can construct the database connection string yourself and provide it
 directly to lazysf() if you want. See [GDAL Postgres](https://gdal.org/drivers/vector/pg.html) 
-for details.
+for details on this format, and this capability is available for any of the GDAL formats (see limitations above).  
+
+
 
 ---
 ## Code of Conduct
