@@ -24,3 +24,5 @@ Imports:
     dbplyr,
     magrittr, 
     dplyr
+URL: https://github.com/mdsumner/lazysf
+BugReports: https://github.com/mdsumner/lazysf/issues
