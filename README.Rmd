@@ -11,6 +11,8 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+library(dplyr)
+library(sf)
 ```
 
 # lazysf
@@ -18,9 +20,30 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of lazysf is to provide interactive delayed read of GDAL vector data sources (a.k.a. "shapefiles")
-using the dbplyr 'tbl_lazy' mechanism. 
+The goal of lazysf is to provide interactive delayed read of GDAL vector data sources. 
 
+Vector data sources (a.k.a. "shapefiles") are files or web services or databases that provide tables of data fields. These fields
+may include spatial geometry data (i.e. points, lines, polygons, and other planar types composed of coordinate paths). 
+
+lazysf uses the dplyr/dbplyr 'tbl_lazy' mechanism by providing a GDAL-backend like many database packages in R.  The convenience function `lazysf()` provides a single-argument wrapper around the database-like workflows. 
+
+See it in action!
+
+```{r sf-action}
+library(lazysf)
+library(sf)
+library(dplyr)
+
+#file <- system.file("shapes/NY8_bna_utm18.gpkg", package = "spData", mustWork = TRUE)
+## might need "GPKG:https://github.com/Nowosad/spData/raw/master/inst/shapes/NY8_bna_utm18.gpkg"
+url <- "https://github.com/Nowosad/spData/raw/master/inst/shapes/NY8_bna_utm18.gpkg"
+(x <- lazysf(url))
+x %>% distinct(AREANAME) %>% arrange(AREANAME) 
+
+plot(st_as_sf(x %>% 
+                dplyr::filter(!(AREANAME %LIKE% "Ca%" | AREANAME %LIKE% "Bi%")) %>% 
+                dplyr::select(AREANAME, geom)))
+```
 
 ## Limitations
 
@@ -80,6 +103,8 @@ lazysf(f, layer = "nc.gpkg") %>%
   dplyr::select(AREA, FIPS, geom) %>% 
   dplyr::filter(AREA < 0.1)
 
+
+## above was a real database (Geopackage), now with an actual shapefile
 shp <- lazysf(system.file("shape/nc.shp", package = "sf", mustWork = TRUE))
 library(dplyr)
 shp %>%
