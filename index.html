@@ -75,8 +75,8 @@
 <!-- badges: start -->
 <!-- badges: end -->
 <p>The goal of lazysf is to provide interactive delayed read of GDAL vector data sources.</p>
-<p>Vector data sources (a.k.a. “shapefiles”) are files or web services or databases that provide tables of data fields. These fields may include spatial geometry data (i.e. points, lines, polygons, and other planar types composed of coordinate paths).</p>
-<p>lazysf uses the dplyr/dbplyr ‘tbl_lazy’ mechanism by providing a GDAL-backend like many database packages in R. The convenience function <code><a href="reference/lazysf.html">lazysf()</a></code> provides a single-argument wrapper around the database-like workflows.</p>
+<p>Vector data sources (a.k.a. “shapefiles”) are files or web services or databases that provide tables of data fields. These fields may include spatial geometry data such as points, lines, polygons, and other planar types composed of paths of coordinates.</p>
+<p>lazysf uses the dplyr/dbplyr ‘tbl_lazy’ mechanism by providing a GDAL DBI-backend like many database packages in R. The convenience function <code><a href="reference/lazysf.html">lazysf()</a></code> provides a single-argument wrapper around the database-like workflows.</p>
 <p>See it in action!</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mdsumner/lazysf">lazysf</a></span><span class="op">)</span>
@@ -126,16 +126,19 @@
 <div id="limitations" class="section level2">
 <h2 class="hasAnchor">
 <a href="#limitations" class="anchor"></a>Limitations</h2>
-<p>These are big promises! It’s very largely format dependent.</p>
+<p>This is very largely format dependent, and by “format” we mean the <em>driver</em> as provided by GDAL.</p>
 <p>We make no claims about performance or convenience, it will be affected by your system and your sf installation - lazysf just takes you closer the GDAL capabilities.</p>
-<p>For example, a query on a CSV, GeoJSON, or KML file local or remote is entirely subject to the performance of the matching <a href="https://gdal.org/drivers/vector/index.html">GDAL driver</a>.</p>
+<p>Performance can be excellent, and may be very competitive compared to reading an entire data source layer into memory. Really good drivers include ESRI Shapefile, Geopackage, PostgreSQL/PostGIS, MapInfo File, ESRI FileGDB, but there are dozens to choose from.</p>
+<p>A query on a CSV, GeoJSON, or KML file (local or remote) is entirely subject to the performance of the matching <a href="https://gdal.org/drivers/vector/index.html">GDAL driver</a>.</p>
 <ul>
 <li>big text files will be slow, they aren’t a format suitable for database-like access</li>
-<li>geometry is not automatic (it <em>is</em> automatic for non-DB formats, with DB-formats it depends on your SQL)</li>
+<li>geometry is not automatic for real database formats, and will depend on the SQL used</li>
+<li>geometry <em>is</em> automatic for non-DB formats</li>
 <li>non-DB formats without a geometry column name will be called <code>_ogr_geometry_</code>, other non-DB formats like ESRI’s geodatabase have other names like <code>SHAPE</code>
 </li>
-<li>non-DB formats have access to special variable names and functions, listed on the <a href="https://gdal.org/user/ogr_sql_dialect.html">OGRSQL page</a>. Real DBs don’t have these special OGRSQL features, but they do have their own.</li>
+<li>non-DB formats have access to special variable names and functions, listed on the <a href="https://gdal.org/user/ogr_sql_dialect.html">OGRSQL page</a>.</li>
 </ul>
+<p>Real DBs don’t have these special OGRSQL features, but they do have their own special syntax which for the most part can be sent straight through.</p>
 <p>When using dplyr verbs (<code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/mutate.html">transmute()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join()</a></code>, …) we are also subject to the rules of SQL translation. There are no specific ones provided by lazysf but that might change.</p>
 <p>Wrappers around lazysf could provide more specific tools for particular formats.</p>
 <div id="cant-we-just-do-this-with-sfs-query-argument" class="section level3">
@@ -284,6 +287,23 @@
 <span class="co">#&gt; 8  1601. 03304         (((-71.14553 -27.96365, -71.13859 -27.96908, -71.12689 -…</span>
 <span class="co">#&gt; 9 11260. 03103         (((-68.98753 -27.52457, -68.98356 -27.53234, -68.97817 -…</span></pre></div>
 <p>You can construct the database connection string yourself and provide it directly to lazysf() if you want. See <a href="https://gdal.org/drivers/vector/pg.html">GDAL Postgres</a> for details on this format, and this capability is available for any of the GDAL formats (see limitations above).</p>
+</div>
+<div id="some-drivers-are-related" class="section level2">
+<h2 class="hasAnchor">
+<a href="#some-drivers-are-related" class="anchor"></a>Some drivers are related</h2>
+<p>Note that GDAL drivers can be confusing, and it can be important to see the behaviours GDAL will provide by default. Here see that we can read from a Geopackage file but not as it was intended. We have used the driver-prefix to make GDAL choose its SQLite driver rather than the Geopackage driver.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mdsumner/lazysf">lazysf</a></span><span class="op">)</span>
+<span class="va">gpkgfile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"gpkg/nc.gpkg"</span>, package <span class="op">=</span> <span class="st">"sf"</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="reference/lazysf.html">lazysf</a></span><span class="op">(</span><span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span><span class="op">(</span><span class="st">"SQLite:{gpkgfile}"</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; # Source:   table&lt;gpkg_contents&gt; [?? x 10]</span>
+<span class="co">#&gt; # Database: SFSQLConnection</span>
+<span class="co">#&gt;   table_name data_type identifier description last_change         min_x min_y</span>
+<span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;       &lt;dttm&gt;              &lt;dbl&gt; &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 nc.gpkg    features  nc.gpkg    ""          2016-09-28 14:57:13 -84.3  33.9</span>
+<span class="co">#&gt; # … with 3 more variables: max_x &lt;dbl&gt;, max_y &lt;dbl&gt;, srs_id &lt;int&gt;</span></pre></div>
+<p>That’s not very spatial, but we can dig in to find out what else is there.</p>
+<p>See <a href="https://twitter.com/mdsumner/status/1306937694467940353?s=20" class="uri">https://twitter.com/mdsumner/status/1306937694467940353?s=20</a> for more (but a SQLite in GDAL returns character not binary geom … so WIP)</p>
 <hr>
 </div>
 <div id="code-of-conduct" class="section level2">
