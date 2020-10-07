@@ -1,8 +1,5 @@
-url: https://mdsumner.github.io/lazysf/
-
-home:
-  title: A dplyr backend for GDAL vector data sources
-  strip_header: true
+development:
+  mode: auto
 
 reference:
 - title: lazysf
@@ -10,10 +7,10 @@ reference:
   - lazysf
   - st_as_sf
 
-- title: Connection to GDAL sources
+- title: SFSQL connection to GDAL sources
   contents:
-  - starts_with("db")
   - starts_with("SFSQL")
+  - starts_with("db")
   - starts_with("show")
 
 articles:
