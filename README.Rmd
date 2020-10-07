@@ -23,9 +23,9 @@ library(sf)
 The goal of lazysf is to provide interactive delayed read of GDAL vector data sources. 
 
 Vector data sources (a.k.a. "shapefiles") are files or web services or databases that provide tables of data fields. These fields
-may include spatial geometry data (i.e. points, lines, polygons, and other planar types composed of coordinate paths). 
+may include spatial geometry data such as points, lines, polygons, and other planar types composed of paths of coordinates. 
 
-lazysf uses the dplyr/dbplyr 'tbl_lazy' mechanism by providing a GDAL-backend like many database packages in R.  The convenience function `lazysf()` provides a single-argument wrapper around the database-like workflows. 
+lazysf uses the dplyr/dbplyr 'tbl_lazy' mechanism by providing a GDAL DBI-backend like many database packages in R.  The convenience function `lazysf()` provides a single-argument wrapper around the database-like workflows. 
 
 See it in action!
 
@@ -45,18 +45,22 @@ plot(st_as_sf(x %>%
 
 ## Limitations
 
-These are big promises!  It's very largely format dependent.  
+This is very largely format dependent, and by "format" we mean the *driver* as provided by GDAL.   
 
 We make no claims about performance or convenience, it will be affected by your system and your sf installation - lazysf just takes you closer the GDAL capabilities. 
 
-For example, a query on a CSV, GeoJSON, or KML file local or remote is entirely
-subject to the performance of the matching [GDAL driver](https://gdal.org/drivers/vector/index.html).
+Performance can be excellent, and may be very competitive compared to reading an entire data source layer into memory. Really good drivers include ESRI Shapefile, Geopackage, PostgreSQL/PostGIS, MapInfo File, ESRI FileGDB, but there are dozens to choose from. 
+
+A query on a CSV, GeoJSON, or KML file (local or remote) is entirely subject to the performance of the matching [GDAL driver](https://gdal.org/drivers/vector/index.html).
 
 * big text files will be slow, they aren't a format suitable for database-like access
-* geometry is not automatic (it *is* automatic for non-DB formats, with DB-formats it depends on your SQL)
+* geometry is not automatic for real database formats, and will depend on the SQL used
+* geometry *is* automatic for non-DB formats
 * non-DB formats without a geometry column name will be called `_ogr_geometry_`, other non-DB formats like
 ESRI's geodatabase have other names like `SHAPE`
-* non-DB formats have access to special variable names and functions, listed on the [OGRSQL page](https://gdal.org/user/ogr_sql_dialect.html). Real DBs don't have these special OGRSQL features, but they do have their own. 
+* non-DB formats have access to special variable names and functions, listed on the [OGRSQL page](https://gdal.org/user/ogr_sql_dialect.html). 
+
+Real DBs don't have these special OGRSQL features, but they do have their own special syntax which for the most part can be sent straight through. 
 
 When using dplyr verbs (`filter()`, `select()`, `mutate()`, `transmute()`,
 `arrange()`, `left_join()`, ...) we are also subject to the rules of SQL
@@ -147,7 +151,24 @@ directly to lazysf() if you want. See [GDAL Postgres](https://gdal.org/drivers/v
 for details on this format, and this capability is available for any of the GDAL formats (see limitations above).  
 
 
+## Some drivers are related
 
+Note that GDAL drivers can be confusing, and it can be important to see the behaviours GDAL will provide by default. Here see that we can read from a Geopackage file but not as it was intended. We
+have used the driver-prefix to make GDAL choose its SQLite driver rather than the Geopackage driver. 
+
+```{r Geopackage-SQLite}
+library(lazysf)
+gpkgfile <- system.file("gpkg/nc.gpkg", package = "sf", mustWork = TRUE)
+lazysf(glue::glue("SQLite:{gpkgfile}"))
+```
+
+That's not very spatial, but we can dig in to find out what else is there. 
+
+
+See https://twitter.com/mdsumner/status/1306937694467940353?s=20 for more (but a SQLite in GDAL returns character not binary geom ... so WIP)
+
+
+  
 ---
 ## Code of Conduct
 
