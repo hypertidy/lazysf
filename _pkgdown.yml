@@ -1,11 +1,5 @@
 url: https://mdsumner.github.io/lazysf/
 
-template:
-  package: tidytemplate
-
-development:
-  mode: auto
-
 home:
   title: A dplyr backend for GDAL vector data sources
   strip_header: true
@@ -22,13 +16,37 @@ reference:
   - starts_with("SFSQL")
   - starts_with("show")
 
+articles:
+- title: All vignettes
+  desc: ~
+  contents: '`GDAL-SQL`'
 
 navbar:
+  structure:
+    left:
+    - home
+    - intro
+    - reference
+    - articles
+    - tutorials
+    - news
+    right: github
   components:
-    home: ~
+    home:
+      icon: fas fa-home fa-lg
+      href: index.html
+    reference:
+      text: Reference
+      href: reference/index.html
     news:
-      text: News
+      text: Changelog
+      href: news/index.html
+    github:
+      icon: fab fa-github fa-lg
+      href: https://github.com/mdsumner/lazysf/
+    articles:
+      text: Articles
       menu:
-      - text: "------------------"
-      - text: "Change log"
-        href: news/index.html
+      - text: GDAL SQL
+        href: articles/GDAL-SQL.html
+
