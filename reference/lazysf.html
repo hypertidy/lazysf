@@ -101,6 +101,9 @@ the sf package." />
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
@@ -184,8 +187,8 @@ run and displayed (the top few rows of data).</p>
 <p>The output of <code>lazysf()</code> is a 'tbl_SFSQLConnection<code>that extends</code>tbl_dbi` and
 may be used with functions and workflows in the normal DBI way (see <code><a href='SFSQL.html'>SFSQL()</a></code>).</p>
 <p>The actual query that may be run will depend on the type of format, see the
-list on the GDAL vector drivers page. For some details see the <a href='OGRSQL vignette'>OGRSQL vignette</a>
-run <code>vignette("GDALSQL", package = "lazysf")</code>.</p>
+list on the GDAL vector drivers page. For some details see the
+<a href='https://mdsumner.github.io/lazysf/articles/GDAL-SQL.html'>GDALSQL vignette</a>.</p>
 <p>When dplyr is attached the lazy data frame can be used with the usual verbs
 verbs (filter, select, distinct, mutate, transmute, arrange, left_join, pull,
 collect etc.). To see the result as a SQL query rather than a data frame
