@@ -1,0 +1,43 @@
+---
+title: "GDAL SQL"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{GDALSQL}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(lazysf)
+```
+
+
+GDAL is a complex tool and there are many intricacies to using SQL with it. 
+
+We haven't explored this comprehensively but [feedback is very welcome](https://github.com/mdsumner/lazysf/issues).
+
+
+## OGRSQL 
+
+https://gdal.org/user/ogr_sql_dialect.html
+
+Unfortunate label. 
+
+## Real databases and file databases
+
+
+SFSQL_PG(), GPKG etc
+
+https://gdal.org/user/sql_sqlite_dialect.html
+
+## Virtual SQL
+
+shapefile, OpenFileGDB etc. 
+

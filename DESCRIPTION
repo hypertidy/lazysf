@@ -26,3 +26,7 @@ Imports:
     dplyr
 URL: https://github.com/mdsumner/lazysf
 BugReports: https://github.com/mdsumner/lazysf/issues
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

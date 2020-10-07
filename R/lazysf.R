@@ -1,13 +1,21 @@
 #' Delayed (lazy) read for simple features
 #'
-#' A lazy data frame for GDAL vector data sources. Should work with any data
-#' source readable by the sf package.
+#' A lazy data frame for GDAL vector data sources. lazysf is DBI compatible and
+#' designed to work with dplyr. It should work with any data source readable by
+#' the sf package.
 #'
 #' Lazy means that the usual behaviour of reading the entirety of a data source
-#' into memory is avoided. Printing the output results in a preview query being run
-#' and displayed (the top few rows of data).
+#' into memory is avoided. Printing the output results in a preview query being
+#' run and displayed (the top few rows of data).
 #'
-#' When dplyr is loaded the lazy data frame can be used with the usual dplyr
+#' The output of `lazysf()` is a 'tbl_SFSQLConnection` that extends `tbl_dbi` and
+#' may be used with functions and workflows in the normal DBI way (see [SFSQL()]).
+#'
+#' The actual query that may be run will depend on the type of format, see the
+#' list on the GDAL vector drivers page. For some details see the [OGRSQL vignette]()
+#' run `vignette("GDALSQL", package = "lazysf")`.
+#'
+#' When dplyr is attached the lazy data frame can be used with the usual verbs
 #' verbs (filter, select, distinct, mutate, transmute, arrange, left_join, pull,
 #' collect etc.). To see the result as a SQL query rather than a data frame
 #' preview use `dplyr::show_query()`.
@@ -18,8 +26,9 @@
 #' convert to an sf data frame. Using `collect()` on its own returns an
 #' unclassed data.frame and may include a classed `sfc` geometry column.
 #'
-#' As well as `collect()` it's also possible to use `tibble::as_tibble()` or `as.data.frame()`
-#' or `pull()` which all force computation and retrieve the result.
+#' As well as `collect()` it's also possible to use `tibble::as_tibble()` or
+#' `as.data.frame()` or `pull()` which all force computation and retrieve the
+#' result.
 #'
 #' @inheritParams sf::read_sf
 #' @param x the data source name (file path, url, or database connection string
