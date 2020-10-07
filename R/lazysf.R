@@ -12,8 +12,8 @@
 #' may be used with functions and workflows in the normal DBI way (see [SFSQL()]).
 #'
 #' The actual query that may be run will depend on the type of format, see the
-#' list on the GDAL vector drivers page. For some details see the [OGRSQL vignette]()
-#' run `vignette("GDALSQL", package = "lazysf")`.
+#' list on the GDAL vector drivers page. For some details see the
+#' [GDALSQL vignette](https://mdsumner.github.io/lazysf/articles/GDAL-SQL.html).
 #'
 #' When dplyr is attached the lazy data frame can be used with the usual verbs
 #' verbs (filter, select, distinct, mutate, transmute, arrange, left_join, pull,

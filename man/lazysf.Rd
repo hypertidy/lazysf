@@ -50,8 +50,8 @@ The output of \code{lazysf()} is a 'tbl_SFSQLConnection\verb{that extends}tbl_db
 may be used with functions and workflows in the normal DBI way (see \code{\link[=SFSQL]{SFSQL()}}).
 
 The actual query that may be run will depend on the type of format, see the
-list on the GDAL vector drivers page. For some details see the \url{OGRSQL vignette}
-run \code{vignette("GDALSQL", package = "lazysf")}.
+list on the GDAL vector drivers page. For some details see the
+\href{https://mdsumner.github.io/lazysf/articles/GDAL-SQL.html}{GDALSQL vignette}.
 
 When dplyr is attached the lazy data frame can be used with the usual verbs
 verbs (filter, select, distinct, mutate, transmute, arrange, left_join, pull,
