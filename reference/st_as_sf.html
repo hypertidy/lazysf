@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Convert to in-memory sf — st_as_sf • lazysf</title>
+<title>Force computation of a GDAL query — st_as_sf • lazysf</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Convert to in-memory sf — st_as_sf" />
-<meta property="og:description" content="Convert lazysf to an sf object" />
+<meta property="og:title" content="Force computation of a GDAL query — st_as_sf" />
+<meta property="og:description" content="Convert lazysf to an in memory data frame or sf object" />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lazysf</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.9001</span>
       </span>
     </div>
 
@@ -108,13 +108,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Convert to in-memory sf</h1>
+    <h1>Force computation of a GDAL query</h1>
     <small class="dont-index">Source: <a href='https://github.com/mdsumner/lazysf/blob/master/R/lazysf.R'><code>R/lazysf.R</code></a></small>
     <div class="hidden name"><code>st_as_sf.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Convert lazysf to an sf object</p>
+    <p>Convert lazysf to an in memory data frame or sf object</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for tbl_SFSQLConnection</span>
@@ -129,16 +129,21 @@
     </tr>
     <tr>
       <th>...</th>
-      <td><p>passed to <a href='https://dplyr.tidyverse.org/reference/compute.html'>collect</a></p></td>
+      <td><p>passed to <code>collect()</code></p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a sf data frame (if possible, i.e. contains an <code>sfc</code> column on <code><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect()</a></code>)</p>
+    <p>a data frame from <code>collect()</code>, sf data frame from <code>st_as_sf()</code> (only if it contains an <code>sfc</code> geometry column)</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>WIP: do we need the st_as_sf.data.frame arguments?</p>
+<p><code>collect()</code> retrieves data into a local table, preserving grouping and ordering.</p>
+<p><code>st_as_sf()</code> retrieves data into a local sf data frame (will succeed only if there is a geometry column of class <code>sfc</code>)</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>lazysf</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='va'>f</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"gpkg/nc.gpkg"</span>, package <span class='op'>=</span> <span class='st'>"sf"</span>, mustWork <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>

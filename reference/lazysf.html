@@ -40,9 +40,8 @@
 
 
 <meta property="og:title" content="Delayed (lazy) read for simple features — lazysf" />
-<meta property="og:description" content="Really a lazy data frame for GDAL vector data sources. Currently we must use an
-explict st_as_sf() on the tbl_lazy object. Using collect() returns an unclassed
-data.frame possibly with a classed sfc geometry column." />
+<meta property="og:description" content="A lazy data frame for GDAL vector data sources. Should work with any data
+source readable by the sf package." />
 
 
 
@@ -74,7 +73,7 @@ data.frame possibly with a classed sfc geometry column." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lazysf</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.9001</span>
       </span>
     </div>
 
@@ -116,9 +115,8 @@ data.frame possibly with a classed sfc geometry column." />
     </div>
 
     <div class="ref-description">
-    <p>Really a lazy data frame for GDAL vector data sources. Currently we must use an
-explict <code><a href='st_as_sf.html'>st_as_sf()</a></code> on the <code>tbl_lazy</code> object. Using <code><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect()</a></code> returns an unclassed
-data.frame possibly with a classed <code>sfc</code> geometry column.</p>
+    <p>A lazy data frame for GDAL vector data sources. Should work with any data
+source readable by the sf package.</p>
     </div>
 
     <pre class="usage"><span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
@@ -134,7 +132,9 @@ data.frame possibly with a classed <code>sfc</code> geometry column.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>the data source name (file path, url, or database connection string - analogous to <code><a href='https://r-spatial.github.io/sf/reference/st_read.html'>sf::read_sf()</a></code> 'dsn')</p></td>
+      <td><p>the data source name (file path, url, or database connection string</p><ul>
+<li><p>analogous to <code><a href='https://r-spatial.github.io/sf/reference/st_read.html'>sf::read_sf()</a></code> 'dsn')</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>...</th>
@@ -159,8 +159,25 @@ use the <code>query</code> argument.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a 'tbl_SFSQLConnection', extending 'tbl_lazy' (something that works with dplyr verbs, and only shows a
-preview until you commit the result via <code><a href='https://dplyr.tidyverse.org/reference/compute.html'>dplyr::collect()</a></code>)</p>
+    <p>a 'tbl_SFSQLConnection', extending 'tbl_lazy' (something that works
+with dplyr verbs, and only shows a preview until you commit the result via
+<code><a href='st_as_sf.html'>collect()</a></code>) see Details</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Lazy means that the usual behaviour of reading the entirety of a data source
+into memory is avoided. Printing the output results in a preview query being run
+and displayed (the top few rows of data).</p>
+<p>When dplyr is loaded the lazy data frame can be used with the usual dplyr
+verbs (filter, select, distinct, mutate, transmute, arrange, left_join, pull,
+collect etc.). To see the result as a SQL query rather than a data frame
+preview use <code><a href='https://dplyr.tidyverse.org/reference/explain.html'>dplyr::show_query()</a></code>.</p>
+<p>To obtain an in memory data frame use an explict <code><a href='st_as_sf.html'>collect()</a></code> or <code><a href='st_as_sf.html'>st_as_sf()</a></code>.
+A call to <code><a href='st_as_sf.html'>collect()</a></code> is triggered by <code><a href='st_as_sf.html'>st_as_sf()</a></code> and will add the sf class
+to the output. A result may not contain a geometry column, and so cannot be
+convert to an sf data frame. Using <code><a href='st_as_sf.html'>collect()</a></code> on its own returns an
+unclassed data.frame and may include a classed <code>sfc</code> geometry column.</p>
+<p>As well as <code><a href='st_as_sf.html'>collect()</a></code> it's also possible to use <code><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>tibble::as_tibble()</a></code> or <code><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame()</a></code>
+or <code><a href='https://dplyr.tidyverse.org/reference/pull.html'>pull()</a></code> which all force computation and retrieve the result.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># online sources can work</span>
@@ -182,7 +199,8 @@ preview until you commit the result via <code><a href='https://dplyr.tidyverse.o
 #&gt; </span><span style='color: #555555;'> 9</span><span> Carlton         48 Melbour…     1.82 #443A83   #443A83                1
 #&gt; </span><span style='color: #555555;'>10</span><span> Carlton…        71 Yarra        2.30 #443A83   #443A83                1
 #&gt; </span><span style='color: #555555;'># … with more rows, and 1 more variable: `_ogr_geometry_` </span><span style='color: #555555;font-style: italic;'>&lt;POLYGON [°]&gt;</span><span></div><div class='input'>
-<span class='co'>## or normal stuff</span>
+<span class='co'>## normal file stuff</span>
+<span class='co'>## (Geopackage is an actual database so with SELECT we must be explicit re geom-column)</span>
 <span class='va'>f</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"gpkg/nc.gpkg"</span>, package <span class='op'>=</span> <span class='st'>"sf"</span>, mustWork <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>f</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; </span><span style='color: #555555;'># Source:   table&lt;nc.gpkg&gt; [?? x 16]</span><span>
@@ -231,6 +249,8 @@ preview until you commit the result via <code><a href='https://dplyr.tidyverse.o
 #&gt; </span><span style='color: #555555;'> 9</span><span> 0.063 37143 (((-76.48053 36.07979, -76.53696 36.08792, -76.5756 36.10266, -7…
 #&gt; </span><span style='color: #555555;'>10</span><span> 0.044 37041 (((-76.68874 36.29452, -76.64822 36.31532, -76.60424 36.31498, -…
 #&gt; </span><span style='color: #555555;'># … with more rows</span><span></div><div class='input'>
+<span class='co'>## the famous ESRI Shapefile (not an actual database)</span>
+<span class='co'>## so if we SELECT we must be ex</span>
 <span class='va'>shp</span> <span class='op'>&lt;-</span> <span class='fu'>lazysf</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"shape/nc.shp"</span>, package <span class='op'>=</span> <span class='st'>"sf"</span>, mustWork <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'></span>
