@@ -3,26 +3,34 @@
 \name{st_as_sf}
 \alias{st_as_sf}
 \alias{st_as_sf.tbl_SFSQLConnection}
-\title{Convert to in-memory sf}
+\alias{collect}
+\title{Force computation of a GDAL query}
 \usage{
 \method{st_as_sf}{tbl_SFSQLConnection}(x, ...)
 }
 \arguments{
 \item{x}{output of \code{\link[=lazysf]{lazysf()}}}
 
-\item{...}{passed to \link{collect}}
+\item{...}{passed to \code{\link[=collect]{collect()}}}
 }
 \value{
-a sf data frame (if possible, i.e. contains an \code{sfc} column on \code{\link[=collect]{collect()}})
+a data frame from \code{collect()}, sf data frame from \code{st_as_sf()} (only if it contains an \code{sfc} geometry column)
 }
 \description{
-Convert lazysf to an sf object
+Convert lazysf to an in memory data frame or sf object
 }
 \details{
 WIP: do we need the st_as_sf.data.frame arguments?
+
+\code{collect()} retrieves data into a local table, preserving grouping and ordering.
+
+\code{st_as_sf()} retrieves data into a local sf data frame (will succeed only if there is a geometry column of class \code{sfc})
 }
 \examples{
 f <- system.file("gpkg/nc.gpkg", package = "sf", mustWork = TRUE)
 lsf <- lazysf(f) \%>\% dplyr::select(AREA, FIPS, geom) \%>\% dplyr::filter(AREA < 0.1)
 st_as_sf(lsf)
+}
+\seealso{
+lazysf
 }

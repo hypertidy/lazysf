@@ -13,7 +13,10 @@ lazysf(x, ...)
 \method{lazysf}{SFSQLConnection}(x, layer, ..., query = NA)
 }
 \arguments{
-\item{x}{the data source name (file path, url, or database connection string - analogous to \code{\link[sf:st_read]{sf::read_sf()}} 'dsn')}
+\item{x}{the data source name (file path, url, or database connection string
+\itemize{
+\item analogous to \code{\link[sf:st_read]{sf::read_sf()}} 'dsn')
+}}
 
 \item{...}{currently ignored}
 
@@ -29,13 +32,32 @@ use the \code{query} argument.}
 \item{query}{SQL query to select records; see details}
 }
 \value{
-a 'tbl_SFSQLConnection', extending 'tbl_lazy' (something that works with dplyr verbs, and only shows a
-preview until you commit the result via \code{\link[dplyr:compute]{dplyr::collect()}})
+a 'tbl_SFSQLConnection', extending 'tbl_lazy' (something that works
+with dplyr verbs, and only shows a preview until you commit the result via
+\code{\link[=collect]{collect()}}) see Details
 }
 \description{
-Really a lazy data frame for GDAL vector data sources. Currently we must use an
-explict \code{st_as_sf()} on the \code{tbl_lazy} object. Using \code{collect()} returns an unclassed
-data.frame possibly with a classed \code{sfc} geometry column.
+A lazy data frame for GDAL vector data sources. Should work with any data
+source readable by the sf package.
+}
+\details{
+Lazy means that the usual behaviour of reading the entirety of a data source
+into memory is avoided. Printing the output results in a preview query being run
+and displayed (the top few rows of data).
+
+When dplyr is loaded the lazy data frame can be used with the usual dplyr
+verbs (filter, select, distinct, mutate, transmute, arrange, left_join, pull,
+collect etc.). To see the result as a SQL query rather than a data frame
+preview use \code{dplyr::show_query()}.
+
+To obtain an in memory data frame use an explict \code{collect()} or \code{st_as_sf()}.
+A call to \code{collect()} is triggered by \code{st_as_sf()} and will add the sf class
+to the output. A result may not contain a geometry column, and so cannot be
+convert to an sf data frame. Using \code{collect()} on its own returns an
+unclassed data.frame and may include a classed \code{sfc} geometry column.
+
+As well as \code{collect()} it's also possible to use \code{tibble::as_tibble()} or \code{as.data.frame()}
+or \code{pull()} which all force computation and retrieve the result.
 }
 \examples{
 # online sources can work
@@ -43,12 +65,15 @@ geojson <- file.path("https://raw.githubusercontent.com/SymbolixAU",
                      "geojsonsf/master/inst/examples/geo_melbourne.geojson")
 lazysf(geojson)
 
-## or normal stuff
+## normal file stuff
+## (Geopackage is an actual database so with SELECT we must be explicit re geom-column)
 f <- system.file("gpkg/nc.gpkg", package = "sf", mustWork = TRUE)
 lazysf(f)
 lazysf(f, query = "SELECT AREA, FIPS, geom FROM \"nc.gpkg\" WHERE AREA < 0.1")
 lazysf(f, layer = "nc.gpkg") \%>\% dplyr::select(AREA, FIPS, geom) \%>\% dplyr::filter(AREA < 0.1)
 
+## the famous ESRI Shapefile (not an actual database)
+## so if we SELECT we must be ex
 shp <- lazysf(system.file("shape/nc.shp", package = "sf", mustWork = TRUE))
 library(dplyr)
 shp \%>\%
