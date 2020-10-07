@@ -10,6 +10,9 @@ reference:
 - title: SFSQL connection to GDAL sources
   contents:
   - starts_with("SFSQL")
+
+- title: DBI methods
+  contents:
   - starts_with("db")
   - starts_with("show")
 
