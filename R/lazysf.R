@@ -113,4 +113,7 @@ st_as_sf.tbl_SFSQLConnection <- function(x, ...) {
   sf::st_as_sf(dplyr::collect(x, ...))
 }
 
+#' @name st_as_sf
+#' @usage collect(x, ...)
+"collect"
 

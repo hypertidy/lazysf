@@ -35,9 +35,3 @@ dbConnect for PostgreSQL via GDAL
 \details{
 https://gdal.org/drivers/vector/pg.html
 }
-\examples{
-\dontrun{
-db <- dbConnect(SFSQL_PG(), afile)
-dbSendQuery(db,
-}
-}
