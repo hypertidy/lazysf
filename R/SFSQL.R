@@ -45,7 +45,8 @@ setClass("SFSQLConnection",
          contains = "DBIConnection",
          slots = list(
            DSN = "character",
-           readonly = "logical")
+           readonly = "logical",
+           sf_read_args = "list")
 )
 
 
@@ -150,11 +151,14 @@ setClass("SFSQLResult",
 #' dbSendQuery(db, "SELECT * FROM \"nc.gpkg\" WHERE FID < 1")
 setMethod("dbSendQuery", "SFSQLConnection",
           function(conn, statement, ...) {
-            ## may not be a file
-            DSN <- conn@DSN
-
             ## quiet and fake layer because we aren't using layer  = (it's in the query)
-            layer_data <- sf::read_sf(DSN, layer = "<this is unused>", query = statement, quiet = TRUE)
+            args <- conn@sf_read_args
+            args$dsn <- DSN <- conn@DSN
+
+            args$query <- statement           ## user can't do this (warn?)
+            layer_data <- do.call(sf::st_read, args)
+
+            #layer_data <- sf::read_sf(DSN, layer = "<this is unused>", query = statement, quiet = TRUE)
             if (inherits(layer_data, "try-error")) {
               message("executing SQL failed:")
               writeLines(statement)

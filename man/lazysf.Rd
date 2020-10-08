@@ -4,21 +4,19 @@
 \alias{lazysf}
 \alias{lazysf.character}
 \alias{lazysf.SFSQLConnection}
-\title{Delayed (lazy) read for simple features}
+\title{Delayed (lazy) read for GDAL vector}
 \usage{
-lazysf(x, ...)
+lazysf(x, layer, ..., query = NA, as_tibble = TRUE, quiet = TRUE)
 
-\method{lazysf}{character}(x, layer, ..., query = NA)
+\method{lazysf}{character}(x, layer, ..., query = NA, as_tibble = TRUE, quiet = TRUE)
 
-\method{lazysf}{SFSQLConnection}(x, layer, ..., query = NA)
+\method{lazysf}{SFSQLConnection}(x, layer, ..., query = NA, as_tibble = TRUE, quiet = TRUE)
 }
 \arguments{
 \item{x}{the data source name (file path, url, or database connection string
 \itemize{
 \item analogous to \code{\link[sf:st_read]{sf::read_sf()}} 'dsn')
 }}
-
-\item{...}{currently ignored}
 
 \item{layer}{layer name (varies by driver, may be a file name without
 extension); in case \code{layer} is missing, \code{st_read} will read the
@@ -29,7 +27,13 @@ are no layers in \code{dsn}. If \code{dsn} is a database connection, then
 \code{\link[DBI]{Id}}). It is also possible to omit \code{layer} and rather
 use the \code{query} argument.}
 
+\item{...}{arguments passed to \code{\link[sf:st_read]{sf::st_read()}}, including \code{as_tibble}, and \code{quiet}}
+
 \item{query}{SQL query to select records; see details}
+
+\item{as_tibble}{default override for sf::st_read (\code{TRUE})}
+
+\item{quiet}{default override for sf::st_read (\code{TRUE})}
 }
 \value{
 a 'tbl_SFSQLConnection', extending 'tbl_lazy' (something that works
@@ -47,9 +51,10 @@ into memory is avoided. Printing the output results in a preview query being
 run and displayed (the top few rows of data).
 
 The output of \code{lazysf()} is a 'tbl_SFSQLConnection\verb{that extends}tbl_dbi` and
-may be used with functions and workflows in the normal DBI way (see \code{\link[=SFSQL]{SFSQL()}}).
+may be used with functions and workflows in the normal DBI way, see \code{\link[=SFSQL]{SFSQL()}} for
+the lazysf DBI support.
 
-The actual query that may be run will depend on the type of format, see the
+The kind of q uery that may be run will depend on the type of format, see the
 list on the GDAL vector drivers page. For some details see the
 \href{https://mdsumner.github.io/lazysf/articles/GDAL-SQL.html}{GDALSQL vignette}.
 

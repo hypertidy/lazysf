@@ -34,7 +34,9 @@
 #' @inheritParams sf::read_sf
 #' @param x the data source name (file path, url, or database connection string
 #'   - analogous to [sf::read_sf()] 'dsn')
-#' @param ... currently ignored
+#' @param as_tibble default override for sf::st_read (`TRUE`)
+#' @param quiet default override for sf::st_read (`TRUE`)
+#' @param ... arguments passed to [sf::st_read()], including `as_tibble`, and `quiet`
 #' @return a 'tbl_SFSQLConnection', extending 'tbl_lazy' (something that works
 #'   with dplyr verbs, and only shows a preview until you commit the result via
 #'   [collect()]) see Details
@@ -67,18 +69,18 @@
 #'
 #'  ## a multi-layer file
 #'  system.file("extdata/multi.gpkg", package = "lazysf", mustWork = TRUE)
-lazysf <- function(x, ...) {
+lazysf <- function(x, layer, ..., query = NA, as_tibble = TRUE, quiet = TRUE) {
   UseMethod("lazysf")
 }
 #' @name lazysf
 #' @export
-lazysf.character <- function(x, layer, ..., query = NA) {
-  db <- dbConnect(SFSQL(), x)
+lazysf.character <- function(x, layer, ..., query = NA, as_tibble = TRUE, quiet = TRUE) {
+  db <- dbConnect(SFSQL(), x, sf_read_args = c(list(as_tibble = as_tibble, quiet = quiet), list(...)))
   lazysf(db, layer, ..., query = query)
 }
 #' @name lazysf
 #' @export
-lazysf.SFSQLConnection <- function(x, layer, ..., query = NA) {
+lazysf.SFSQLConnection <- function(x, layer, ..., query = NA, as_tibble = TRUE, quiet = TRUE) {
   if (!is.na(query)) {
     if (!missing(layer)) message("'layer' argument ignored, using 'query'")
     return(dplyr::tbl(x, dbplyr::sql(query)))
