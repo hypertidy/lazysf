@@ -14,6 +14,3 @@
 \description{
 dbClearResult for SFSQLResult
 }
-\details{
-This doesn't do anything
-}

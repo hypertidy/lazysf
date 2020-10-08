@@ -72,7 +72,9 @@ result.
 # online sources can work
 geojson <- file.path("https://raw.githubusercontent.com/SymbolixAU",
                      "geojsonsf/master/inst/examples/geo_melbourne.geojson")
+\donttest{
 lazysf(geojson)
+}
 
 ## normal file stuff
 ## (Geopackage is an actual database so with SELECT we must be explicit re geom-column)
@@ -90,4 +92,7 @@ shp \%>\%
  mutate(abc = 1.3) \%>\%
  select(abc, NAME, `_ogr_geometry_`) \%>\%
  arrange(desc(NAME))  #\%>\% show_query()
+
+ ## a multi-layer file
+ system.file("extdata/multi.gpkg", package = "lazysf", mustWork = TRUE)
 }

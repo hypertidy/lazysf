@@ -3,11 +3,7 @@
 \docType{class}
 \name{SFSQLDriver-class}
 \alias{SFSQLDriver-class}
-\alias{dbUnloadDriver,SFSQLDriver-method}
 \title{Driver for SFSQL.}
-\usage{
-\S4method{dbUnloadDriver}{SFSQLDriver}(drv, ...)
-}
 \description{
 Driver for SFSQL.
 }

@@ -41,3 +41,85 @@ https://gdal.org/user/sql_sqlite_dialect.html
 
 shapefile, OpenFileGDB etc. 
 
+ESRI "Geodatabases", known as 'OpenFileGDB' to GDAL *are not real databases*. Amazing!  Sadly this means we cannot perform subquerys, which occurs with some contructs. 
+
+For example, this is fine - filter where on variables and then count the number of rows. There is only one 'SELECT ...' statement. 
+
+```R
+## here f is a file path to the directory containing list_2d_building_polys_hobart from TheLIST opendata
+lazysf(f) %>% filter(SHAPE_Area < 15) %>% tally() %>% show_query()
+<SQL>
+SELECT COUNT(*) AS "n"
+FROM "list_2d_building_polys_hobart"
+WHERE ("SHAPE_Area" < 15.0)
+
+## we predicted this woud work, even on our not-a-database geodatabase
+lazysf(f) %>% filter(SHAPE_Area < 15) %>% tally() %>% collect()
+# A tibble: 1 x 1
+      n
+  <int>
+1    56
+```
+
+However, if we do something more complex like a GROUP BY and then `slice_min()` we cannot run the query. 
+
+```R
+lazysf(f) %>% group_by(BUILD_TY) %>% slice_min(SHAPE_Area) %>% show_query()
+<SQL>
+SELECT "BUILD_ID", "BUILD_TY", "BUILD_NAME", "BLD_PUR", "MEAN_HGT", "UFI", "CREATED_ON", "LIST_GUID", "NOM_REG_NO", "SHAPE_Length", "SHAPE_Area", "SHAPE"
+FROM (SELECT "BUILD_ID", "BUILD_TY", "BUILD_NAME", "BLD_PUR", "MEAN_HGT", "UFI", "CREATED_ON", "LIST_GUID", "NOM_REG_NO", "SHAPE_Length", "SHAPE_Area", "SHAPE", RANK() OVER (PARTITION BY "BUILD_TY" ORDER BY "SHAPE_Area") AS "q01"
+FROM "list_2d_building_polys_hobart") "q01"
+WHERE ("q01" <= 1)
+
+
+lazysf(f) %>% group_by(BUILD_TY) %>% slice_min(SHAPE_Area)
+Error in CPL_read_ogr(dsn, layer, query, as.character(options), quiet,  : 
+  Query execution failed, cannot open layer.
+In addition: Warning message:
+In CPL_read_ogr(dsn, layer, query, as.character(options), quiet,  :
+
+```
+
+Even a simpler version `slice_min()` without grouping fails because it would be generating a subquery to do the work (this might change, but for now consider if you can re-imagine your query as something that will not require nested statements, or write it yourself.)
+
+```R
+lazysf(f) %>% slice_min(SHAPE_Area) %>% show_query()
+<SQL>
+SELECT "BUILD_ID", "BUILD_TY", "BUILD_NAME", "BLD_PUR", "MEAN_HGT", "UFI", "CREATED_ON", "LIST_GUID", "NOM_REG_NO", "SHAPE_Length", "SHAPE_Area", "SHAPE"
+FROM (SELECT "BUILD_ID", "BUILD_TY", "BUILD_NAME", "BLD_PUR", "MEAN_HGT", "UFI", "CREATED_ON", "LIST_GUID", "NOM_REG_NO", "SHAPE_Length", "SHAPE_Area", "SHAPE", RANK() OVER (ORDER BY "SHAPE_Area") AS "q01"
+FROM "list_2d_building_polys_hobart") "q01"
+WHERE ("q01" <= 1)
+```
+
+At worst, we can GROUP_BY and filter in the database and then sub select. 
+
+Note that this kind of query works on a "real database", so consider relating your experiences to your friendly local data provider. 
+
+
+
+```{r real-gpkg}
+library(lazysf)
+library(dplyr)
+f <- system.file("gpkg/nc.gpkg", package = "sf", mustWork = TRUE)
+lazysf(f) %>% group_by(BIR74) %>% slice_min(PERIMETER) %>% show_query()
+
+
+lazysf(f) %>% group_by(BIR74) %>% slice_min(PERIMETER) %>% select(NAME, PERIMETER, geom) %>% st_as_sf()
+```
+
+Other things are less obvious, why doesn't this work? The tally fails but filter/collect is fine
+
+```R
+lazysf("C:/temp/temp.xlsx") %>% group_by(a) %>% tally() %>% show_query()
+<SQL>
+SELECT "a", COUNT(*) AS "n"
+FROM "Encoding Time"
+GROUP BY "a"
+
+
+lazysf("C:/temp/temp.xlsx") %>% filter(d < 675868) %>% group_by(a) %>% collect()
+# A tibble: 31 x 6
+# Groups:   a [1]
+   a               
+....
+```

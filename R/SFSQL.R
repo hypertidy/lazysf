@@ -1,10 +1,13 @@
 setOldClass(c("data.frame", "sf"))
 
+
+# importFrom DBI dbUnloadDriver
+
 #' Driver for SFSQL.
 #'
 #' @keywords internal
 #' @export
-#' @importFrom DBI dbUnloadDriver dbConnect dbDisconnect dbSendQuery dbClearResult dbFetch
+#' @importFrom DBI  dbConnect  dbSendQuery dbFetch  dbDisconnect dbClearResult
 #'  dbHasCompleted dbReadTable dbListTables dbExistsTable dbDataType dbGetInfo
 #' @importFrom methods setMethod setClass setOldClass callNextMethod new show
 #' @importFrom sf read_sf st_layers sf_extSoftVersion
@@ -12,12 +15,6 @@ setOldClass(c("data.frame", "sf"))
 setClass("SFSQLDriver", contains = "DBIDriver")
 setClass("SFSQL_PGDriver", contains = "DBIDriver")
 
-
-#' @export
-#' @rdname SFSQLDriver-class
-setMethod("dbUnloadDriver", "SFSQLDriver", function(drv, ...) {
-  TRUE
-})
 
 
 
@@ -172,18 +169,6 @@ setMethod("dbSendQuery", "SFSQLConnection",
 
           })
 
-#' dbClearResult
-#'
-#' dbClearResult for SFSQLResult
-#'
-#' This doesn't do anything
-#' @param res SFSQLResult
-#' @param ... ignored
-#' @export
-setMethod("dbClearResult", "SFSQLResult", function(res, ...) {
-  ## FIXME maybe a ResetReading here  if we use a pointer not a DSN string?
-  TRUE
-})
 
 #' show
 #'
@@ -209,17 +194,7 @@ setMethod("dbFetch", "SFSQLResult", function(res, n = -1, ...) {
   res@layer_data
 })
 
-#' dbHasCompleted
-#'
-#' dbHasCompleted for SFSQLResult
-#'
-#' This doesn't do anything
-#' @param res SFSQLResult
-#' @param ... ignored
-#' @export
-setMethod("dbHasCompleted", "SFSQLResult", function(res, ...) {
-  TRUE
-})
+
 
 
 #' dbReadTable
@@ -309,3 +284,48 @@ setMethod("dbGetInfo", "SFSQLDriver",
                  driver.version = vers["GDAL"],
                  client.version = utils::packageVersion("lazysf"))
           })
+
+# ---- This seemingly doesn't do anything but must exist for the Result class
+
+#' dbClearResult
+#'
+#' dbClearResult for SFSQLResult
+#'
+
+#' @param res SFSQLResult
+#' @param ... ignored
+#' @export
+setMethod("dbClearResult", "SFSQLResult", function(res, ...) {
+  TRUE
+})
+
+#' dbHasCompleted
+#'
+#' dbHasCompleted for SFSQLResult
+#'
+#' This doesn't do anything
+#' @param res SFSQLResult
+#' @param ... ignored
+#' @export
+setMethod("dbHasCompleted", "SFSQLResult", function(res, ...) {
+  TRUE
+})
+
+## ------------------------------
+
+
+## ------------------------------
+
+## things that do nothing and don't seem needed below
+
+## @export
+## @rdname SFSQLDriver-class
+# setMethod("dbUnloadDriver", "SFSQLDriver", function(drv, ...) {
+#   TRUE
+# })
+
+## ------------------------------
+
+
+
+

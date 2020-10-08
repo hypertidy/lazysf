@@ -36,6 +36,8 @@ WIP: do we need the st_as_sf.data.frame arguments?
 f <- system.file("gpkg/nc.gpkg", package = "sf", mustWork = TRUE)
 lsf <- lazysf(f) \%>\% dplyr::select(AREA, FIPS, geom) \%>\% dplyr::filter(AREA < 0.1)
 st_as_sf(lsf)
+
+
 }
 \seealso{
 lazysf
