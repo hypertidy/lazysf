@@ -50,5 +50,5 @@ navbar:
       text: Articles
       menu:
       - text: GDAL SQL
-        href: articles/GDAL-SQL.html
+        href: articles/GDALSQL.html
 

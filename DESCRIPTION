@@ -6,7 +6,7 @@ Authors@R:
            family = "Sumner",
            role = c("aut", "cre"),
            email = "mdsumner@gmail.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           comment = c(ORCID = "0000-0002-2471-7511"))
 Description: A 'dplyr' back end for data sources supported by 'GDAL' vector drivers, 
     that allows you to work with local or remote sources as if they are in-memory data 
     frames. Basic features works with any 'GDAL' vector data source supported by the
@@ -16,10 +16,10 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
-Depends: DBI
 Imports: 
     sf (>= 0.7-0),
     methods,
+    DBI,
     tibble,
     dbplyr,
     magrittr, 
@@ -30,3 +30,12 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+Collate: 
+    'SFSQLConnection.R'
+    'SFSQLDriver.R'
+    'SFSQLResult.R'
+    'SFSQL_PGDriver.R'
+    'connect.R'
+    'lazysf-package.R'
+    'lazysf.R'
+    'utils-pipe.R'

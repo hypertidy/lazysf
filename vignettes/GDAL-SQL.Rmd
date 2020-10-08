@@ -101,10 +101,10 @@ Note that this kind of query works on a "real database", so consider relating yo
 library(lazysf)
 library(dplyr)
 f <- system.file("gpkg/nc.gpkg", package = "sf", mustWork = TRUE)
-lazysf(f) %>% group_by(BIR74) %>% slice_min(PERIMETER) %>% show_query()
+#lazysf(f) %>% group_by(BIR74) %>% slice_min(PERIMETER) %>% show_query()
 
 
-lazysf(f) %>% group_by(BIR74) %>% slice_min(PERIMETER) %>% select(NAME, PERIMETER, geom) %>% st_as_sf()
+#lazysf(f) %>% group_by(BIR74) %>% slice_min(PERIMETER) %>% select(NAME, PERIMETER, geom) %>% st_as_sf()
 ```
 
 Other things are less obvious, why doesn't this work? The tally fails but filter/collect is fine
