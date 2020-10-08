@@ -276,15 +276,19 @@
 <span class="co">#&gt;  9 Carlton         48 Melbour…     1.82 #443A83   #443A83                1</span>
 <span class="co">#&gt; 10 Carlton…        71 Yarra        2.30 #443A83   #443A83                1</span>
 <span class="co">#&gt; # … with more rows, and 1 more variable: `_ogr_geometry_` &lt;POLYGON [°]&gt;</span></pre></div>
-<p>Also works on PostgreSQL with spatial PostGIS (or just normal postgres).</p>
-<p>Note that the connection object is a transparent string so take care with your credentials and don’t share in public (currently trying to work out if only the externalptr should be kept in this, or in all cases with GDAL sources).</p>
-<p>The <code><a href="reference/SFSQL_PG.html">SFSQL_PG()</a></code> driver is a convenience wrapper around the <code><a href="reference/SFSQL.html">SFSQL()</a></code> driver.</p>
+<p>Also works on PostgreSQL and many others as per GDAL vector driver support.</p>
+<p>To create a connection string for <a href="">GDAL for PostgreSQL</a> use something like</p>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="va">DSN</span> <span class="op">&lt;-</span> <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span><span class="op">(</span><span class="st">"PG:host='{host}' dbname='{dbname}' user='{user}' password='{password}'"</span><span class="op">)</span>
+
+<span class="fu">dbConnect</span><span class="op">(</span><span class="fu"><a href="reference/SFSQL.html">SFSQL</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">DSN</span><span class="op">)</span></pre></div>
+<p>but the same can be done with generic DBI and (for example) the <a href="https://rpostgres.r-dbi.org/">Rpostgres package</a>. With <code><a href="reference/SFSQL.html">SFSQL()</a></code> we just know that it’s executed by GDAL (via sf).</p>
 </div>
 <div id="some-drivers-are-related" class="section level2">
 <h2 class="hasAnchor">
 <a href="#some-drivers-are-related" class="anchor"></a>Some drivers are related</h2>
 <p>Note that GDAL drivers can be confusing, and it can be important to see the behaviours GDAL will provide by default. Here see that we can read from a Geopackage file but not as it was intended. We have used the driver-prefix to make GDAL choose its SQLite driver rather than the Geopackage driver.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
+<div class="sourceCode" id="cb6"><pre class="downlit">
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mdsumner/lazysf">lazysf</a></span><span class="op">)</span>
 <span class="va">gpkgfile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"gpkg/nc.gpkg"</span>, package <span class="op">=</span> <span class="st">"sf"</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="reference/lazysf.html">lazysf</a></span><span class="op">(</span><span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span><span class="op">(</span><span class="st">"SQLite:{gpkgfile}"</span><span class="op">)</span><span class="op">)</span>
