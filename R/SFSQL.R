@@ -154,7 +154,7 @@ setMethod("dbSendQuery", "SFSQLConnection",
             ## quiet and fake layer because we aren't using layer  = (it's in the query)
             args <- conn@sf_read_args
             args$dsn <- DSN <- conn@DSN
-
+            args$layer <- "<this is unused but keeps sf quiet>"
             args$query <- statement           ## user can't do this (warn?)
             layer_data <- do.call(sf::st_read, args)
 
