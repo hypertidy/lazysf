@@ -104,11 +104,6 @@ setMethod("dbConnect", "SFSQLDriver",
 #' @param readonly open in readonly mode?
 #' @param ... unused
 #' @export
-#' @examples
-#' \dontrun{
-#' db <- dbConnect(SFSQL_PG(), afile)
-#' dbSendQuery(db,
-#' }
 setMethod("dbConnect", "SFSQL_PGDriver",
           function(drv, host = "", dbname = "", user = "", password = "", readonly = TRUE, ...) {
             DSN <- glue::glue("PG:host='{host}' dbname='{dbname}' user='{user}' password='{password}'")
