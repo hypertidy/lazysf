@@ -5,23 +5,30 @@ reference:
 
 - title: lazysf
   contents:
-  - lazysf
-  - st_as_sf
-  - collect
-
-- title: SFSQL connection to GDAL sources
-  contents:
-  - starts_with("SFSQL")
+  - '`lazysf`'
+  - '`st_as_sf`'
+  - '`collect`'
+  - '`lazysf-package`'
 
 - title: DBI methods
   contents:
   - starts_with("db")
-  - starts_with("show")
+
+- title: SFSQL connection to GDAL sources
+  contents:
+  - '`SFSQL_PG`'
+  - '`SFSQL_PGDriver-class`'
+  - '`SFSQL`'
+  - '`SFSQLDriver-class`'
+  - '`SFSQLConnection-class`'
+  - '`SFSQLResult-class`'
+
+
 
 articles:
 - title: All vignettes
   desc: ~
-  contents: '`GDAL-SQL`'
+  contents: '`GDALSQL`'
 
 navbar:
   structure:
@@ -49,6 +56,6 @@ navbar:
     articles:
       text: Articles
       menu:
-      - text: GDAL SQL
+      - text: GDALSQL
         href: articles/GDALSQL.html
 
