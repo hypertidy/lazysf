@@ -21,7 +21,7 @@ library(lazysf)
 
 GDAL is a complex tool and there are many intricacies to using SQL with it. 
 
-We haven't explored this comprehensively but [feedback is very welcome](https://github.com/mdsumner/lazysf/issues).
+We haven't explored this comprehensively so [feedback is very welcome](https://github.com/mdsumner/lazysf/issues).
 
 
 ## OGRSQL 
