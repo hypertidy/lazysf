@@ -7,6 +7,7 @@ reference:
   contents:
   - lazysf
   - st_as_sf
+  - collect
 
 - title: SFSQL connection to GDAL sources
   contents:
