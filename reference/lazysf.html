@@ -136,13 +136,13 @@ designed to work with dplyr. It should work with any data source readable by
 the sf package.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>layer</span>, <span class='va'>...</span>, query <span class='op'>=</span> <span class='cn'>NA</span>, as_tibble <span class='op'>=</span> <span class='cn'>TRUE</span>, quiet <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>layer</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for character</span>
-<span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>layer</span>, <span class='va'>...</span>, query <span class='op'>=</span> <span class='cn'>NA</span>, as_tibble <span class='op'>=</span> <span class='cn'>TRUE</span>, quiet <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>layer</span>, <span class='va'>...</span>, query <span class='op'>=</span> <span class='cn'>NA</span><span class='op'>)</span>
 
 <span class='co'># S3 method for SFSQLConnection</span>
-<span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>layer</span>, <span class='va'>...</span>, query <span class='op'>=</span> <span class='cn'>NA</span>, as_tibble <span class='op'>=</span> <span class='cn'>TRUE</span>, quiet <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+<span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>layer</span>, <span class='va'>...</span>, query <span class='op'>=</span> <span class='cn'>NA</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -166,19 +166,11 @@ use the <code>query</code> argument.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>arguments passed to <code><a href='https://r-spatial.github.io/sf/reference/st_read.html'>sf::st_read()</a></code>, including <code>as_tibble</code>, and <code>quiet</code></p></td>
+      <td><p>ignored</p></td>
     </tr>
     <tr>
       <th>query</th>
-      <td><p>SQL query to select records; see details</p></td>
-    </tr>
-    <tr>
-      <th>as_tibble</th>
-      <td><p>default override for sf::st_read (<code>TRUE</code>)</p></td>
-    </tr>
-    <tr>
-      <th>quiet</th>
-      <td><p>default override for sf::st_read (<code>TRUE</code>)</p></td>
+      <td><p>SQL query to pass in directly</p></td>
     </tr>
     </table>
 
