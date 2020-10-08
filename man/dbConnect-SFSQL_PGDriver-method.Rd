@@ -27,7 +27,11 @@
 
 \item{readonly}{open in readonly mode?}
 
-\item{...}{unused}
+\item{...}{passed on in to \code{\link[sf:st_read]{sf::st_read()}}}
+
+\item{as_tibble}{default override for sf::st_read (\code{TRUE})}
+
+\item{quiet}{default override for sf::st_read (\code{TRUE})}
 }
 \description{
 dbConnect for PostgreSQL via GDAL

@@ -6,11 +6,11 @@
 \alias{lazysf.SFSQLConnection}
 \title{Delayed (lazy) read for GDAL vector}
 \usage{
-lazysf(x, layer, ..., query = NA, as_tibble = TRUE, quiet = TRUE)
+lazysf(x, layer, ...)
 
-\method{lazysf}{character}(x, layer, ..., query = NA, as_tibble = TRUE, quiet = TRUE)
+\method{lazysf}{character}(x, layer, ..., query = NA)
 
-\method{lazysf}{SFSQLConnection}(x, layer, ..., query = NA, as_tibble = TRUE, quiet = TRUE)
+\method{lazysf}{SFSQLConnection}(x, layer, ..., query = NA)
 }
 \arguments{
 \item{x}{the data source name (file path, url, or database connection string
@@ -27,13 +27,9 @@ are no layers in \code{dsn}. If \code{dsn} is a database connection, then
 \code{\link[DBI]{Id}}). It is also possible to omit \code{layer} and rather
 use the \code{query} argument.}
 
-\item{...}{arguments passed to \code{\link[sf:st_read]{sf::st_read()}}, including \code{as_tibble}, and \code{quiet}}
+\item{...}{ignored}
 
-\item{query}{SQL query to select records; see details}
-
-\item{as_tibble}{default override for sf::st_read (\code{TRUE})}
-
-\item{quiet}{default override for sf::st_read (\code{TRUE})}
+\item{query}{SQL query to pass in directly}
 }
 \value{
 a 'tbl_SFSQLConnection', extending 'tbl_lazy' (something that works

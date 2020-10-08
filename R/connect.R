@@ -24,7 +24,9 @@ SFSQL <- function() {
 #' @param drv SFSQLDriver created by \code{SFSQL()}
 #' @param DSN  data source name, may be a file, or folder path, database connection string, or URL
 #' @param readonly open in readonly mode?
-#' @param ... unused
+#' @param ... ignored
+#' @param as_tibble default override for sf::st_read (`TRUE`)
+#' @param quiet default override for sf::st_read (`TRUE`)
 #' @export
 #' @examples
 #' \dontrun{
@@ -67,7 +69,9 @@ SFSQL_PG <- function() {
 #' @param user user name if needed
 #' @param password password if needed
 #' @param readonly open in readonly mode?
-#' @param ... unused
+#' @param ... passed on in to [sf::st_read()]
+#' @param as_tibble default override for sf::st_read (`TRUE`)
+#' @param quiet default override for sf::st_read (`TRUE`)
 #' @export
 setMethod("dbConnect", "SFSQL_PGDriver",
           function(drv, host = "", dbname = "", user = "", password = "", readonly = TRUE, ...) {

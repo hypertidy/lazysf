@@ -25,8 +25,7 @@ setClass("SFSQLConnection",
          contains = "DBIConnection",
          slots = list(
            DSN = "character",
-           readonly = "logical",
-           sf_read_args = "list")
+           readonly = "logical")
 )
 
 
@@ -62,15 +61,17 @@ setMethod("show", "SFSQLConnection", function(object) {
 #' @export
 setMethod("dbSendQuery", "SFSQLConnection",
           function(conn, statement, ...) {
+#            print(statement)
             ## quiet and fake layer because we aren't using layer  = (it's in the query)
-            args <- conn@sf_read_args
-            args$dsn <- DSN <- conn@DSN
+            args <- list(...)
+            args$dsn <- conn@DSN
             args$layer <- "<unused fake layer>"
             args$query <- statement           ## user can't do this (warn?)
-
-            layer_data <- do.call(sf::st_read, args)
-
-            #layer_data <- sf::read_sf(DSN, layer = "<this is unused>", query = statement, quiet = TRUE)
+            args$quiet <- TRUE; args$as_tibble <- TRUE ## hardcoded
+           layer_data <- do.call(sf::st_read, args)
+# print("----")
+# print(nrow(layer_data))
+# print("----")
             if (inherits(layer_data, "try-error")) {
               message("executing SQL failed:")
               writeLines(statement)
