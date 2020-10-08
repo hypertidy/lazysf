@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lazysf</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2</span>
       </span>
     </div>
 
@@ -94,7 +94,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/GDAL-SQL.html">GDAL SQL</a>
+      <a href="../articles/GDALSQL.html">GDALSQL</a>
     </li>
   </ul>
 </li>
@@ -150,18 +150,24 @@
         <td>
           <p><code><a href="lazysf.html">lazysf()</a></code> </p>
         </td>
-        <td><p>Delayed (lazy) read for simple features</p></td>
+        <td><p>Delayed (lazy) read for GDAL vector</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="st_as_sf.html">st_as_sf(<i>&lt;tbl_SFSQLConnection&gt;</i>)</a></code> </p>
+          <p><code><a href="st_as_sf.html">st_as_sf(<i>&lt;tbl_SFSQLConnection&gt;</i>)</a></code> <code><a href="st_as_sf.html">collect()</a></code> </p>
         </td>
         <td><p>Force computation of a GDAL query</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="lazysf-package.html">lazysf-package</a></code> </p>
+        </td>
+        <td><p>lazysf: Delayed Read for 'GDAL' Vector Data Sources</p></td>
       </tr>
     </tbody><tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-connection-to-gdal-sources" class="hasAnchor"><a href="#section-connection-to-gdal-sources" class="anchor"></a>Connection to GDAL sources</h2>
+          <h2 id="section-dbi-methods" class="hasAnchor"><a href="#section-dbi-methods" class="anchor"></a>DBI methods</h2>
           <p class="section-desc"></p>
         </th>
       </tr>
@@ -173,12 +179,6 @@
       <tr>
         
         <td>
-          <p><code><a href="dbClearResult-SFSQLResult-method.html">dbClearResult(<i>&lt;SFSQLResult&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>dbClearResult</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="dbConnect-SFSQLDriver-method.html">dbConnect(<i>&lt;SFSQLDriver&gt;</i>)</a></code> </p>
         </td>
         <td><p>dbConnect</p></td>
@@ -188,78 +188,55 @@
           <p><code><a href="dbConnect-SFSQL_PGDriver-method.html">dbConnect(<i>&lt;SFSQL_PGDriver&gt;</i>)</a></code> </p>
         </td>
         <td><p>dbConnect</p></td>
-      </tr><tr>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-sfsql-connection-to-gdal-sources" class="hasAnchor"><a href="#section-sfsql-connection-to-gdal-sources" class="anchor"></a>SFSQL connection to GDAL sources</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
         
         <td>
-          <p><code><a href="dbDataType-SFSQLDriver-ANY-method.html">dbDataType(<i>&lt;SFSQLDriver&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> </p>
+          <p><code><a href="SFSQL_PG.html">SFSQL_PG()</a></code> </p>
         </td>
-        <td><p>dbDataType</p></td>
+        <td><p>SFSQL_PG</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="dbDisconnect-SFSQLConnection-method.html">dbDisconnect(<i>&lt;SFSQLConnection&gt;</i>)</a></code> </p>
+          <p><code><a href="SFSQL_PGDriver-class.html">dbDataType(<i>&lt;SFSQL_PGDriver&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="SFSQL_PGDriver-class.html">dbIsValid(<i>&lt;SFSQL_PGDriver&gt;</i>)</a></code> <code><a href="SFSQL_PGDriver-class.html">dbUnloadDriver(<i>&lt;SFSQL_PGDriver&gt;</i>)</a></code> <code><a href="SFSQL_PGDriver-class.html">dbGetInfo(<i>&lt;SFSQL_PGDriver&gt;</i>)</a></code> </p>
         </td>
-        <td><p>dbDisconnect</p></td>
+        <td><p>Class SFSQL_PGDriver.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="dbExistsTable-SFSQLConnection-ANY-method.html">dbExistsTable(<i>&lt;SFSQLConnection&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>dbExistsTable</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dbFetch-SFSQLResult-method.html">dbFetch(<i>&lt;SFSQLResult&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>dbFetch</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dbGetInfo-SFSQLDriver-method.html">dbGetInfo(<i>&lt;SFSQLDriver&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>dbGetInfo</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dbHasCompleted-SFSQLResult-method.html">dbHasCompleted(<i>&lt;SFSQLResult&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>dbHasCompleted</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dbListTables-SFSQLConnection-method.html">dbListTables(<i>&lt;SFSQLConnection&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>dbListTables</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dbReadTable-SFSQLConnection-character-method.html">dbReadTable(<i>&lt;SFSQLConnection&gt;</i>,<i>&lt;character&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>dbReadTable</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dbSendQuery-SFSQLConnection-method.html">dbSendQuery(<i>&lt;SFSQLConnection&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Send a query to SFSQL.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SFSQL.html">SFSQL()</a></code> <code><a href="SFSQL.html">SFSQL_PG()</a></code> </p>
+          <p><code><a href="SFSQL.html">SFSQL()</a></code> </p>
         </td>
         <td><p>SFSQL</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="show-SFSQLDriver-method.html">show(<i>&lt;SFSQLDriver&gt;</i>)</a></code> </p>
+          <p><code><a href="SFSQLDriver-class.html">dbDataType(<i>&lt;SFSQLDriver&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="SFSQLDriver-class.html">dbIsValid(<i>&lt;SFSQLDriver&gt;</i>)</a></code> <code><a href="SFSQLDriver-class.html">dbUnloadDriver(<i>&lt;SFSQLDriver&gt;</i>)</a></code> <code><a href="SFSQLDriver-class.html">dbGetInfo(<i>&lt;SFSQLDriver&gt;</i>)</a></code> </p>
         </td>
-        <td><p>show</p></td>
+        <td><p>Class SFSQLDriver.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="show-SFSQLResult-method.html">show(<i>&lt;SFSQLResult&gt;</i>)</a></code> </p>
+          <p><code><a href="SFSQLConnection-class.html">show(<i>&lt;SFSQLConnection&gt;</i>)</a></code> <code><a href="SFSQLConnection-class.html">dbSendQuery(<i>&lt;SFSQLConnection&gt;</i>)</a></code> <code><a href="SFSQLConnection-class.html">dbReadTable(<i>&lt;SFSQLConnection&gt;</i>,<i>&lt;character&gt;</i>)</a></code> <code><a href="SFSQLConnection-class.html">dbListTables(<i>&lt;SFSQLConnection&gt;</i>)</a></code> <code><a href="SFSQLConnection-class.html">dbExistsTable(<i>&lt;SFSQLConnection&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="SFSQLConnection-class.html">dbDisconnect(<i>&lt;SFSQLConnection&gt;</i>)</a></code> </p>
         </td>
-        <td><p>show</p></td>
+        <td><p>Class SFSQLConnection (and methods)</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="SFSQLResult-class.html">show(<i>&lt;SFSQLResult&gt;</i>)</a></code> <code><a href="SFSQLResult-class.html">dbFetch(<i>&lt;SFSQLResult&gt;</i>)</a></code> <code><a href="SFSQLResult-class.html">dbClearResult(<i>&lt;SFSQLResult&gt;</i>)</a></code> <code><a href="SFSQLResult-class.html">dbHasCompleted(<i>&lt;SFSQLResult&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Class SFSQLResult (and methods)</p></td>
       </tr>
     </tbody>
     </table>

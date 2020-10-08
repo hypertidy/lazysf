@@ -2,9 +2,6 @@ pandoc: 2.7.3
 pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
-  GDAL-SQL: GDAL-SQL.html
-last_built: 2020-10-07T23:03Z
-urls:
-  reference: https://mdsumner.github.io/lazysf//reference
-  article: https://mdsumner.github.io/lazysf//articles
+  GDALSQL: GDALSQL.html
+last_built: 2020-10-08T11:52Z
 

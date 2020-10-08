@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SFSQL results class — SFSQLResult-class • lazysf</title>
+<title>Class SFSQLResult (and methods) — SFSQLResult-class • lazysf</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,11 @@
 
 
 
-<meta property="og:title" content="SFSQL results class — SFSQLResult-class" />
-<meta property="og:description" content="SFSQL results class" />
+<meta property="og:title" content="Class SFSQLResult (and methods) — SFSQLResult-class" />
+<meta property="og:description" content="SFSQLResult objects are created by dbSendQuery() or dbSendStatement(),
+and encapsulate the result of an SQL statement.
+They are a superclass of the DBIResult class.
+The &quot;Usage&quot; section lists the class methods overridden by lazsf." />
 
 
 
@@ -72,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lazysf</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2</span>
       </span>
     </div>
 
@@ -95,7 +98,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/GDAL-SQL.html">GDAL SQL</a>
+      <a href="../articles/GDALSQL.html">GDALSQL</a>
     </li>
   </ul>
 </li>
@@ -123,17 +126,36 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>SFSQL results class</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mdsumner/lazysf/blob/master/R/SFSQL.R'><code>R/SFSQL.R</code></a></small>
+    <h1>Class SFSQLResult (and methods)</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mdsumner/lazysf/blob/master/R/SFSQLResult.R'><code>R/SFSQLResult.R</code></a></small>
     <div class="hidden name"><code>SFSQLResult-class.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>SFSQL results class</p>
+    <p>SFSQLResult objects are created by <code>dbSendQuery()</code> or <code>dbSendStatement()</code>,
+and encapsulate the result of an SQL statement.
+They are a superclass of the DBIResult class.
+The "Usage" section lists the class methods overridden by <span class="pkg">lazsf</span>.</p>
     </div>
 
+    <pre class="usage"><span class='co'># S4 method for SFSQLResult</span>
+<span class='fu'>show</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SFSQLResult</span>
+<span class='fu'>dbFetch</span><span class='op'>(</span><span class='va'>res</span>, n <span class='op'>=</span> <span class='op'>-</span><span class='fl'>1</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SFSQLResult</span>
+<span class='fu'>dbClearResult</span><span class='op'>(</span><span class='va'>res</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SFSQLResult</span>
+<span class='fu'>dbHasCompleted</span><span class='op'>(</span><span class='va'>res</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
 
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>The corresponding generic functions
+<code><a href='https://dbi.r-dbi.org/reference/dbFetch.html'>DBI::dbFetch()</a></code>, <code><a href='https://dbi.r-dbi.org/reference/dbClearResult.html'>DBI::dbClearResult()</a></code>, and
+<code><a href='https://dbi.r-dbi.org/reference/dbHasCompleted.html'>DBI::dbHasCompleted()</a></code>.</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

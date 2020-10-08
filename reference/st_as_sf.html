@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lazysf</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2</span>
       </span>
     </div>
 
@@ -95,7 +95,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/GDAL-SQL.html">GDAL SQL</a>
+      <a href="../articles/GDALSQL.html">GDALSQL</a>
     </li>
   </ul>
 </li>
@@ -133,7 +133,9 @@
     </div>
 
     <pre class="usage"><span class='co'># S3 method for tbl_SFSQLConnection</span>
-<span class='fu'>st_as_sf</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+<span class='fu'>st_as_sf</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='fu'>collect</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -148,6 +150,9 @@
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+
+    <p>An object of class <code>function</code> of length 1.</p>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>a data frame from <code>collect()</code>, sf data frame from <code>st_as_sf()</code> (only if it contains an <code>sfc</code> geometry column)</p>
@@ -182,7 +187,9 @@
 #&gt; </span><span style='color: #555555;'> 8</span><span> 0.081 37189 (((-81.80622 36.10456, -81.81715 36.10939, -81.82231 36.15786, -…
 #&gt; </span><span style='color: #555555;'> 9</span><span> 0.063 37143 (((-76.48053 36.07979, -76.53696 36.08792, -76.5756 36.10266, -7…
 #&gt; </span><span style='color: #555555;'>10</span><span> 0.044 37041 (((-76.68874 36.29452, -76.64822 36.31532, -76.60424 36.31498, -…
-#&gt; </span><span style='color: #555555;'># … with 24 more rows</span><span></div></span></pre>
+#&gt; </span><span style='color: #555555;'># … with 24 more rows</span><span></div><div class='input'>
+
+</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

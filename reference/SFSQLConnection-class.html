@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SFSQL connection class. — SFSQLConnection-class • lazysf</title>
+<title>Class SFSQLConnection (and methods) — SFSQLConnection-class • lazysf</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,11 @@
 
 
 
-<meta property="og:title" content="SFSQL connection class. — SFSQLConnection-class" />
-<meta property="og:description" content="SFSQL connection class." />
+<meta property="og:title" content="Class SFSQLConnection (and methods) — SFSQLConnection-class" />
+<meta property="og:description" content="SFSQLConnection objects are created by passing SFSQL() as first
+argument to DBI::dbConnect().
+They are a superclass of the DBIConnection class.
+The &quot;Usage&quot; section lists the class methods overridden by lazysf." />
 
 
 
@@ -72,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lazysf</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2</span>
       </span>
     </div>
 
@@ -95,7 +98,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/GDAL-SQL.html">GDAL SQL</a>
+      <a href="../articles/GDALSQL.html">GDALSQL</a>
     </li>
   </ul>
 </li>
@@ -123,19 +126,43 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>SFSQL connection class.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mdsumner/lazysf/blob/master/R/SFSQL.R'><code>R/SFSQL.R</code></a></small>
+    <h1>Class SFSQLConnection (and methods)</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mdsumner/lazysf/blob/master/R/SFSQLConnection.R'><code>R/SFSQLConnection.R</code></a>, <a href='https://github.com/mdsumner/lazysf/blob/master/R/connect.R'><code>R/connect.R</code></a></small>
     <div class="hidden name"><code>SFSQLConnection-class.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>SFSQL connection class.</p>
+    <p>SFSQLConnection objects are created by passing <code><a href='SFSQL.html'>SFSQL()</a></code> as first
+argument to <code><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>DBI::dbConnect()</a></code>.
+They are a superclass of the DBIConnection class.
+The "Usage" section lists the class methods overridden by <span class="pkg">lazysf</span>.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for SFSQLConnection</span>
-<span class='fu'>show</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span></pre>
+<span class='fu'>show</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SFSQLConnection</span>
+<span class='fu'>dbSendQuery</span><span class='op'>(</span><span class='va'>conn</span>, <span class='va'>statement</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SFSQLConnection,character</span>
+<span class='fu'>dbReadTable</span><span class='op'>(</span><span class='va'>conn</span>, <span class='va'>name</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SFSQLConnection</span>
+<span class='fu'>dbListTables</span><span class='op'>(</span><span class='va'>conn</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SFSQLConnection,ANY</span>
+<span class='fu'>dbExistsTable</span><span class='op'>(</span><span class='va'>conn</span>, <span class='va'>name</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SFSQLConnection</span>
+<span class='fu'>dbDisconnect</span><span class='op'>(</span><span class='va'>conn</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
 
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>The corresponding generic functions
+<code><a href='https://dbi.r-dbi.org/reference/dbSendQuery.html'>DBI::dbSendQuery()</a></code>, <code><a href='https://dbi.r-dbi.org/reference/dbDisconnect.html'>DBI::dbDisconnect()</a></code>,
+<code><a href='https://dbi.r-dbi.org/reference/dbReadTable.html'>DBI::dbReadTable()</a></code>,
+<code><a href='https://dbi.r-dbi.org/reference/dbExistsTable.html'>DBI::dbExistsTable()</a></code>, <code><a href='https://dbi.r-dbi.org/reference/dbListTables.html'>DBI::dbListTables()</a></code>.</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Delayed (lazy) read for simple features — lazysf • lazysf</title>
+<title>Delayed (lazy) read for GDAL vector — lazysf • lazysf</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Delayed (lazy) read for simple features — lazysf" />
+<meta property="og:title" content="Delayed (lazy) read for GDAL vector — lazysf" />
 <meta property="og:description" content="A lazy data frame for GDAL vector data sources. lazysf is DBI compatible and
 designed to work with dplyr. It should work with any data source readable by
 the sf package." />
@@ -74,7 +74,7 @@ the sf package." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lazysf</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@ the sf package." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/GDAL-SQL.html">GDAL SQL</a>
+      <a href="../articles/GDALSQL.html">GDALSQL</a>
     </li>
   </ul>
 </li>
@@ -125,7 +125,7 @@ the sf package." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Delayed (lazy) read for simple features</h1>
+    <h1>Delayed (lazy) read for GDAL vector</h1>
     <small class="dont-index">Source: <a href='https://github.com/mdsumner/lazysf/blob/master/R/lazysf.R'><code>R/lazysf.R</code></a></small>
     <div class="hidden name"><code>lazysf.Rd</code></div>
     </div>
@@ -136,13 +136,13 @@ designed to work with dplyr. It should work with any data source readable by
 the sf package.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>layer</span>, <span class='va'>...</span>, query <span class='op'>=</span> <span class='cn'>NA</span>, as_tibble <span class='op'>=</span> <span class='cn'>TRUE</span>, quiet <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
 <span class='co'># S3 method for character</span>
-<span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>layer</span>, <span class='va'>...</span>, query <span class='op'>=</span> <span class='cn'>NA</span><span class='op'>)</span>
+<span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>layer</span>, <span class='va'>...</span>, query <span class='op'>=</span> <span class='cn'>NA</span>, as_tibble <span class='op'>=</span> <span class='cn'>TRUE</span>, quiet <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
 <span class='co'># S3 method for SFSQLConnection</span>
-<span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>layer</span>, <span class='va'>...</span>, query <span class='op'>=</span> <span class='cn'>NA</span><span class='op'>)</span></pre>
+<span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>layer</span>, <span class='va'>...</span>, query <span class='op'>=</span> <span class='cn'>NA</span>, as_tibble <span class='op'>=</span> <span class='cn'>TRUE</span>, quiet <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -152,10 +152,6 @@ the sf package.</p>
       <td><p>the data source name (file path, url, or database connection string</p><ul>
 <li><p>analogous to <code><a href='https://r-spatial.github.io/sf/reference/st_read.html'>sf::read_sf()</a></code> 'dsn')</p></li>
 </ul></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>currently ignored</p></td>
     </tr>
     <tr>
       <th>layer</th>
@@ -169,8 +165,20 @@ are no layers in <code>dsn</code>. If <code>dsn</code> is a database connection,
 use the <code>query</code> argument.</p></td>
     </tr>
     <tr>
+      <th>...</th>
+      <td><p>arguments passed to <code><a href='https://r-spatial.github.io/sf/reference/st_read.html'>sf::st_read()</a></code>, including <code>as_tibble</code>, and <code>quiet</code></p></td>
+    </tr>
+    <tr>
       <th>query</th>
       <td><p>SQL query to select records; see details</p></td>
+    </tr>
+    <tr>
+      <th>as_tibble</th>
+      <td><p>default override for sf::st_read (<code>TRUE</code>)</p></td>
+    </tr>
+    <tr>
+      <th>quiet</th>
+      <td><p>default override for sf::st_read (<code>TRUE</code>)</p></td>
     </tr>
     </table>
 
@@ -185,8 +193,9 @@ with dplyr verbs, and only shows a preview until you commit the result via
 into memory is avoided. Printing the output results in a preview query being
 run and displayed (the top few rows of data).</p>
 <p>The output of <code>lazysf()</code> is a 'tbl_SFSQLConnection<code>that extends</code>tbl_dbi` and
-may be used with functions and workflows in the normal DBI way (see <code><a href='SFSQL.html'>SFSQL()</a></code>).</p>
-<p>The actual query that may be run will depend on the type of format, see the
+may be used with functions and workflows in the normal DBI way, see <code><a href='SFSQL.html'>SFSQL()</a></code> for
+the lazysf DBI support.</p>
+<p>The kind of q uery that may be run will depend on the type of format, see the
 list on the GDAL vector drivers page. For some details see the
 <a href='https://mdsumner.github.io/lazysf/articles/GDAL-SQL.html'>GDALSQL vignette</a>.</p>
 <p>When dplyr is attached the lazy data frame can be used with the usual verbs
@@ -206,27 +215,17 @@ result.</p>
     <pre class="examples"><div class='input'><span class='co'># online sources can work</span>
 <span class='va'>geojson</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='st'>"https://raw.githubusercontent.com/SymbolixAU"</span>,
                      <span class='st'>"geojsonsf/master/inst/examples/geo_melbourne.geojson"</span><span class='op'>)</span>
+<span class='co'># \donttest{</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>geojson</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #555555;'># Source:   table&lt;geo_melbourne&gt; [?? x 8]</span><span>
-#&gt; </span><span style='color: #555555;'># Database: SFSQLConnection</span><span>
-#&gt;    SA2_NAME polygonId SA3_NAME AREASQKM fillColor strokeColor strokeWeight
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>        </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>              </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> Abbotsf…        70 Yarra        1.74 #440154   #440154                1
-#&gt; </span><span style='color: #555555;'> 2</span><span> Albert …        59 Port Ph…     4.67 #450457   #450457                1
-#&gt; </span><span style='color: #555555;'> 3</span><span> Alphing…        41 Darebin…     2.89 #46075A   #46075A                1
-#&gt; </span><span style='color: #555555;'> 4</span><span> Armadale        66 Stonnin…     2.18 #460A5D   #460A5D                1
-#&gt; </span><span style='color: #555555;'> 5</span><span> Ascot V…        44 Essendon     3.84 #460C5F   #460C5F                1
-#&gt; </span><span style='color: #555555;'> 6</span><span> Brunswi…        36 Brunswi…     5.14 #472D7B   #472D7B                1
-#&gt; </span><span style='color: #555555;'> 7</span><span> Brunswi…        37 Brunswi…     2.17 #472D7B   #472D7B                1
-#&gt; </span><span style='color: #555555;'> 8</span><span> Brunswi…        38 Brunswi…     3.18 #472E7C   #472E7C                1
-#&gt; </span><span style='color: #555555;'> 9</span><span> Carlton         48 Melbour…     1.82 #443A83   #443A83                1
-#&gt; </span><span style='color: #555555;'>10</span><span> Carlton…        71 Yarra        2.30 #443A83   #443A83                1
-#&gt; </span><span style='color: #555555;'># … with more rows, and 1 more variable: `_ogr_geometry_` </span><span style='color: #555555;font-style: italic;'>&lt;POLYGON [°]&gt;</span><span></div><div class='input'>
+<span class='op'>}</span>
+<span class='co'># }</span>
+
 <span class='co'>## normal file stuff</span>
 <span class='co'>## (Geopackage is an actual database so with SELECT we must be explicit re geom-column)</span>
 <span class='va'>f</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"gpkg/nc.gpkg"</span>, package <span class='op'>=</span> <span class='st'>"sf"</span>, mustWork <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>f</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; </span><span style='color: #555555;'># Source:   table&lt;nc.gpkg&gt; [?? x 16]</span><span>
+</div><div class='output co'>#&gt; <span style='color: #555555;'># Source:   table&lt;nc.gpkg&gt; [?? x 16]</span><span>
 #&gt; </span><span style='color: #555555;'># Database: SFSQLConnection</span><span>
 #&gt;     AREA PERIMETER CNTY_ CNTY_ID NAME  FIPS  FIPSNO CRESS_ID BIR74 SID74 NWBIR74
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
@@ -296,7 +295,10 @@ result.</p>
 #&gt; </span><span style='color: #555555;'>3</span><span>   1.3 Anson    ((-79.91995 34.80792, -80.32528 34.81476, -80.27512 35.19311, …
 #&gt; </span><span style='color: #555555;'>4</span><span>   1.3 Allegha… ((-81.23989 36.36536, -81.24069 36.37942, -81.26284 36.40504, …
 #&gt; </span><span style='color: #555555;'>5</span><span>   1.3 Alexand… ((-81.10889 35.7719, -81.12728 35.78897, -81.1414 35.82332, -8…
-#&gt; </span><span style='color: #555555;'>6</span><span>   1.3 Alamance ((-79.24619 35.86815, -79.23799 35.83725, -79.54099 35.83699, …</div></span></pre>
+#&gt; </span><span style='color: #555555;'>6</span><span>   1.3 Alamance ((-79.24619 35.86815, -79.23799 35.83725, -79.54099 35.83699, …</div><div class='input'>
+ <span class='co'>## a multi-layer file</span>
+ <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata/multi.gpkg"</span>, package <span class='op'>=</span> <span class='st'>"lazysf"</span>, mustWork <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "/Users/runner/work/_temp/Library/lazysf/extdata/multi.gpkg"</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
