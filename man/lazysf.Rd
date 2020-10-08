@@ -78,7 +78,9 @@ result.
 geojson <- file.path("https://raw.githubusercontent.com/SymbolixAU",
                      "geojsonsf/master/inst/examples/geo_melbourne.geojson")
 \donttest{
+\dontrun{
 lazysf(geojson)
+}
 }
 
 ## normal file stuff
