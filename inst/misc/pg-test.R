@@ -1,10 +1,10 @@
 library(lazysf)
 
 con <- dbConnect(SFSQL_PG(),
-  dbname = Sys.getenv("dbedu_dbname"),
-  user = Sys.getenv("dbedu_usr"),
-  password = Sys.getenv("dbedu_pwd"),
-  host = Sys.getenv("dbedu_host")
+  dbname =
+  user =
+  password =
+  host =
 )
 
 library(dplyr)
@@ -16,11 +16,6 @@ x <- mapa  %>% filter(codigo_provincia == "014") %>% select(codigo_comuna, geom)
 
 
 ```{r postgres}
-con <- dbConnect(SFSQL_PG(),
-                 host = Sys.getenv("dbedu_host"),
-                 dbname = Sys.getenv("dbedu_dbname"),
-                 user = Sys.getenv("dbedu_usr"),
-                 password = Sys.getenv("dbedu_pwd"))
 
 (sfx <- lazysf(con, query = "SELECT st_area(st_transform(geom, '+proj=laea +lon_0=-68 +lat_0=-25')) / 1e6 AS sq_km,
                                         codigo_comuna, geom FROM mapa_comunas WHERE codigo_region = '03'"))
