@@ -14,10 +14,6 @@
 \item{readonly}{open in readonly mode?}
 
 \item{...}{ignored}
-
-\item{as_tibble}{default override for sf::st_read (\code{TRUE})}
-
-\item{quiet}{default override for sf::st_read (\code{TRUE})}
 }
 \description{
 dbConnect

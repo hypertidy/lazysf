@@ -33,7 +33,7 @@ Unfortunate label.
 ## Real databases and file databases
 
 
-SFSQL_PG(), GPKG etc
+PG, GPKG etc
 
 https://gdal.org/user/sql_sqlite_dialect.html
 

@@ -11,6 +11,12 @@ A 'dplyr' back end for data sources supported by 'GDAL' vector drivers,
     frames. Basic features works with any 'GDAL' vector data source supported by the
     'sf' package.
 }
+\section{Package Options}{
+
+There is a debug option \code{options(lazysf.query.debug = TRUE)} which if set will cause the generated SQL statement
+to be printed before every call to \code{sf::st_read()}. In addition it will print the number of rows actual read.
+}
+
 \seealso{
 Useful links:
 \itemize{

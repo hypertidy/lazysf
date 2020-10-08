@@ -61,7 +61,8 @@ setMethod("show", "SFSQLConnection", function(object) {
 #' @export
 setMethod("dbSendQuery", "SFSQLConnection",
           function(conn, statement, ...) {
-#            print(statement)
+
+
             ## quiet and fake layer because we aren't using layer  = (it's in the query)
             args <- list(...)
             args$dsn <- conn@DSN
@@ -69,10 +70,15 @@ setMethod("dbSendQuery", "SFSQLConnection",
             args$query <- statement           ## user can't do this (warn?)
             args$quiet <- TRUE; args$as_tibble <- TRUE ## hardcoded
            layer_data <- do.call(sf::st_read, args)
-# print("----")
-# print(nrow(layer_data))
-# print("----")
-            if (inherits(layer_data, "try-error")) {
+           if (getOption("lazysf.query.debug")) {
+             print("-------------")
+             print("lazysf debug ....")
+             print("SQL:")
+             print(statement)
+             print("nrows read:")
+             print(nrow(layer_data))
+           }
+                       if (inherits(layer_data, "try-error")) {
               message("executing SQL failed:")
               writeLines(statement)
               if (length(gregexpr("SELECT", statement, ignore.case = TRUE)[[1]]) > 1) {

@@ -126,14 +126,18 @@ lazysf(geojson)
 ```
 
 
-Also works on PostgreSQL with spatial PostGIS (or just normal postgres).  
-
-Note that the connection object is a transparent string so take care with your
-credentials and don't share in public (currently trying to work out if only the
-externalptr should be kept in this, or in all cases with GDAL sources).
+Also works on PostgreSQL and many others as per GDAL vector driver support.   
 
 
-The `SFSQL_PG()` driver is a convenience wrapper around the `SFSQL()` driver. 
+To create a connection string for [GDAL for PostgreSQL]() use something like
+
+```R
+DSN <- glue::glue("PG:host='{host}' dbname='{dbname}' user='{user}' password='{password}'")
+
+dbConnect(SFSQL(), DSN)
+```
+
+but the same can be done with generic DBI and (for example) the [Rpostgres package](https://rpostgres.r-dbi.org/). With `SFSQL()` we just know that it's executed by GDAL (via sf). 
 
 
 ## Some drivers are related

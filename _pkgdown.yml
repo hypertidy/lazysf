@@ -16,8 +16,6 @@ reference:
 
 - title: SFSQL connection to GDAL sources
   contents:
-  - '`SFSQL_PG`'
-  - '`SFSQL_PGDriver-class`'
   - '`SFSQL`'
   - '`SFSQLDriver-class`'
   - '`SFSQLConnection-class`'

@@ -1,7 +1,6 @@
 
 #' @include SFSQLConnection.R
 #' @include SFSQLDriver.R
-#' @include SFSQL_PGDriver.R
 NULL
 
 
@@ -25,8 +24,6 @@ SFSQL <- function() {
 #' @param DSN  data source name, may be a file, or folder path, database connection string, or URL
 #' @param readonly open in readonly mode?
 #' @param ... ignored
-#' @param as_tibble default override for sf::st_read (`TRUE`)
-#' @param quiet default override for sf::st_read (`TRUE`)
 #' @export
 #' @examples
 #' \dontrun{
@@ -44,42 +41,6 @@ setMethod("dbConnect", "SFSQLDriver",
           })
 
 
-
-
-
-#' SFSQL_PG
-#'
-#' SFSQL_PG driver, a wrapper for SFSQL to construct the full connection string required by
-#' GDAL from host,dbname,user,password
-#' @export
-#' @name SFSQL_PG
-SFSQL_PG <- function() {
-  new("SFSQL_PGDriver")
-}
-
-
-#' dbConnect
-#'
-#' dbConnect for PostgreSQL via GDAL
-#'
-#' https://gdal.org/drivers/vector/pg.html
-#' @param drv SFSQL_PGDriver created by \code{SFSQL_PG()}
-#' @param host database server
-#' @param dbname database name
-#' @param user user name if needed
-#' @param password password if needed
-#' @param readonly open in readonly mode?
-#' @param ... passed on in to [sf::st_read()]
-#' @param as_tibble default override for sf::st_read (`TRUE`)
-#' @param quiet default override for sf::st_read (`TRUE`)
-#' @export
-setMethod("dbConnect", "SFSQL_PGDriver",
-          function(drv, host = "", dbname = "", user = "", password = "", readonly = TRUE, ...) {
-            DSN <- glue::glue("PG:host='{host}' dbname='{dbname}' user='{user}' password='{password}'")
-            new("SFSQLConnection", DSN = as.character(DSN),  readonly = readonly, ...)
-          })
-
-
 #' @rdname SFSQLConnection-class
 #' @export
 setMethod("dbDisconnect", "SFSQLConnection",
@@ -87,3 +48,5 @@ setMethod("dbDisconnect", "SFSQLConnection",
             conn@DSN <- ""
             conn
           })
+
+
