@@ -10,10 +10,10 @@
 The goal of lazysf is to provide interactive delayed read of GDAL vector
 data sources.
 
-Vector data sources (a.k.a. “shapefiles”) are files or web services or
-databases that provide tables of data fields. These fields may include
-spatial geometry data such as points, lines, polygons, and other planar
-types composed of paths of coordinates.
+Vector data sources, drawings (a.k.a. “shapefiles”) are files or web
+services or databases that provide tables of data fields. These fields
+may include spatial geometry data such as points, lines, polygons, and
+other planar types composed of paths of coordinates.
 
 lazysf uses the dplyr/dbplyr ‘tbl\_lazy’ mechanism by providing a GDAL
 DBI-backend like many database packages in R. The convenience function

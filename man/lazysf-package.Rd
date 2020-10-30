@@ -6,10 +6,10 @@
 \alias{_PACKAGE}
 \title{lazysf: Delayed Read for 'GDAL' Vector Data Sources}
 \description{
-A 'dplyr' back end for data sources supported by 'GDAL' vector drivers, 
-    that allows you to work with local or remote sources as if they are in-memory data 
-    frames. Basic features works with any 'GDAL' vector data source supported by the
-    'sf' package.
+Lazy read for drawings. A 'dplyr' back end for data sources supported by 
+    'GDAL' vector drivers, that allows working with local or remote sources as if they 
+    are in-memory data frames. Basic features works with any drawing format ('GDAL vector 
+    data source') supported by the 'sf' package.
 }
 \section{Package Options}{
 

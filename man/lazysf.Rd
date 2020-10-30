@@ -37,9 +37,9 @@ with dplyr verbs, and only shows a preview until you commit the result via
 \code{\link[=collect]{collect()}}) see Details
 }
 \description{
-A lazy data frame for GDAL vector data sources. lazysf is DBI compatible and
-designed to work with dplyr. It should work with any data source readable by
-the sf package.
+A lazy data frame for GDAL drawings ('vector data sources'). lazysf is DBI
+compatible and designed to work with dplyr. It should work with any data source
+(file, url, connection string) readable by the sf package function \code{sf_read}.
 }
 \details{
 Lazy means that the usual behaviour of reading the entirety of a data source

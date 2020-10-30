@@ -6,8 +6,9 @@ NULL
 
 #' SFSQL
 #'
-#' SFSQL driver
-#' https://gdal.org/user/ogr_sql_dialect.html
+#' SFSQL driver, use to [dbConnect()] to a data source readable by sf
+#'
+#' @seealso lazysf dbConnect
 #' @export
 SFSQL <- function() {
   new("SFSQLDriver")
@@ -17,12 +18,12 @@ SFSQL <- function() {
 
 #' dbConnect
 #'
-#' dbConnect
+#' dbConnect for drawings that may be read by package sf
 #'
-#' https://gdal.org/user/ogr_sql_dialect.html
+#' The 'OGRSQL' available is documented with GDAL: https://gdal.org/user/ogr_sql_dialect.html
 #' @param drv SFSQLDriver created by \code{SFSQL()}
 #' @param DSN  data source name, may be a file, or folder path, database connection string, or URL
-#' @param readonly open in readonly mode?
+#' @param readonly open in readonly mode (`TRUE` is the only option)
 #' @param ... ignored
 #' @export
 #' @examples

@@ -11,15 +11,15 @@
 
 \item{DSN}{data source name, may be a file, or folder path, database connection string, or URL}
 
-\item{readonly}{open in readonly mode?}
+\item{readonly}{open in readonly mode (\code{TRUE} is the only option)}
 
 \item{...}{ignored}
 }
 \description{
-dbConnect
+dbConnect for drawings that may be read by package sf
 }
 \details{
-https://gdal.org/user/ogr_sql_dialect.html
+The 'OGRSQL' available is documented with GDAL: https://gdal.org/user/ogr_sql_dialect.html
 }
 \examples{
 \dontrun{

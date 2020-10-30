@@ -26,8 +26,6 @@ a data frame from \code{collect()}, sf data frame from \code{st_as_sf()} (only i
 Convert lazysf to an in memory data frame or sf object
 }
 \details{
-WIP: do we need the st_as_sf.data.frame arguments?
-
 \code{collect()} retrieves data into a local table, preserving grouping and ordering.
 
 \code{st_as_sf()} retrieves data into a local sf data frame (will succeed only if there is a geometry column of class \code{sfc})

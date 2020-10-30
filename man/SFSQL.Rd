@@ -7,6 +7,8 @@
 SFSQL()
 }
 \description{
-SFSQL driver
-https://gdal.org/user/ogr_sql_dialect.html
+SFSQL driver, use to \code{\link[=dbConnect]{dbConnect()}} to a data source readable by sf
+}
+\seealso{
+lazysf dbConnect
 }

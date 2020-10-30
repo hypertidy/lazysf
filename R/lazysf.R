@@ -1,8 +1,8 @@
 #' Delayed (lazy) read for GDAL vector
 #'
-#' A lazy data frame for GDAL vector data sources. lazysf is DBI compatible and
-#' designed to work with dplyr. It should work with any data source readable by
-#' the sf package.
+#' A lazy data frame for GDAL drawings ('vector data sources'). lazysf is DBI
+#' compatible and designed to work with dplyr. It should work with any data source
+#' (file, url, connection string) readable by the sf package function `sf_read`.
 #'
 #' Lazy means that the usual behaviour of reading the entirety of a data source
 #' into memory is avoided. Printing the output results in a preview query being
@@ -96,8 +96,6 @@ lazysf.SFSQLConnection <- function(x, layer, ..., query = NA) {
 #' Force computation of a GDAL query
 #'
 #' Convert lazysf to an in memory data frame or sf object
-#'
-#' WIP: do we need the st_as_sf.data.frame arguments?
 #'
 #' `collect()` retrieves data into a local table, preserving grouping and ordering.
 #'
