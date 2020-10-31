@@ -129,7 +129,7 @@ lazysf(geojson)
 Also works on PostgreSQL and many others as per GDAL vector driver support.   
 
 
-To create a connection string for [GDAL for PostgreSQL]() use something like
+To create a connection string for [GDAL for PostgreSQL](https://gdal.org/drivers/vector/pg.html) use something like
 
 ```R
 DSN <- glue::glue("PG:host='{host}' dbname='{dbname}' user='{user}' password='{password}'")
