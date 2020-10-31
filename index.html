@@ -277,7 +277,7 @@
 <span class="co">#&gt; 10 Carlton…        71 Yarra        2.30 #443A83   #443A83                1</span>
 <span class="co">#&gt; # … with more rows, and 1 more variable: `_ogr_geometry_` &lt;POLYGON [°]&gt;</span></pre></div>
 <p>Also works on PostgreSQL and many others as per GDAL vector driver support.</p>
-<p>To create a connection string for <a href="">GDAL for PostgreSQL</a> use something like</p>
+<p>To create a connection string for <a href="https://gdal.org/drivers/vector/pg.html">GDAL for PostgreSQL</a> use something like</p>
 <div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="va">DSN</span> <span class="op">&lt;-</span> <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span><span class="op">(</span><span class="st">"PG:host='{host}' dbname='{dbname}' user='{user}' password='{password}'"</span><span class="op">)</span>
 
