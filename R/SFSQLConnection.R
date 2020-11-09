@@ -61,8 +61,6 @@ setMethod("show", "SFSQLConnection", function(object) {
 #' @export
 setMethod("dbSendQuery", "SFSQLConnection",
           function(conn, statement, ...) {
-
-
             ## quiet and fake layer because we aren't using layer  = (it's in the query)
             args <- list(...)
             args$dsn <- conn@DSN
@@ -71,22 +69,17 @@ setMethod("dbSendQuery", "SFSQLConnection",
             args$quiet <- TRUE; args$as_tibble <- TRUE ## hardcoded
            layer_data <- do.call(sf::st_read, args)
            if (getOption("lazysf.query.debug")) {
-             print("-------------")
-             print("lazysf debug ....")
-             print("SQL:")
-             print(statement)
-             print("nrows read:")
-             print(nrow(layer_data))
+             message(sprintf("-------------\nlazysf debug ....\nSQL:\n%s\nnrows read:\n%i",
+                             statement), nrow(layer_data))
            }
-                       if (inherits(layer_data, "try-error")) {
-              message("executing SQL failed:")
-              writeLines(statement)
-              if (length(gregexpr("SELECT", statement, ignore.case = TRUE)[[1]]) > 1) {
-                stop("perhaps driver in use does not support sub-queries?")
-              } else {
-                stop("")
-              }
-            }
+           if (inherits(layer_data, "try-error")) {
+             if (length(gregexpr("SELECT", statement, ignore.case = TRUE)[[1]]) > 1) {
+               stop(sprintf("executing SQL failed: \n%s\n\nperhaps driver in use does not support sub-queries?",
+                            statement))
+             } else {
+               stop("executing SQL failed")
+             }
+           }
             new("SFSQLResult",
                 layer_data = layer_data)
 

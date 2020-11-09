@@ -22,11 +22,7 @@ dbConnect for drawings that may be read by package sf
 The 'OGRSQL' available is documented with GDAL: https://gdal.org/user/ogr_sql_dialect.html
 }
 \examples{
-\dontrun{
-## a nothing connection not allowed
-## ERR: dbConnect(SFSQL())
 afile <- system.file("gpkg/nc.gpkg", package = "sf", mustWork = TRUE)
 db <- dbConnect(SFSQL(), afile)
 dbSendQuery(db, 'SELECT * FROM "nc.gpkg"')
-}
 }

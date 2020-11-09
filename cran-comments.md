@@ -1,5 +1,10 @@
 ## lazysf 0.1.0
 
+Second submission of 0.1.0, a new package with improvements thanks to CRAN feedback:
+
+* no commented-out examples
+* convert print() to message() for diagnostic messages
+
 ## Test environments
 
 * local R installation, R 4.0.2

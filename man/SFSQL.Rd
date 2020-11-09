@@ -9,6 +9,9 @@ SFSQL()
 \description{
 SFSQL driver, use to \code{\link[=dbConnect]{dbConnect()}} to a data source readable by sf
 }
+\examples{
+SFSQL()
+}
 \seealso{
 lazysf dbConnect
 }
