@@ -208,16 +208,28 @@ result.</p>
 <span class='va'>geojson</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='st'>"https://raw.githubusercontent.com/SymbolixAU"</span>,
                      <span class='st'>"geojsonsf/master/inst/examples/geo_melbourne.geojson"</span><span class='op'>)</span>
 <span class='co'># \donttest{</span>
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>geojson</span><span class='op'>)</span>
-<span class='op'>}</span>
-<span class='co'># }</span>
+</div><div class='output co'>#&gt; <span style='color: #555555;'># Source:   table&lt;geo_melbourne&gt; [?? x 8]</span><span>
+#&gt; </span><span style='color: #555555;'># Database: SFSQLConnection</span><span>
+#&gt;    SA2_NAME polygonId SA3_NAME AREASQKM fillColor strokeColor strokeWeight
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>        </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>              </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> Abbotsf…        70 Yarra        1.74 #440154   #440154                1
+#&gt; </span><span style='color: #555555;'> 2</span><span> Albert …        59 Port Ph…     4.67 #450457   #450457                1
+#&gt; </span><span style='color: #555555;'> 3</span><span> Alphing…        41 Darebin…     2.89 #46075A   #46075A                1
+#&gt; </span><span style='color: #555555;'> 4</span><span> Armadale        66 Stonnin…     2.18 #460A5D   #460A5D                1
+#&gt; </span><span style='color: #555555;'> 5</span><span> Ascot V…        44 Essendon     3.84 #460C5F   #460C5F                1
+#&gt; </span><span style='color: #555555;'> 6</span><span> Brunswi…        36 Brunswi…     5.14 #472D7B   #472D7B                1
+#&gt; </span><span style='color: #555555;'> 7</span><span> Brunswi…        37 Brunswi…     2.17 #472D7B   #472D7B                1
+#&gt; </span><span style='color: #555555;'> 8</span><span> Brunswi…        38 Brunswi…     3.18 #472E7C   #472E7C                1
+#&gt; </span><span style='color: #555555;'> 9</span><span> Carlton         48 Melbour…     1.82 #443A83   #443A83                1
+#&gt; </span><span style='color: #555555;'>10</span><span> Carlton…        71 Yarra        2.30 #443A83   #443A83                1
+#&gt; </span><span style='color: #555555;'># … with more rows, and 1 more variable: `_ogr_geometry_` </span><span style='color: #555555;font-style: italic;'>&lt;POLYGON [°]&gt;</span><span></div><div class='input'><span class='co'># }</span>
 
 <span class='co'>## normal file stuff</span>
 <span class='co'>## (Geopackage is an actual database so with SELECT we must be explicit re geom-column)</span>
 <span class='va'>f</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"gpkg/nc.gpkg"</span>, package <span class='op'>=</span> <span class='st'>"sf"</span>, mustWork <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>f</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #555555;'># Source:   table&lt;nc.gpkg&gt; [?? x 16]</span><span>
+</div><div class='output co'>#&gt; </span><span style='color: #555555;'># Source:   table&lt;nc.gpkg&gt; [?? x 16]</span><span>
 #&gt; </span><span style='color: #555555;'># Database: SFSQLConnection</span><span>
 #&gt;     AREA PERIMETER CNTY_ CNTY_ID NAME  FIPS  FIPSNO CRESS_ID BIR74 SID74 NWBIR74
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
