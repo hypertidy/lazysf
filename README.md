@@ -5,6 +5,9 @@
 
 <!-- badges: start -->
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/lazysf)](https://CRAN.R-project.org/package=lazysf)
+[![](http://cranlogs.r-pkg.org/badges/last-month/lazysf?color=green)](https://cran.r-project.org/package=lazysf)
 <!-- badges: end -->
 
 The goal of lazysf is to provide interactive delayed read of GDAL vector
