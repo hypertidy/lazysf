@@ -52,7 +52,7 @@ the lazysf DBI support.
 
 The kind of q uery that may be run will depend on the type of format, see the
 list on the GDAL vector drivers page. For some details see the
-\href{https://mdsumner.github.io/lazysf/articles/GDAL-SQL.html}{GDALSQL vignette}.
+\href{https://hypertidy.github.io/lazysf/articles/GDALSQL.html}{GDALSQL vignette}.
 
 When dplyr is attached the lazy data frame can be used with the usual verbs
 verbs (filter, select, distinct, mutate, transmute, arrange, left_join, pull,

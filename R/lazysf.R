@@ -14,7 +14,7 @@
 #'
 #' The kind of q uery that may be run will depend on the type of format, see the
 #' list on the GDAL vector drivers page. For some details see the
-#' [GDALSQL vignette](https://mdsumner.github.io/lazysf/articles/GDAL-SQL.html).
+#' [GDALSQL vignette](https://hypertidy.github.io/lazysf/articles/GDALSQL.html).
 #'
 #' When dplyr is attached the lazy data frame can be used with the usual verbs
 #' verbs (filter, select, distinct, mutate, transmute, arrange, left_join, pull,

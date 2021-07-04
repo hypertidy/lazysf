@@ -1,6 +1,6 @@
 Package: lazysf
 Title: Delayed Read for 'GDAL' Vector Data Sources
-Version: 0.1.0
+Version: 0.1.9001
 Authors@R: 
     person(given = "Michael",
            family = "Sumner",
@@ -24,8 +24,8 @@ Imports:
     dbplyr,
     magrittr, 
     dplyr
-URL: https://github.com/mdsumner/lazysf
-BugReports: https://github.com/mdsumner/lazysf/issues
+URL: https://github.com/hypertidy/lazysf
+BugReports: https://github.com/hypertidy/lazysf/issues
 Suggests: 
     knitr,
     rmarkdown

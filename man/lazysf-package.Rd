@@ -20,8 +20,8 @@ to be printed before every call to \code{sf::st_read()}. In addition it will pri
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/mdsumner/lazysf}
-  \item Report bugs at \url{https://github.com/mdsumner/lazysf/issues}
+  \item \url{https://github.com/hypertidy/lazysf}
+  \item Report bugs at \url{https://github.com/hypertidy/lazysf/issues}
 }
 
 }

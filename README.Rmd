@@ -82,10 +82,16 @@ it.
 
 ## Installation
 
-You can install the dev version of lazysf from [GitHub](https://github.com/mdsumner/lazysf) with:
+You can install the dev version of lazysf from [GitHub](https://github.com/hypertidy/lazysf) with:
 
 ``` r
-remotes::install_github("mdsumner/lazysf")
+# Enable this universe
+options(repos = c(
+    hypertidy = 'https://hypertidy.r-universe.dev',
+    CRAN = 'https://cloud.r-project.org'))
+
+# Install some packages
+install.packages('lazysf')
 ```
 
 ## Example
