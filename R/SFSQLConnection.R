@@ -67,6 +67,14 @@ setMethod("dbSendQuery", "SFSQLConnection",
             args$layer <- "<unused fake layer>"
             args$query <- statement           ## user can't do this (warn?)
             args$quiet <- TRUE; args$as_tibble <- TRUE ## hardcoded
+            #browser()
+            qu <- as.character(args$query)
+
+            if (grepl("AS.*q", qu) && grepl("WHERE \\(0 = 1)", qu)) {
+              ## workaround for non-DB sources
+              args$query <- dbplyr::sql(gsub("WHERE \\(0 = 1)", "LIMIT 0", qu))
+            }
+
            layer_data <- do.call(sf::st_read, args)
            if (getOption("lazysf.query.debug")) {
              message(sprintf("-------------\nlazysf debug ....\nSQL:\n%s\nnrows read:\n%i",
@@ -102,6 +110,7 @@ setMethod("dbReadTable", c(conn = "SFSQLConnection", name = "character"),
 #' @export
 setMethod("dbListTables", c(conn = "SFSQLConnection"),
           function(conn, ...){
+
             layers <- sf::st_layers(conn@DSN, ...)
             layers$name
           })
