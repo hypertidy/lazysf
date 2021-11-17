@@ -74,8 +74,10 @@ setMethod("dbSendQuery", "SFSQLConnection",
               ## workaround for non-DB sources
               args$query <- dbplyr::sql(gsub("WHERE \\(0 = 1)", "LIMIT 0", qu))
             }
-
+op <- options(warn = -1)
+on.exit(options(op), add = TRUE)
            layer_data <- do.call(sf::st_read, args)
+
            if (getOption("lazysf.query.debug")) {
              message(sprintf("-------------\nlazysf debug ....\nSQL:\n%s\nnrows read:\n%i",
                              statement), nrow(layer_data))
