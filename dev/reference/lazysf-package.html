@@ -40,10 +40,10 @@
 
 
 <meta property="og:title" content="lazysf: Delayed Read for 'GDAL' Vector Data Sources — lazysf-package" />
-<meta property="og:description" content="A 'dplyr' back end for data sources supported by 'GDAL' vector drivers, 
-    that allows you to work with local or remote sources as if they are in-memory data 
-    frames. Basic features works with any 'GDAL' vector data source supported by the
-    'sf' package." />
+<meta property="og:description" content="Lazy read for drawings. A 'dplyr' back end for data sources supported by 
+    'GDAL' vector drivers, that allows working with local or remote sources as if they 
+    are in-memory data frames. Basic features works with any drawing format ('GDAL vector 
+    data source') supported by the 'sf' package." />
 
 
 <meta name="robots" content="noindex">
@@ -75,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lazysf</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.1.9002</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.1.9001</span>
       </span>
     </div>
 
@@ -83,7 +83,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -98,7 +98,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/GDAL-SQL.html">GDAL SQL</a>
+      <a href="../articles/GDALSQL.html">GDALSQL</a>
     </li>
   </ul>
 </li>
@@ -108,8 +108,8 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/mdsumner/lazysf/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/hypertidy/lazysf/">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -127,30 +127,36 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>lazysf: Delayed Read for 'GDAL' Vector Data Sources</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mdsumner/lazysf/blob/master/R/lazysf-package.R'><code>R/lazysf-package.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/hypertidy/lazysf/blob/master/R/lazysf-package.R'><code>R/lazysf-package.R</code></a></small>
     <div class="hidden name"><code>lazysf-package.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A 'dplyr' back end for data sources supported by 'GDAL' vector drivers, 
-    that allows you to work with local or remote sources as if they are in-memory data 
-    frames. Basic features works with any 'GDAL' vector data source supported by the
-    'sf' package.</p>
+    <p>Lazy read for drawings. A 'dplyr' back end for data sources supported by 
+    'GDAL' vector drivers, that allows working with local or remote sources as if they 
+    are in-memory data frames. Basic features works with any drawing format ('GDAL vector 
+    data source') supported by the 'sf' package.</p>
     </div>
 
 
 
+    <h2 class="hasAnchor" id="package-options"><a class="anchor" href="#package-options"></a>Package Options</h2>
+
+    
+
+<p>There is a debug option <code>options(lazysf.query.debug = TRUE)</code> which if set will cause the generated SQL statement
+to be printed before every call to <code><a href='https://r-spatial.github.io/sf/reference/st_read.html'>sf::st_read()</a></code>. In addition it will print the number of rows actual read.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Useful links:</p><ul>
-<li><p><a href='https://github.com/mdsumner/lazysf'>https://github.com/mdsumner/lazysf</a></p></li>
-<li><p>Report bugs at <a href='https://github.com/mdsumner/lazysf/issues'>https://github.com/mdsumner/lazysf/issues</a></p></li>
+<li><p><a href='https://github.com/hypertidy/lazysf'>https://github.com/hypertidy/lazysf</a></p></li>
+<li><p>Report bugs at <a href='https://github.com/hypertidy/lazysf/issues'>https://github.com/hypertidy/lazysf/issues</a></p></li>
 </ul>
 
 </div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
-    <p><strong>Maintainer</strong>: Michael Sumner <a href='mailto:mdsumner@gmail.com'>mdsumner@gmail.com</a> (<a href='https://orcid.org/YOUR-ORCID-ID'>ORCID</a>)</p>
+    <p><strong>Maintainer</strong>: Michael Sumner <a href='mailto:mdsumner@gmail.com'>mdsumner@gmail.com</a> (<a href='https://orcid.org/0000-0002-2471-7511'>ORCID</a>)</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

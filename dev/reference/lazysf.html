@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Delayed (lazy) read for simple features — lazysf • lazysf</title>
+<title>Delayed (lazy) read for GDAL vector — lazysf • lazysf</title>
 
 
 <!-- jquery -->
@@ -39,10 +39,10 @@
 
 
 
-<meta property="og:title" content="Delayed (lazy) read for simple features — lazysf" />
-<meta property="og:description" content="A lazy data frame for GDAL vector data sources. lazysf is DBI compatible and
-designed to work with dplyr. It should work with any data source readable by
-the sf package." />
+<meta property="og:title" content="Delayed (lazy) read for GDAL vector — lazysf" />
+<meta property="og:description" content="A lazy data frame for GDAL drawings ('vector data sources'). lazysf is DBI
+compatible and designed to work with dplyr. It should work with any data source
+(file, url, connection string) readable by the sf package function sf_read." />
 
 
 <meta name="robots" content="noindex">
@@ -74,7 +74,7 @@ the sf package." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lazysf</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.1.9002</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.1.9001</span>
       </span>
     </div>
 
@@ -82,7 +82,7 @@ the sf package." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -97,7 +97,7 @@ the sf package." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/GDAL-SQL.html">GDAL SQL</a>
+      <a href="../articles/GDALSQL.html">GDALSQL</a>
     </li>
   </ul>
 </li>
@@ -107,8 +107,8 @@ the sf package." />
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/mdsumner/lazysf/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/hypertidy/lazysf/">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -125,18 +125,18 @@ the sf package." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Delayed (lazy) read for simple features</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mdsumner/lazysf/blob/master/R/lazysf.R'><code>R/lazysf.R</code></a></small>
+    <h1>Delayed (lazy) read for GDAL vector</h1>
+    <small class="dont-index">Source: <a href='https://github.com/hypertidy/lazysf/blob/master/R/lazysf.R'><code>R/lazysf.R</code></a></small>
     <div class="hidden name"><code>lazysf.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A lazy data frame for GDAL vector data sources. lazysf is DBI compatible and
-designed to work with dplyr. It should work with any data source readable by
-the sf package.</p>
+    <p>A lazy data frame for GDAL drawings ('vector data sources'). lazysf is DBI
+compatible and designed to work with dplyr. It should work with any data source
+(file, url, connection string) readable by the sf package function <code>sf_read</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>layer</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for character</span>
 <span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>layer</span>, <span class='va'>...</span>, query <span class='op'>=</span> <span class='cn'>NA</span><span class='op'>)</span>
@@ -154,10 +154,6 @@ the sf package.</p>
 </ul></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>currently ignored</p></td>
-    </tr>
-    <tr>
       <th>layer</th>
       <td><p>layer name (varies by driver, may be a file name without
 extension); in case <code>layer</code> is missing, <code>st_read</code> will read the
@@ -169,8 +165,12 @@ are no layers in <code>dsn</code>. If <code>dsn</code> is a database connection,
 use the <code>query</code> argument.</p></td>
     </tr>
     <tr>
+      <th>...</th>
+      <td><p>ignored</p></td>
+    </tr>
+    <tr>
       <th>query</th>
-      <td><p>SQL query to select records; see details</p></td>
+      <td><p>SQL query to pass in directly</p></td>
     </tr>
     </table>
 
@@ -185,10 +185,11 @@ with dplyr verbs, and only shows a preview until you commit the result via
 into memory is avoided. Printing the output results in a preview query being
 run and displayed (the top few rows of data).</p>
 <p>The output of <code>lazysf()</code> is a 'tbl_SFSQLConnection<code>that extends</code>tbl_dbi` and
-may be used with functions and workflows in the normal DBI way (see <code><a href='SFSQL.html'>SFSQL()</a></code>).</p>
-<p>The actual query that may be run will depend on the type of format, see the
+may be used with functions and workflows in the normal DBI way, see <code><a href='SFSQL.html'>SFSQL()</a></code> for
+the lazysf DBI support.</p>
+<p>The kind of q uery that may be run will depend on the type of format, see the
 list on the GDAL vector drivers page. For some details see the
-<a href='https://mdsumner.github.io/lazysf/articles/GDAL-SQL.html'>GDALSQL vignette</a>.</p>
+<a href='https://hypertidy.github.io/lazysf/articles/GDALSQL.html'>GDALSQL vignette</a>.</p>
 <p>When dplyr is attached the lazy data frame can be used with the usual verbs
 verbs (filter, select, distinct, mutate, transmute, arrange, left_join, pull,
 collect etc.). To see the result as a SQL query rather than a data frame
@@ -203,100 +204,114 @@ unclassed data.frame and may include a classed <code>sfc</code> geometry column.
 result.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># online sources can work</span>
-<span class='va'>geojson</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='st'>"https://raw.githubusercontent.com/SymbolixAU"</span>,
-                     <span class='st'>"geojsonsf/master/inst/examples/geo_melbourne.geojson"</span><span class='op'>)</span>
-<span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>geojson</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #555555;'># Source:   table&lt;geo_melbourne&gt; [?? x 8]</span><span>
-#&gt; </span><span style='color: #555555;'># Database: SFSQLConnection</span><span>
-#&gt;    SA2_NAME polygonId SA3_NAME AREASQKM fillColor strokeColor strokeWeight
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>        </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>              </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> Abbotsf…        70 Yarra        1.74 #440154   #440154                1
-#&gt; </span><span style='color: #555555;'> 2</span><span> Albert …        59 Port Ph…     4.67 #450457   #450457                1
-#&gt; </span><span style='color: #555555;'> 3</span><span> Alphing…        41 Darebin…     2.89 #46075A   #46075A                1
-#&gt; </span><span style='color: #555555;'> 4</span><span> Armadale        66 Stonnin…     2.18 #460A5D   #460A5D                1
-#&gt; </span><span style='color: #555555;'> 5</span><span> Ascot V…        44 Essendon     3.84 #460C5F   #460C5F                1
-#&gt; </span><span style='color: #555555;'> 6</span><span> Brunswi…        36 Brunswi…     5.14 #472D7B   #472D7B                1
-#&gt; </span><span style='color: #555555;'> 7</span><span> Brunswi…        37 Brunswi…     2.17 #472D7B   #472D7B                1
-#&gt; </span><span style='color: #555555;'> 8</span><span> Brunswi…        38 Brunswi…     3.18 #472E7C   #472E7C                1
-#&gt; </span><span style='color: #555555;'> 9</span><span> Carlton         48 Melbour…     1.82 #443A83   #443A83                1
-#&gt; </span><span style='color: #555555;'>10</span><span> Carlton…        71 Yarra        2.30 #443A83   #443A83                1
-#&gt; </span><span style='color: #555555;'># … with more rows, and 1 more variable: `_ogr_geometry_` </span><span style='color: #555555;font-style: italic;'>&lt;POLYGON [°]&gt;</span><span></div><div class='input'>
-<span class='co'>## normal file stuff</span>
-<span class='co'>## (Geopackage is an actual database so with SELECT we must be explicit re geom-column)</span>
-<span class='va'>f</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"gpkg/nc.gpkg"</span>, package <span class='op'>=</span> <span class='st'>"sf"</span>, mustWork <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>f</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; </span><span style='color: #555555;'># Source:   table&lt;nc.gpkg&gt; [?? x 16]</span><span>
-#&gt; </span><span style='color: #555555;'># Database: SFSQLConnection</span><span>
-#&gt;     AREA PERIMETER CNTY_ CNTY_ID NAME  FIPS  FIPSNO CRESS_ID BIR74 SID74 NWBIR74
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> 0.114      1.44  </span><span style='text-decoration: underline;'>1</span><span>825    </span><span style='text-decoration: underline;'>1</span><span>825 Ashe  37009  </span><span style='text-decoration: underline;'>37</span><span>009        5  </span><span style='text-decoration: underline;'>1</span><span>091     1      10
-#&gt; </span><span style='color: #555555;'> 2</span><span> 0.061      1.23  </span><span style='text-decoration: underline;'>1</span><span>827    </span><span style='text-decoration: underline;'>1</span><span>827 Alle… 37005  </span><span style='text-decoration: underline;'>37</span><span>005        3   487     0      10
-#&gt; </span><span style='color: #555555;'> 3</span><span> 0.143      1.63  </span><span style='text-decoration: underline;'>1</span><span>828    </span><span style='text-decoration: underline;'>1</span><span>828 Surry 37171  </span><span style='text-decoration: underline;'>37</span><span>171       86  </span><span style='text-decoration: underline;'>3</span><span>188     5     208
-#&gt; </span><span style='color: #555555;'> 4</span><span> 0.07       2.97  </span><span style='text-decoration: underline;'>1</span><span>831    </span><span style='text-decoration: underline;'>1</span><span>831 Curr… 37053  </span><span style='text-decoration: underline;'>37</span><span>053       27   508     1     123
-#&gt; </span><span style='color: #555555;'> 5</span><span> 0.153      2.21  </span><span style='text-decoration: underline;'>1</span><span>832    </span><span style='text-decoration: underline;'>1</span><span>832 Nort… 37131  </span><span style='text-decoration: underline;'>37</span><span>131       66  </span><span style='text-decoration: underline;'>1</span><span>421     9    </span><span style='text-decoration: underline;'>1</span><span>066
-#&gt; </span><span style='color: #555555;'> 6</span><span> 0.097      1.67  </span><span style='text-decoration: underline;'>1</span><span>833    </span><span style='text-decoration: underline;'>1</span><span>833 Hert… 37091  </span><span style='text-decoration: underline;'>37</span><span>091       46  </span><span style='text-decoration: underline;'>1</span><span>452     7     954
-#&gt; </span><span style='color: #555555;'> 7</span><span> 0.062      1.55  </span><span style='text-decoration: underline;'>1</span><span>834    </span><span style='text-decoration: underline;'>1</span><span>834 Camd… 37029  </span><span style='text-decoration: underline;'>37</span><span>029       15   286     0     115
-#&gt; </span><span style='color: #555555;'> 8</span><span> 0.091      1.28  </span><span style='text-decoration: underline;'>1</span><span>835    </span><span style='text-decoration: underline;'>1</span><span>835 Gates 37073  </span><span style='text-decoration: underline;'>37</span><span>073       37   420     0     254
-#&gt; </span><span style='color: #555555;'> 9</span><span> 0.118      1.42  </span><span style='text-decoration: underline;'>1</span><span>836    </span><span style='text-decoration: underline;'>1</span><span>836 Warr… 37185  </span><span style='text-decoration: underline;'>37</span><span>185       93   968     4     748
-#&gt; </span><span style='color: #555555;'>10</span><span> 0.124      1.43  </span><span style='text-decoration: underline;'>1</span><span>837    </span><span style='text-decoration: underline;'>1</span><span>837 Stok… 37169  </span><span style='text-decoration: underline;'>37</span><span>169       85  </span><span style='text-decoration: underline;'>1</span><span>612     1     160
-#&gt; </span><span style='color: #555555;'># … with more rows, and 4 more variables: BIR79 </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, SID79 </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
-#&gt; </span><span style='color: #555555;'>#   NWBIR79 </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, geom </span><span style='color: #555555;font-style: italic;'>&lt;MULTIPOLYGON [°]&gt;</span><span></div><div class='input'><span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>f</span>, query <span class='op'>=</span> <span class='st'>"SELECT AREA, FIPS, geom FROM \"nc.gpkg\" WHERE AREA &lt; 0.1"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; </span><span style='color: #555555;'># Source:   SQL [?? x 3]</span><span>
-#&gt; </span><span style='color: #555555;'># Database: SFSQLConnection</span><span>
-#&gt;     AREA FIPS                                                               geom
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                                                </span><span style='color: #555555;font-style: italic;'>&lt;MULTIPOLYGON [°]&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> 0.061 37005 (((-81.23989 36.36536, -81.24069 36.37942, -81.26284 36.40504, -…
-#&gt; </span><span style='color: #555555;'> 2</span><span> 0.07  37053 (((-76.00897 36.3196, -76.01735 36.33773, -76.03288 36.33598, -7…
-#&gt; </span><span style='color: #555555;'> 3</span><span> 0.097 37091 (((-76.74506 36.23392, -76.98069 36.23024, -76.99475 36.23558, -…
-#&gt; </span><span style='color: #555555;'> 4</span><span> 0.062 37029 (((-76.00897 36.3196, -75.95718 36.19377, -75.98134 36.16973, -7…
-#&gt; </span><span style='color: #555555;'> 5</span><span> 0.091 37073 (((-76.56251 36.34057, -76.60424 36.31498, -76.64822 36.31532, -…
-#&gt; </span><span style='color: #555555;'> 6</span><span> 0.072 37181 (((-78.49252 36.17359, -78.51472 36.17522, -78.51709 36.46148, -…
-#&gt; </span><span style='color: #555555;'> 7</span><span> 0.053 37139 (((-76.29893 36.21423, -76.32423 36.23362, -76.37242 36.25235, -…
-#&gt; </span><span style='color: #555555;'> 8</span><span> 0.081 37189 (((-81.80622 36.10456, -81.81715 36.10939, -81.82231 36.15786, -…
-#&gt; </span><span style='color: #555555;'> 9</span><span> 0.063 37143 (((-76.48053 36.07979, -76.53696 36.08792, -76.5756 36.10266, -7…
-#&gt; </span><span style='color: #555555;'>10</span><span> 0.044 37041 (((-76.68874 36.29452, -76.64822 36.31532, -76.60424 36.31498, -…
-#&gt; </span><span style='color: #555555;'># … with more rows</span><span></div><div class='input'><span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>f</span>, layer <span class='op'>=</span> <span class='st'>"nc.gpkg"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>AREA</span>, <span class='va'>FIPS</span>, <span class='va'>geom</span><span class='op'>)</span> <span class='op'>%&gt;%</span> <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>AREA</span> <span class='op'>&lt;</span> <span class='fl'>0.1</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; </span><span style='color: #555555;'># Source:   lazy query [?? x 3]</span><span>
-#&gt; </span><span style='color: #555555;'># Database: SFSQLConnection</span><span>
-#&gt;     AREA FIPS                                                               geom
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                                                </span><span style='color: #555555;font-style: italic;'>&lt;MULTIPOLYGON [°]&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> 0.061 37005 (((-81.23989 36.36536, -81.24069 36.37942, -81.26284 36.40504, -…
-#&gt; </span><span style='color: #555555;'> 2</span><span> 0.07  37053 (((-76.00897 36.3196, -76.01735 36.33773, -76.03288 36.33598, -7…
-#&gt; </span><span style='color: #555555;'> 3</span><span> 0.097 37091 (((-76.74506 36.23392, -76.98069 36.23024, -76.99475 36.23558, -…
-#&gt; </span><span style='color: #555555;'> 4</span><span> 0.062 37029 (((-76.00897 36.3196, -75.95718 36.19377, -75.98134 36.16973, -7…
-#&gt; </span><span style='color: #555555;'> 5</span><span> 0.091 37073 (((-76.56251 36.34057, -76.60424 36.31498, -76.64822 36.31532, -…
-#&gt; </span><span style='color: #555555;'> 6</span><span> 0.072 37181 (((-78.49252 36.17359, -78.51472 36.17522, -78.51709 36.46148, -…
-#&gt; </span><span style='color: #555555;'> 7</span><span> 0.053 37139 (((-76.29893 36.21423, -76.32423 36.23362, -76.37242 36.25235, -…
-#&gt; </span><span style='color: #555555;'> 8</span><span> 0.081 37189 (((-81.80622 36.10456, -81.81715 36.10939, -81.82231 36.15786, -…
-#&gt; </span><span style='color: #555555;'> 9</span><span> 0.063 37143 (((-76.48053 36.07979, -76.53696 36.08792, -76.5756 36.10266, -7…
-#&gt; </span><span style='color: #555555;'>10</span><span> 0.044 37041 (((-76.68874 36.29452, -76.64822 36.31532, -76.60424 36.31498, -…
-#&gt; </span><span style='color: #555555;'># … with more rows</span><span></div><div class='input'>
-<span class='co'>## the famous ESRI Shapefile (not an actual database)</span>
-<span class='co'>## so if we SELECT we must be ex</span>
-<span class='va'>shp</span> <span class='op'>&lt;-</span> <span class='fu'>lazysf</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"shape/nc.shp"</span>, package <span class='op'>=</span> <span class='st'>"sf"</span>, mustWork <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: ‘dplyr’</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:stats’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    filter, lag</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='input'><span class='va'>shp</span> <span class='op'>%&gt;%</span>
- <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>NAME</span> <span class='op'>%LIKE%</span> <span class='st'>'A%'</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
- <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>abc <span class='op'>=</span> <span class='fl'>1.3</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
- <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>abc</span>, <span class='va'>NAME</span>, <span class='va'>`_ogr_geometry_`</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
- <span class='fu'><a href='https://dplyr.tidyverse.org/reference/arrange.html'>arrange</a></span><span class='op'>(</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/desc.html'>desc</a></span><span class='op'>(</span><span class='va'>NAME</span><span class='op'>)</span><span class='op'>)</span>  <span class='co'>#%&gt;% show_query()</span>
-</div><div class='output co'>#&gt; </span><span style='color: #555555;'># Source:     lazy query [?? x 3]</span><span>
-#&gt; </span><span style='color: #555555;'># Database:   SFSQLConnection</span><span>
-#&gt; </span><span style='color: #555555;'># Ordered by: desc(NAME)</span><span>
-#&gt;     abc NAME                                                    `_ogr_geometry_`
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                                                      </span><span style='color: #555555;font-style: italic;'>&lt;POLYGON [°]&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span>   1.3 Avery    ((-81.94135 35.95498, -81.9614 35.93922, -81.94495 35.91861, -…
-#&gt; </span><span style='color: #555555;'>2</span><span>   1.3 Ashe     ((-81.47276 36.23436, -81.54084 36.27251, -81.56198 36.27359, …
-#&gt; </span><span style='color: #555555;'>3</span><span>   1.3 Anson    ((-79.91995 34.80792, -80.32528 34.81476, -80.27512 35.19311, …
-#&gt; </span><span style='color: #555555;'>4</span><span>   1.3 Allegha… ((-81.23989 36.36536, -81.24069 36.37942, -81.26284 36.40504, …
-#&gt; </span><span style='color: #555555;'>5</span><span>   1.3 Alexand… ((-81.10889 35.7719, -81.12728 35.78897, -81.1414 35.82332, -8…
-#&gt; </span><span style='color: #555555;'>6</span><span>   1.3 Alamance ((-79.24619 35.86815, -79.23799 35.83725, -79.54099 35.83699, …</div></span></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># online sources can work</span></span>
+<span class='r-in'><span class='va'>geojson</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='st'>"https://raw.githubusercontent.com/SymbolixAU"</span>,</span>
+<span class='r-in'>                     <span class='st'>"geojsonsf/master/inst/examples/geo_melbourne.geojson"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># \donttest{</span></span>
+<span class='r-in'><span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>geojson</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># Source:   table&lt;geo_melbourne&gt; [?? x 8]</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># Database: SFSQLConnection</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    SA2_NAME     polygonId SA3_NAME   AREASQKM fillColor strokeColor strokeWeight</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>            <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>              <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> Abbotsford          70 Yarra          1.74 #440154   #440154                1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> Albert Park         59 Port Phil…     4.67 #450457   #450457                1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> Alphington …        41 Darebin -…     2.89 #46075A   #46075A                1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> Armadale            66 Stonningt…     2.18 #460A5D   #460A5D                1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> Ascot Vale          44 Essendon       3.84 #460C5F   #460C5F                1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> Brunswick           36 Brunswick…     5.14 #472D7B   #472D7B                1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> Brunswick E…        37 Brunswick…     2.17 #472D7B   #472D7B                1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> Brunswick W…        38 Brunswick…     3.18 #472E7C   #472E7C                1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> Carlton             48 Melbourne…     1.82 #443A83   #443A83                1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> Carlton Nor…        71 Yarra          2.30 #443A83   #443A83                1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with more rows, and 1 more variable: _ogr_geometry_ &lt;POLYGON [°]&gt;</span></span>
+<span class='r-in'><span class='co'># }</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## normal file stuff</span></span>
+<span class='r-in'><span class='co'>## (Geopackage is an actual database so with SELECT we must be explicit re geom-column)</span></span>
+<span class='r-in'><span class='va'>f</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"gpkg/nc.gpkg"</span>, package <span class='op'>=</span> <span class='st'>"sf"</span>, mustWork <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>f</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># Source:   table&lt;nc.gpkg&gt; [?? x 16]</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># Database: SFSQLConnection</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     AREA PERIMETER CNTY_ CNTY_ID NAME  FIPS  FIPSNO CRESS_ID BIR74 SID74 NWBIR74</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> 0.114      1.44  <span style='text-decoration: underline;'>1</span>825    <span style='text-decoration: underline;'>1</span>825 Ashe  37009  <span style='text-decoration: underline;'>37</span>009        5  <span style='text-decoration: underline;'>1</span>091     1      10</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> 0.061      1.23  <span style='text-decoration: underline;'>1</span>827    <span style='text-decoration: underline;'>1</span>827 Alle… 37005  <span style='text-decoration: underline;'>37</span>005        3   487     0      10</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> 0.143      1.63  <span style='text-decoration: underline;'>1</span>828    <span style='text-decoration: underline;'>1</span>828 Surry 37171  <span style='text-decoration: underline;'>37</span>171       86  <span style='text-decoration: underline;'>3</span>188     5     208</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> 0.07       2.97  <span style='text-decoration: underline;'>1</span>831    <span style='text-decoration: underline;'>1</span>831 Curr… 37053  <span style='text-decoration: underline;'>37</span>053       27   508     1     123</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> 0.153      2.21  <span style='text-decoration: underline;'>1</span>832    <span style='text-decoration: underline;'>1</span>832 Nort… 37131  <span style='text-decoration: underline;'>37</span>131       66  <span style='text-decoration: underline;'>1</span>421     9    <span style='text-decoration: underline;'>1</span>066</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> 0.097      1.67  <span style='text-decoration: underline;'>1</span>833    <span style='text-decoration: underline;'>1</span>833 Hert… 37091  <span style='text-decoration: underline;'>37</span>091       46  <span style='text-decoration: underline;'>1</span>452     7     954</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> 0.062      1.55  <span style='text-decoration: underline;'>1</span>834    <span style='text-decoration: underline;'>1</span>834 Camd… 37029  <span style='text-decoration: underline;'>37</span>029       15   286     0     115</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> 0.091      1.28  <span style='text-decoration: underline;'>1</span>835    <span style='text-decoration: underline;'>1</span>835 Gates 37073  <span style='text-decoration: underline;'>37</span>073       37   420     0     254</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> 0.118      1.42  <span style='text-decoration: underline;'>1</span>836    <span style='text-decoration: underline;'>1</span>836 Warr… 37185  <span style='text-decoration: underline;'>37</span>185       93   968     4     748</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> 0.124      1.43  <span style='text-decoration: underline;'>1</span>837    <span style='text-decoration: underline;'>1</span>837 Stok… 37169  <span style='text-decoration: underline;'>37</span>169       85  <span style='text-decoration: underline;'>1</span>612     1     160</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with more rows, and 4 more variables: BIR79 &lt;dbl&gt;, SID79 &lt;dbl&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   NWBIR79 &lt;dbl&gt;, geom &lt;MULTIPOLYGON [°]&gt;</span></span>
+<span class='r-in'><span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>f</span>, query <span class='op'>=</span> <span class='st'>"SELECT AREA, FIPS, geom FROM \"nc.gpkg\" WHERE AREA &lt; 0.1"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># Source:   SQL [?? x 3]</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># Database: SFSQLConnection</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     AREA FIPS                                                               geom</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                                                <span style='color: #949494; font-style: italic;'>&lt;MULTIPOLYGON [°]&gt;</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> 0.061 37005 (((-81.23989 36.36536, -81.24069 36.37942, -81.26284 36.40504, -…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> 0.07  37053 (((-76.00897 36.3196, -76.01735 36.33773, -76.03288 36.33598, -7…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> 0.097 37091 (((-76.74506 36.23392, -76.98069 36.23024, -76.99475 36.23558, -…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> 0.062 37029 (((-76.00897 36.3196, -75.95718 36.19377, -75.98134 36.16973, -7…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> 0.091 37073 (((-76.56251 36.34057, -76.60424 36.31498, -76.64822 36.31532, -…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> 0.072 37181 (((-78.49252 36.17359, -78.51472 36.17522, -78.51709 36.46148, -…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> 0.053 37139 (((-76.29893 36.21423, -76.32423 36.23362, -76.37242 36.25235, -…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> 0.081 37189 (((-81.80622 36.10456, -81.81715 36.10939, -81.82231 36.15786, -…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> 0.063 37143 (((-76.48053 36.07979, -76.53696 36.08792, -76.5756 36.10266, -7…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> 0.044 37041 (((-76.68874 36.29452, -76.64822 36.31532, -76.60424 36.31498, -…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with more rows</span></span>
+<span class='r-in'><span class='fu'>lazysf</span><span class='op'>(</span><span class='va'>f</span>, layer <span class='op'>=</span> <span class='st'>"nc.gpkg"</span><span class='op'>)</span> <span class='op'><a href='%>%.html'>%&gt;%</a></span> <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>AREA</span>, <span class='va'>FIPS</span>, <span class='va'>geom</span><span class='op'>)</span> <span class='op'><a href='%>%.html'>%&gt;%</a></span> <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>AREA</span> <span class='op'>&lt;</span> <span class='fl'>0.1</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># Source:   lazy query [?? x 3]</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># Database: SFSQLConnection</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     AREA FIPS                                                               geom</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                                                <span style='color: #949494; font-style: italic;'>&lt;MULTIPOLYGON [°]&gt;</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> 0.061 37005 (((-81.23989 36.36536, -81.24069 36.37942, -81.26284 36.40504, -…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> 0.07  37053 (((-76.00897 36.3196, -76.01735 36.33773, -76.03288 36.33598, -7…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> 0.097 37091 (((-76.74506 36.23392, -76.98069 36.23024, -76.99475 36.23558, -…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> 0.062 37029 (((-76.00897 36.3196, -75.95718 36.19377, -75.98134 36.16973, -7…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> 0.091 37073 (((-76.56251 36.34057, -76.60424 36.31498, -76.64822 36.31532, -…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> 0.072 37181 (((-78.49252 36.17359, -78.51472 36.17522, -78.51709 36.46148, -…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> 0.053 37139 (((-76.29893 36.21423, -76.32423 36.23362, -76.37242 36.25235, -…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> 0.081 37189 (((-81.80622 36.10456, -81.81715 36.10939, -81.82231 36.15786, -…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> 0.063 37143 (((-76.48053 36.07979, -76.53696 36.08792, -76.5756 36.10266, -7…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> 0.044 37041 (((-76.68874 36.29452, -76.64822 36.31532, -76.60424 36.31498, -…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with more rows</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## the famous ESRI Shapefile (not an actual database)</span></span>
+<span class='r-in'><span class='co'>## so if we SELECT we must be ex</span></span>
+<span class='r-in'><span class='va'>shp</span> <span class='op'>&lt;-</span> <span class='fu'>lazysf</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"shape/nc.shp"</span>, package <span class='op'>=</span> <span class='st'>"sf"</span>, mustWork <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Attaching package: ‘dplyr’</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> The following objects are masked from ‘package:stats’:</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     filter, lag</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> The following objects are masked from ‘package:base’:</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     intersect, setdiff, setequal, union</span>
+<span class='r-in'><span class='va'>shp</span> <span class='op'><a href='%>%.html'>%&gt;%</a></span></span>
+<span class='r-in'> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>NAME</span> <span class='op'>%LIKE%</span> <span class='st'>'A%'</span><span class='op'>)</span> <span class='op'><a href='%>%.html'>%&gt;%</a></span></span>
+<span class='r-in'> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>abc <span class='op'>=</span> <span class='fl'>1.3</span><span class='op'>)</span> <span class='op'><a href='%>%.html'>%&gt;%</a></span></span>
+<span class='r-in'> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>abc</span>, <span class='va'>NAME</span>, <span class='va'>`_ogr_geometry_`</span><span class='op'>)</span> <span class='op'><a href='%>%.html'>%&gt;%</a></span></span>
+<span class='r-in'> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/arrange.html'>arrange</a></span><span class='op'>(</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/desc.html'>desc</a></span><span class='op'>(</span><span class='va'>NAME</span><span class='op'>)</span><span class='op'>)</span>  <span class='co'>#%&gt;% show_query()</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># Source:     lazy query [?? x 3]</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># Database:   SFSQLConnection</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># Ordered by: desc(NAME)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     abc NAME                                                    `_ogr_geometry_`</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                                                      <span style='color: #949494; font-style: italic;'>&lt;POLYGON [°]&gt;</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span>   1.3 Avery     ((-81.94135 35.95498, -81.9614 35.93922, -81.94495 35.91861, …</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>2</span>   1.3 Ashe      ((-81.47276 36.23436, -81.54084 36.27251, -81.56198 36.27359,…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>3</span>   1.3 Anson     ((-79.91995 34.80792, -80.32528 34.81476, -80.27512 35.19311,…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>4</span>   1.3 Alleghany ((-81.23989 36.36536, -81.24069 36.37942, -81.26284 36.40504,…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>5</span>   1.3 Alexander ((-81.10889 35.7719, -81.12728 35.78897, -81.1414 35.82332, -…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>6</span>   1.3 Alamance  ((-79.24619 35.86815, -79.23799 35.83725, -79.54099 35.83699,…</span>
+<span class='r-in'></span>
+<span class='r-in'> <span class='co'>## a multi-layer file</span></span>
+<span class='r-in'> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata/multi.gpkg"</span>, package <span class='op'>=</span> <span class='st'>"lazysf"</span>, mustWork <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "/Users/runner/work/_temp/Library/lazysf/extdata/multi.gpkg"</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -12,10 +12,10 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Delayed Read for GDAL Vector Data Sources">
-<meta property="og:description" content="A dplyr back end for data sources supported by GDAL vector drivers, 
-    that allows you to work with local or remote sources as if they are in-memory data 
-    frames. Basic features works with any GDAL vector data source supported by the
-    sf package. ">
+<meta property="og:description" content="Lazy read for drawings. A dplyr back end for data sources supported by 
+    GDAL vector drivers, that allows working with local or remote sources as if they 
+    are in-memory data frames. Basic features works with any drawing format (GDAL vector 
+    data source) supported by the sf package. ">
 <meta name="robots" content="noindex">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -35,7 +35,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">lazysf</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.1.9002</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.1.9001</span>
       </span>
     </div>
 
@@ -43,7 +43,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -58,7 +58,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/GDAL-SQL.html">GDAL SQL</a>
+      <a href="articles/GDALSQL.html">GDALSQL</a>
     </li>
   </ul>
 </li>
@@ -68,8 +68,8 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/mdsumner/lazysf/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/hypertidy/lazysf/">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -89,13 +89,13 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#lazysf" class="anchor"></a>lazysf</h1></div>
 <!-- badges: start -->
-<!-- badges: end -->
+
 <p>The goal of lazysf is to provide interactive delayed read of GDAL vector data sources.</p>
-<p>Vector data sources (a.k.a. “shapefiles”) are files or web services or databases that provide tables of data fields. These fields may include spatial geometry data such as points, lines, polygons, and other planar types composed of paths of coordinates.</p>
+<p>Vector data sources, drawings (a.k.a. “shapefiles”) are files or web services or databases that provide tables of data fields. These fields may include spatial geometry data such as points, lines, polygons, and other planar types composed of paths of coordinates.</p>
 <p>lazysf uses the dplyr/dbplyr ‘tbl_lazy’ mechanism by providing a GDAL DBI-backend like many database packages in R. The convenience function <code><a href="reference/lazysf.html">lazysf()</a></code> provides a single-argument wrapper around the database-like workflows.</p>
 <p>See it in action!</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mdsumner/lazysf">lazysf</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hypertidy/lazysf">lazysf</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 
@@ -117,7 +117,7 @@
 <span class="co">#&gt; 10 360070… Bingham…  7.40 -68.1   948     0.02 2.10e-5      0.166     0.179</span>
 <span class="co">#&gt; # … with more rows, and 4 more variables: Z &lt;dbl&gt;, AVGIDIST &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   PEXPOSURE &lt;dbl&gt;, geom &lt;MULTIPOLYGON [m]&gt;</span>
-<span class="va">x</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html">distinct</a></span><span class="op">(</span><span class="va">AREANAME</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">AREANAME</span><span class="op">)</span> 
+<span class="va">x</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html">distinct</a></span><span class="op">(</span><span class="va">AREANAME</span><span class="op">)</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">AREANAME</span><span class="op">)</span> 
 <span class="co">#&gt; # Source:     lazy query [?? x 1]</span>
 <span class="co">#&gt; # Database:   SFSQLConnection</span>
 <span class="co">#&gt; # Ordered by: AREANAME</span>
@@ -135,9 +135,9 @@
 <span class="co">#&gt; 10 Canastota village    </span>
 <span class="co">#&gt; # … with more rows</span>
 
-<span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html">plot</a></span><span class="op">(</span><span class="fu"><a href="reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span><span class="va">x</span> <span class="op">%&gt;%</span> 
-                <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="op">(</span><span class="va">AREANAME</span> <span class="op">%LIKE%</span> <span class="st">"Ca%"</span> <span class="op">|</span> <span class="va">AREANAME</span> <span class="op">%LIKE%</span> <span class="st">"Bi%"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-                <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">AREANAME</span>, <span class="va">geom</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html">plot</a></span><span class="op">(</span><span class="fu"><a href="reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span><span class="va">x</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span> 
+                <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="op">(</span><span class="va">AREANAME</span> <span class="op">%LIKE%</span> <span class="st">"Ca%"</span> <span class="op">|</span> <span class="va">AREANAME</span> <span class="op">%LIKE%</span> <span class="st">"Bi%"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span> 
+                <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">AREANAME</span>, <span class="va">geom</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-sf-action-1.png" width="100%"></p>
 <div id="limitations" class="section level2">
 <h2 class="hasAnchor">
@@ -168,15 +168,15 @@
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>You can install the dev version of lazysf from <a href="https://github.com/mdsumner/lazysf">GitHub</a> with:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"mdsumner/lazysf"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"mdsumner/lazysf"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
 <p>This is a basic example.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mdsumner/lazysf">lazysf</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hypertidy/lazysf">lazysf</a></span><span class="op">)</span>
 <span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"gpkg/nc.gpkg"</span>, package <span class="op">=</span> <span class="st">"sf"</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
 <span class="co">## specify only the data source</span>
@@ -217,8 +217,8 @@
 <span class="co">#&gt; # … with more rows</span>
 
 <span class="co">## specify the data source and the table/layer to access</span>
-<span class="fu"><a href="reference/lazysf.html">lazysf</a></span><span class="op">(</span><span class="va">f</span>, layer <span class="op">=</span> <span class="st">"nc.gpkg"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">AREA</span>, <span class="va">FIPS</span>, <span class="va">geom</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+<span class="fu"><a href="reference/lazysf.html">lazysf</a></span><span class="op">(</span><span class="va">f</span>, layer <span class="op">=</span> <span class="st">"nc.gpkg"</span><span class="op">)</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">AREA</span>, <span class="va">FIPS</span>, <span class="va">geom</span><span class="op">)</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span> 
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">AREA</span> <span class="op">&lt;</span> <span class="fl">0.1</span><span class="op">)</span>
 <span class="co">#&gt; # Source:   lazy query [?? x 3]</span>
 <span class="co">#&gt; # Database: SFSQLConnection</span>
@@ -240,10 +240,10 @@
 <span class="co">## above was a real database (Geopackage), now with an actual shapefile</span>
 <span class="va">shp</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lazysf.html">lazysf</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"shape/nc.shp"</span>, package <span class="op">=</span> <span class="st">"sf"</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="va">shp</span> <span class="op">%&gt;%</span>
- <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">NAME</span> <span class="op">%LIKE%</span> <span class="st">'A%'</span><span class="op">)</span> <span class="op">%&gt;%</span>
- <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>abc <span class="op">=</span> <span class="fl">1.3</span><span class="op">)</span> <span class="op">%&gt;%</span>
- <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">abc</span>, <span class="va">NAME</span>, <span class="va">`_ogr_geometry_`</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<span class="va">shp</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span>
+ <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">NAME</span> <span class="op">%LIKE%</span> <span class="st">'A%'</span><span class="op">)</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span>
+ <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>abc <span class="op">=</span> <span class="fl">1.3</span><span class="op">)</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span>
+ <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">abc</span>, <span class="va">NAME</span>, <span class="va">`_ogr_geometry_`</span><span class="op">)</span> <span class="op"><a href="reference/%&gt;%.html">%&gt;%</a></span>
  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">NAME</span><span class="op">)</span><span class="op">)</span>  <span class="co">#%&gt;% show_query()</span>
 <span class="co">#&gt; # Source:     lazy query [?? x 3]</span>
 <span class="co">#&gt; # Database:   SFSQLConnection</span>
@@ -255,10 +255,10 @@
 <span class="co">#&gt; 3   1.3 Anson    ((-79.91995 34.80792, -80.32528 34.81476, -80.27512 35.19311, …</span>
 <span class="co">#&gt; 4   1.3 Allegha… ((-81.23989 36.36536, -81.24069 36.37942, -81.26284 36.40504, …</span>
 <span class="co">#&gt; 5   1.3 Alexand… ((-81.10889 35.7719, -81.12728 35.78897, -81.1414 35.82332, -8…</span>
-<span class="co">#&gt; 6   1.3 Alamance ((-79.24619 35.86815, -79.23799 35.83725, -79.54099 35.83699, …</span></pre></div>
+<span class="co">#&gt; 6   1.3 Alamance ((-79.24619 35.86815, -79.23799 35.83725, -79.54099 35.83699, …</span></code></pre></div>
 <p>Online sources can also work if your build of sf supports.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="co"># online sources can work</span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># online sources can work</span>
 <span class="va">geojson</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/SymbolixAU"</span>,
                       <span class="st">"geojsonsf/master/inst/examples/geo_melbourne.geojson"</span><span class="op">)</span>
 <span class="fu"><a href="reference/lazysf.html">lazysf</a></span><span class="op">(</span><span class="va">geojson</span><span class="op">)</span>
@@ -276,40 +276,21 @@
 <span class="co">#&gt;  8 Brunswi…        38 Brunswi…     3.18 #472E7C   #472E7C                1</span>
 <span class="co">#&gt;  9 Carlton         48 Melbour…     1.82 #443A83   #443A83                1</span>
 <span class="co">#&gt; 10 Carlton…        71 Yarra        2.30 #443A83   #443A83                1</span>
-<span class="co">#&gt; # … with more rows, and 1 more variable: `_ogr_geometry_` &lt;POLYGON [°]&gt;</span></pre></div>
-<p>Also works on PostgreSQL with spatial PostGIS (or just normal postgres).</p>
-<p>Note that the connection object is a transparent string so take care with your credentials and don’t share in public (currently trying to work out if only the externalptr should be kept in this, or in all cases with GDAL sources).</p>
-<p>The <code><a href="reference/SFSQL.html">SFSQL_PG()</a></code> driver is a convenience wrapper around the <code><a href="reference/SFSQL.html">SFSQL()</a></code> driver.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">dbConnect</span><span class="op">(</span><span class="fu"><a href="reference/SFSQL.html">SFSQL_PG</a></span><span class="op">(</span><span class="op">)</span>,
-          host <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span><span class="op">(</span><span class="st">"dbedu_host"</span><span class="op">)</span>,
-          dbname <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span><span class="op">(</span><span class="st">"dbedu_dbname"</span><span class="op">)</span>, 
-          user <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span><span class="op">(</span><span class="st">"dbedu_usr"</span><span class="op">)</span>, 
-          password <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span><span class="op">(</span><span class="st">"dbedu_pwd"</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; # … with more rows, and 1 more variable: `_ogr_geometry_` &lt;POLYGON [°]&gt;</span></code></pre></div>
+<p>Also works on PostgreSQL and many others as per GDAL vector driver support.</p>
+<p>To create a connection string for <a href="https://gdal.org/drivers/vector/pg.html">GDAL for PostgreSQL</a> use something like</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">DSN</span> <span class="op">&lt;-</span> <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span><span class="op">(</span><span class="st">"PG:host='{host}' dbname='{dbname}' user='{user}' password='{password}'"</span><span class="op">)</span>
 
-<span class="op">(</span><span class="va">sfx</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lazysf.html">lazysf</a></span><span class="op">(</span><span class="va">con</span>, query <span class="op">=</span> <span class="st">"SELECT st_area(st_transform(geom, '+proj=laea +lon_0=-68 +lat_0=-25')) / 1e6 AS sq_km, 
-                                        codigo_comuna, geom FROM mapa_comunas WHERE codigo_region = '03'"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; # Source:   SQL [?? x 3]</span>
-<span class="co">#&gt; # Database: SFSQLConnection</span>
-<span class="co">#&gt;    sq_km codigo_comuna                                                      geom</span>
-<span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt;                                                &lt;MULTIPOLYGON [°]&gt;</span>
-<span class="co">#&gt; 1 18991. 03202         (((-68.36698 -26.79685, -68.36946 -26.79951, -68.38041 -…</span>
-<span class="co">#&gt; 2 17789. 03101         (((-68.36698 -26.79685, -68.36379 -26.80107, -68.34811 -…</span>
-<span class="co">#&gt; 3  7228. 03301         (((-70.07472 -28.15016, -70.07486 -28.15708, -70.07754 -…</span>
-<span class="co">#&gt; 4  3223. 03303         (((-71.57305 -29.02126, -71.56807 -29.02501, -71.56409 -…</span>
-<span class="co">#&gt; 5  6158. 03302         (((-69.69013 -28.59016, -69.6956 -28.59591, -69.69542 -2…</span>
-<span class="co">#&gt; 6  5773. 03201         (((-70.68641 -26.15053, -70.68303 -26.15132, -70.67828 -…</span>
-<span class="co">#&gt; 7  3680. 03102         (((-70.9699 -27.24161, -70.97552 -27.2499, -70.9782 -27.…</span>
-<span class="co">#&gt; 8  1601. 03304         (((-71.14553 -27.96365, -71.13859 -27.96908, -71.12689 -…</span>
-<span class="co">#&gt; 9 11260. 03103         (((-68.98753 -27.52457, -68.98356 -27.53234, -68.97817 -…</span></pre></div>
-<p>You can construct the database connection string yourself and provide it directly to lazysf() if you want. See <a href="https://gdal.org/drivers/vector/pg.html">GDAL Postgres</a> for details on this format, and this capability is available for any of the GDAL formats (see limitations above).</p>
+<span class="fu">dbConnect</span><span class="op">(</span><span class="fu"><a href="reference/SFSQL.html">SFSQL</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">DSN</span><span class="op">)</span></code></pre></div>
+<p>but the same can be done with generic DBI and (for example) the <a href="https://rpostgres.r-dbi.org/">Rpostgres package</a>. With <code><a href="reference/SFSQL.html">SFSQL()</a></code> we just know that it’s executed by GDAL (via sf).</p>
 </div>
 <div id="some-drivers-are-related" class="section level2">
 <h2 class="hasAnchor">
 <a href="#some-drivers-are-related" class="anchor"></a>Some drivers are related</h2>
 <p>Note that GDAL drivers can be confusing, and it can be important to see the behaviours GDAL will provide by default. Here see that we can read from a Geopackage file but not as it was intended. We have used the driver-prefix to make GDAL choose its SQLite driver rather than the Geopackage driver.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mdsumner/lazysf">lazysf</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hypertidy/lazysf">lazysf</a></span><span class="op">)</span>
 <span class="va">gpkgfile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"gpkg/nc.gpkg"</span>, package <span class="op">=</span> <span class="st">"sf"</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="reference/lazysf.html">lazysf</a></span><span class="op">(</span><span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span><span class="op">(</span><span class="st">"SQLite:{gpkgfile}"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; # Source:   table&lt;gpkg_contents&gt; [?? x 10]</span>
@@ -317,7 +298,7 @@
 <span class="co">#&gt;   table_name data_type identifier description last_change         min_x min_y</span>
 <span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;       &lt;dttm&gt;              &lt;dbl&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 nc.gpkg    features  nc.gpkg    ""          2016-09-28 14:57:13 -84.3  33.9</span>
-<span class="co">#&gt; # … with 3 more variables: max_x &lt;dbl&gt;, max_y &lt;dbl&gt;, srs_id &lt;int&gt;</span></pre></div>
+<span class="co">#&gt; # … with 3 more variables: max_x &lt;dbl&gt;, max_y &lt;dbl&gt;, srs_id &lt;int&gt;</span></code></pre></div>
 <p>That’s not very spatial, but we can dig in to find out what else is there.</p>
 <p>See <a href="https://twitter.com/mdsumner/status/1306937694467940353?s=20" class="uri">https://twitter.com/mdsumner/status/1306937694467940353?s=20</a> for more (but a SQLite in GDAL returns character not binary geom … so WIP)</p>
 <hr>
@@ -334,9 +315,11 @@
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/mdsumner/lazysf/">https://​github.com/​mdsumner/​lazysf/​</a>
+<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=lazysf">https://​cloud.r-project.org/​package=lazysf</a>
 </li>
-<li>Report a bug at <br><a href="https://github.com/mdsumner/lazysf/issues">https://​github.com/​mdsumner/​lazysf/​issues</a>
+<li>Browse source code at <br><a href="https://github.com/hypertidy/lazysf/">https://​github.com/​hypertidy/​lazysf/​</a>
+</li>
+<li>Report a bug at <br><a href="https://github.com/hypertidy/lazysf/issues">https://​github.com/​hypertidy/​lazysf/​issues</a>
 </li>
 </ul>
 </div>
@@ -355,11 +338,18 @@
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
-<li>Michael Sumner <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/YOUR-ORCID-ID" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Michael Sumner <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-2471-7511" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
 
-  </div>
+  <div class="dev-status">
+<h2>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://CRAN.R-project.org/package=lazysf"><img src="https://www.r-pkg.org/badges/version/lazysf" alt="CRAN status"></a></li>
+<li><a href="https://cran.r-project.org/package=lazysf"><img src="http://cranlogs.r-pkg.org/badges/last-month/lazysf?color=green"></a></li>
+</ul>
+</div>
+</div>
 </div>
 
 
