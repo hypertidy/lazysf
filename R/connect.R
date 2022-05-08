@@ -33,10 +33,10 @@ SFSQL <- function() {
 #' db <- dbConnect(SFSQL(), afile)
 #' dbSendQuery(db, 'SELECT * FROM "nc.gpkg"')
 setMethod("dbConnect", "SFSQLDriver",
-          function(drv, DSN = "", readonly = TRUE, ...) {
+          function(drv, DSN = "", readonly = TRUE, wkt_filter = character(0), ...) {
             ## FIXME: could be a new MEM dataset
             if (nchar(DSN) < 1) stop("DSN must be a valid data source name (file, connection string, url, ...)")
-            new("SFSQLConnection", DSN = DSN,  readonly = readonly, ...)
+            new("SFSQLConnection", DSN = DSN,  readonly = readonly, wkt_filter = wkt_filter, ...)
           })
 
 

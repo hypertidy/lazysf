@@ -1,3 +1,23 @@
+extent_to_wkt <- function(extent) {
+  bbox <- NULL
+  if (is.numeric(extent)) {
+    stopifnot(length(extent) == 4L)
+    stopifnot(all(diff(extent)[c(1, 3)] > 0))
+    bbox <- sf::st_bbox(setNames(extent, c("xmin", "xmax", "ymin", "ymax"))[c(1, 3, 2, 4)])
+  }
+  if (inherits(extent, "bbox")) {
+    bbox <- extent
+  }
+  ## other logic for raster,terra, polygons, etc
+  wkt_filter <- character(0)
+  if (!is.null(bbox)) {
+    wkt_filter <-
+    sf::st_as_text(sf::st_as_sfc(bbox))
+  }
+  wkt_filter
+}
+
+
 #' Delayed (lazy) read for GDAL vector
 #'
 #' A lazy data frame for GDAL drawings ('vector data sources'). lazysf is DBI
@@ -73,13 +93,16 @@ lazysf <- function(x, layer, ...) {
 }
 #' @name lazysf
 #' @export
-lazysf.character <- function(x, layer, ..., query = NA) {
-  db <- dbConnect(SFSQL(), x)
+lazysf.character <- function(x, layer, ..., query = NA, extent = NULL) {
+
+  db <- dbConnect(SFSQL(), x, wkt_filter = extent_to_wkt(extent))
   lazysf(db, layer, ..., query = query)
 }
 #' @name lazysf
 #' @export
 lazysf.SFSQLConnection <- function(x, layer, ..., query = NA) {
+
+
   if (!is.na(query)) {
     if (!missing(layer)) message("'layer' argument ignored, using 'query'")
     return(dplyr::tbl(x, dbplyr::sql(query)))
@@ -88,6 +111,7 @@ lazysf.SFSQLConnection <- function(x, layer, ..., query = NA) {
     layers <- dbListTables(x)
     layer <- layers[1L]
   }
+
   dplyr::tbl(x, layer)
 }
 

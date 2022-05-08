@@ -25,7 +25,8 @@ setClass("SFSQLConnection",
          contains = "DBIConnection",
          slots = list(
            DSN = "character",
-           readonly = "logical")
+           readonly = "logical",
+           wkt_filter = "character")
 )
 
 
@@ -67,6 +68,7 @@ setMethod("dbSendQuery", "SFSQLConnection",
             args$layer <- "<unused fake layer>"
             args$query <- statement           ## user can't do this (warn?)
             args$quiet <- TRUE; args$as_tibble <- TRUE ## hardcoded
+            args$wkt_filter <- conn@wkt_filter
             #browser()
             qu <- as.character(args$query)
 
@@ -76,6 +78,7 @@ setMethod("dbSendQuery", "SFSQLConnection",
             }
 op <- options(warn = -1)
 on.exit(options(op), add = TRUE)
+
            layer_data <- do.call(sf::st_read, args)
 
            if (getOption("lazysf.query.debug")) {
