@@ -4,7 +4,7 @@
 \alias{dbConnect,SFSQLDriver-method}
 \title{dbConnect}
 \usage{
-\S4method{dbConnect}{SFSQLDriver}(drv, DSN = "", readonly = TRUE, ...)
+\S4method{dbConnect}{SFSQLDriver}(drv, DSN = "", readonly = TRUE, wkt_filter = character(0), ...)
 }
 \arguments{
 \item{drv}{SFSQLDriver created by \code{SFSQL()}}

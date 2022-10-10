@@ -8,7 +8,7 @@
 \usage{
 lazysf(x, layer, ...)
 
-\method{lazysf}{character}(x, layer, ..., query = NA)
+\method{lazysf}{character}(x, layer, ..., query = NA, extent = NULL)
 
 \method{lazysf}{SFSQLConnection}(x, layer, ..., query = NA)
 }
