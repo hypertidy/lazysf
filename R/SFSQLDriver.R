@@ -54,10 +54,11 @@ setMethod("dbUnloadDriver", "SFSQLDriver", function(drv, ...) {
 #' @export
 setMethod("dbGetInfo", "SFSQLDriver",
           function(dbObj, ...) {
-            vers <- sf::sf_extSoftVersion()
+            #vers <- sf::sf_extSoftVersion()
+            vers <- vapour::vapour_gdal_version()
             list(name = "SFSQLDriver",
                  note = "virtual SQL driver for GDAL",
-                 driver.version = vers["GDAL"],
+                 driver.version = vers,
                  client.version = utils::packageVersion("lazysf"))
           })
 

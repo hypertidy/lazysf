@@ -63,20 +63,26 @@ setMethod("dbSendQuery", "SFSQLConnection",
           function(conn, statement, ...) {
             ## quiet and fake layer because we aren't using layer  = (it's in the query)
             args <- list(...)
-            args$dsn <- conn@DSN
-            args$layer <- "<unused fake layer>"
-            args$query <- statement           ## user can't do this (warn?)
-            args$quiet <- TRUE; args$as_tibble <- TRUE ## hardcoded
+            args$dsource <- conn@DSN
+            args$layer <- 0
+            args$sql <- statement           ## user can't do this (warn?)
+            ##args$extent <- "placeholder"
+            #args$quiet <- TRUE; args$as_tibble <- TRUE ## hardcoded
             #browser()
-            qu <- as.character(args$query)
+            qu <- as.character(args$sql)
 
             if (grepl("AS.*q", qu) && grepl("WHERE \\(0 = 1)", qu)) {
               ## workaround for non-DB sources
-              args$query <- dbplyr::sql(gsub("WHERE \\(0 = 1)", "LIMIT 0", qu))
+              args$sql <- dbplyr::sql(gsub("WHERE \\(0 = 1)", "LIMIT 0", qu))
             }
 op <- options(warn = -1)
 on.exit(options(op), add = TRUE)
-           layer_data <- do.call(sf::st_read, args)
+    #       layer_data <- do.call(sf::st_read, args)
+   geom_name <- vapour::vapour_geom_name(args$dsource, args$layer, sql = args$sql)
+   info <- vapour::vapour_layer_info(args$dsource, args$layer, sql = args$sql, count = FALSE)
+
+layer_data <- tibble::as_tibble(c(do.call(vapour::vapour_read_fields, args),
+                                setNames(list(wk::wkb(do.call(vapour::vapour_read_geometry, args), crs = info$projection$Wkt)), geom_name)))
 
            if (getOption("lazysf.query.debug")) {
              message(sprintf("-------------\nlazysf debug ....\nSQL:\n%s\nnrows read:\n%i",
@@ -113,8 +119,8 @@ setMethod("dbReadTable", c(conn = "SFSQLConnection", name = "character"),
 setMethod("dbListTables", c(conn = "SFSQLConnection"),
           function(conn, ...){
 
-            layers <- sf::st_layers(conn@DSN, ...)
-            layers$name
+            layers <- vapour::vapour_layer_names(conn@DSN, ...)
+
           })
 
 #' @rdname SFSQLConnection-class

@@ -91,37 +91,5 @@ lazysf.SFSQLConnection <- function(x, layer, ..., query = NA) {
   dplyr::tbl(x, layer)
 }
 
-#' Force computation of a GDAL query
-#'
-#' Convert lazysf to an in memory data frame or sf object
-#'
-#' `collect()` retrieves data into a local table, preserving grouping and ordering.
-#'
-#' `st_as_sf()` retrieves data into a local sf data frame (will succeed only if there is a geometry column of class `sfc`)
-#'
-#' @param x output of [lazysf()]
-#' @param ... passed to [collect()]
-#' @name st_as_sf
-#' @return a data frame from `collect()`, sf data frame from `st_as_sf()` (only if it contains an `sfc` geometry column)
-#' @seealso lazysf
-#' @importFrom sf st_as_sf
-#' @importFrom dplyr collect
-#' @export
-#' @export st_as_sf
-#' @export collect
-#' @aliases collect
-#' @examples
-#' f <- system.file("gpkg/nc.gpkg", package = "sf", mustWork = TRUE)
-#' lsf <- lazysf(f) %>% dplyr::select(AREA, FIPS, geom) %>% dplyr::filter(AREA < 0.1)
-#' st_as_sf(lsf)
-#'
-#'
-st_as_sf.tbl_SFSQLConnection <- function(x, ...) {
-  sf::st_as_sf(dplyr::collect(x, ...))
-}
 
-
-#' @name st_as_sf
-#' @usage collect(x, ...)
-"collect"
 
