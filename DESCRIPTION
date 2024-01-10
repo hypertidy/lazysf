@@ -24,7 +24,7 @@ Imports:
     dbplyr,
     magrittr, 
     dplyr
-URL: https://github.com/hypertidy/lazysf
+URL: https://github.com/hypertidy/lazysf, https://hypertidy.github.io/lazysf/
 BugReports: https://github.com/hypertidy/lazysf/issues
 Suggests: 
     knitr,
