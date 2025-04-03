@@ -6,7 +6,7 @@ NULL
 
 #' SFSQL
 #'
-#' SFSQL driver, use to [dbConnect()] to a data source readable by sf
+#' SFSQL driver, use to [DBI::dbConnect()] to a data source readable by sf
 #'
 #' @seealso lazysf dbConnect
 #' @export

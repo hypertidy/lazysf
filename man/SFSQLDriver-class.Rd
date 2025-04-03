@@ -19,11 +19,11 @@
 }
 \description{
 SFSQLDriver objects are created by \code{\link[=SFSQL]{SFSQL()}} and used to select the correct
-method in \code{\link[=dbConnect]{dbConnect()}}.
-They are a superclass of the \linkS4class{DBIDriver} class, and used purely for dispatch.
+method in \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.
+They are a superclass of the \link[DBI:DBIDriver-class]{DBI::DBIDriver} class, and used purely for dispatch.
 }
 \details{
 The "Usage" section lists the class methods overridden by \pkg{lazysf}.
-The \code{\link[=dbUnloadDriver]{dbUnloadDriver()}} method is a null-op.
+The \code{\link[DBI:dbDriver]{DBI::dbUnloadDriver()}} method is a null-op.
 }
 \keyword{internal}

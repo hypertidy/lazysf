@@ -7,7 +7,7 @@
 SFSQL()
 }
 \description{
-SFSQL driver, use to \code{\link[=dbConnect]{dbConnect()}} to a data source readable by sf
+SFSQL driver, use to \code{\link[DBI:dbConnect]{DBI::dbConnect()}} to a data source readable by sf
 }
 \examples{
 SFSQL()

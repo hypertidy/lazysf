@@ -15,7 +15,6 @@ setOldClass(c("data.frame", "sf"))
 #' @section Package Options:
 #' There is a debug option `options(lazysf.query.debug = TRUE)` which if set will cause the generated SQL statement
 #' to be printed before every call to `sf::st_read()`. In addition it will print the number of rows actual read.
-#' @docType package
 #' @name lazysf-package
 NULL
 

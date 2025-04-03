@@ -3,13 +3,9 @@
 \docType{package}
 \name{lazysf-package}
 \alias{lazysf-package}
-\alias{_PACKAGE}
 \title{lazysf: Delayed Read for 'GDAL' Vector Data Sources}
 \description{
-Lazy read for drawings. A 'dplyr' back end for data sources supported by 
-    'GDAL' vector drivers, that allows working with local or remote sources as if they 
-    are in-memory data frames. Basic features works with any drawing format ('GDAL vector 
-    data source') supported by the 'sf' package.
+Lazy read for drawings. A 'dplyr' back end for data sources supported by 'GDAL' vector drivers, that allows working with local or remote sources as if they are in-memory data frames. Basic features works with any drawing format ('GDAL vector data source') supported by the 'sf' package.
 }
 \section{Package Options}{
 
@@ -21,6 +17,7 @@ to be printed before every call to \code{sf::st_read()}. In addition it will pri
 Useful links:
 \itemize{
   \item \url{https://github.com/hypertidy/lazysf}
+  \item \url{https://hypertidy.github.io/lazysf/}
   \item Report bugs at \url{https://github.com/hypertidy/lazysf/issues}
 }
 

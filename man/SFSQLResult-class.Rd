@@ -18,9 +18,9 @@
 \S4method{dbHasCompleted}{SFSQLResult}(res, ...)
 }
 \description{
-SFSQLResult objects are created by \code{\link[=dbSendQuery]{dbSendQuery()}} or \code{\link[=dbSendStatement]{dbSendStatement()}},
+SFSQLResult objects are created by \code{\link[DBI:dbSendQuery]{DBI::dbSendQuery()}} or \code{\link[DBI:dbSendStatement]{DBI::dbSendStatement()}},
 and encapsulate the result of an SQL statement.
-They are a superclass of the \linkS4class{DBIResult} class.
+They are a superclass of the \link[DBI:DBIResult-class]{DBI::DBIResult} class.
 The "Usage" section lists the class methods overridden by \pkg{lazsf}.
 }
 \seealso{

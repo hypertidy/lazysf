@@ -1,4 +1,6 @@
-# lazysf dev
+# lazysf 0.2.0
+
+* Fixed doc links thanks to CRAN. 
 
 * Moved to hypertidy org. 
 
