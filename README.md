@@ -13,6 +13,10 @@ status](https://www.r-pkg.org/badges/version/lazysf)](https://CRAN.R-project.org
 The goal of lazysf is to provide interactive delayed read of GDAL vector
 data sources.
 
+Note: very soon a release of
+[gdalraster](https://CRAN.R-project.org/package=gdalraster) will
+supersede what lazysf can do and we recommend using that instead.
+
 Vector data sources, drawings (a.k.a. “shapefiles”) are files or web
 services or databases that provide tables of data fields. These fields
 may include spatial geometry data such as points, lines, polygons, and
@@ -35,10 +39,6 @@ url <- "https://github.com/Nowosad/spData/raw/master/inst/shapes/NY8_bna_utm18.g
 #> Warning: <SFSQLConnection> uses an old dbplyr interface
 #> ℹ Please install a newer version of the package or contact the maintainer
 #> This warning is displayed once every 8 hours.
-#> Warning in CPL_read_ogr(dsn, layer, query, as.character(options), quiet, :
-#> argument layer is ignored when query is specified
-#> Warning in CPL_read_ogr(dsn, layer, query, as.character(options), quiet, :
-#> argument layer is ignored when query is specified
 #> # Source:   table<"sf_bna2_utm18"> [?? x 13]
 #> # Database: SFSQLConnection
 #>    AREAKEY     AREANAME      X     Y  POP8 TRACTCAS PROPCAS PCTOWNHOME PCTAGE65P
@@ -57,8 +57,6 @@ url <- "https://github.com/Nowosad/spData/raw/master/inst/shapes/NY8_bna_utm18.g
 #> # ℹ 4 more variables: Z <dbl>, AVGIDIST <dbl>, PEXPOSURE <dbl>,
 #> #   geom <MULTIPOLYGON [m]>
 x %>% distinct(AREANAME) %>% arrange(AREANAME) 
-#> Warning in CPL_read_ogr(dsn, layer, query, as.character(options), quiet, :
-#> argument layer is ignored when query is specified
 #> # Source:     SQL [?? x 1]
 #> # Database:   SFSQLConnection
 #> # Ordered by: AREANAME
@@ -79,8 +77,6 @@ x %>% distinct(AREANAME) %>% arrange(AREANAME)
 plot(st_as_sf(x %>% 
                 dplyr::filter(!(AREANAME %LIKE% "Ca%" | AREANAME %LIKE% "Bi%")) %>% 
                 dplyr::select(AREANAME, geom)))
-#> Warning in CPL_read_ogr(dsn, layer, query, as.character(options), quiet, :
-#> argument layer is ignored when query is specified
 ```
 
 <img src="man/figures/README-sf-action-1.png" width="100%" />
@@ -162,10 +158,6 @@ f <- system.file("gpkg/nc.gpkg", package = "sf", mustWork = TRUE)
 
 ## specify only the data source
 lazysf(f)
-#> Warning in CPL_read_ogr(dsn, layer, query, as.character(options), quiet, :
-#> argument layer is ignored when query is specified
-#> Warning in CPL_read_ogr(dsn, layer, query, as.character(options), quiet, :
-#> argument layer is ignored when query is specified
 #> # Source:   table<"nc.gpkg"> [?? x 15]
 #> # Database: SFSQLConnection
 #>     AREA PERIMETER CNTY_ CNTY_ID NAME  FIPS  FIPSNO CRESS_ID BIR74 SID74 NWBIR74
@@ -186,10 +178,6 @@ lazysf(f)
 
 ## specify the data source and a query to run
 lazysf(f, query = "SELECT AREA, FIPS, geom FROM \"nc.gpkg\" WHERE AREA < 0.1")
-#> Warning in CPL_read_ogr(dsn, layer, query, as.character(options), quiet, :
-#> argument layer is ignored when query is specified
-#> Warning in CPL_read_ogr(dsn, layer, query, as.character(options), quiet, :
-#> argument layer is ignored when query is specified
 #> # Source:   SQL [?? x 3]
 #> # Database: SFSQLConnection
 #>     AREA FIPS                                                               geom
@@ -210,10 +198,6 @@ lazysf(f, query = "SELECT AREA, FIPS, geom FROM \"nc.gpkg\" WHERE AREA < 0.1")
 lazysf(f, layer = "nc.gpkg") %>% 
   dplyr::select(AREA, FIPS, geom) %>% 
   dplyr::filter(AREA < 0.1)
-#> Warning in CPL_read_ogr(dsn, layer, query, as.character(options), quiet, :
-#> argument layer is ignored when query is specified
-#> Warning in CPL_read_ogr(dsn, layer, query, as.character(options), quiet, :
-#> argument layer is ignored when query is specified
 #> # Source:   SQL [?? x 3]
 #> # Database: SFSQLConnection
 #>     AREA FIPS                                                               geom
@@ -233,16 +217,12 @@ lazysf(f, layer = "nc.gpkg") %>%
 
 ## above was a real database (Geopackage), now with an actual shapefile
 shp <- lazysf(system.file("shape/nc.shp", package = "sf", mustWork = TRUE))
-#> Warning in CPL_read_ogr(dsn, layer, query, as.character(options), quiet, :
-#> argument layer is ignored when query is specified
 library(dplyr)
 shp %>%
  filter(NAME %LIKE% 'A%') %>%
  mutate(abc = 1.3) %>%
  select(abc, NAME, `_ogr_geometry_`) %>%
  arrange(desc(NAME))  #%>% show_query()
-#> Warning in CPL_read_ogr(dsn, layer, query, as.character(options), quiet, :
-#> argument layer is ignored when query is specified
 #> # Source:     SQL [?? x 3]
 #> # Database:   SFSQLConnection
 #> # Ordered by: desc(NAME)
@@ -263,10 +243,6 @@ Online sources can also work if your build of sf supports.
 geojson <- file.path("https://raw.githubusercontent.com/SymbolixAU",
                       "geojsonsf/master/inst/examples/geo_melbourne.geojson")
 lazysf(geojson)
-#> Warning in CPL_read_ogr(dsn, layer, query, as.character(options), quiet, :
-#> argument layer is ignored when query is specified
-#> Warning in CPL_read_ogr(dsn, layer, query, as.character(options), quiet, :
-#> argument layer is ignored when query is specified
 #> # Source:   table<"geo_melbourne"> [?? x 8]
 #> # Database: SFSQLConnection
 #>    geo_melbourne.SA2_NAME       geo_melbourne.polygonId geo_melbourne.SA3_NAME
@@ -317,10 +293,6 @@ Geopackage driver.
 library(lazysf)
 gpkgfile <- system.file("gpkg/nc.gpkg", package = "sf", mustWork = TRUE)
 lazysf(glue::glue("SQLite:{gpkgfile}"))
-#> Warning in CPL_read_ogr(dsn, layer, query, as.character(options), quiet, :
-#> argument layer is ignored when query is specified
-#> Warning in CPL_read_ogr(dsn, layer, query, as.character(options), quiet, :
-#> argument layer is ignored when query is specified
 #> # Source:   table<"gpkg_contents"> [?? x 10]
 #> # Database: SFSQLConnection
 #>   table_name data_type identifier description last_change         min_x min_y

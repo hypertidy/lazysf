@@ -24,6 +24,9 @@ library(sf)
 
 The goal of lazysf is to provide interactive delayed read of GDAL vector data sources. 
 
+Note: very soon a release of [gdalraster](https://CRAN.R-project.org/package=gdalraster) will supersede what lazysf can
+do and we recommend using that instead. 
+
 Vector data sources, drawings (a.k.a. "shapefiles") are files or web services or databases that provide tables of data fields. These fields
 may include spatial geometry data such as points, lines, polygons, and other planar types composed of paths of coordinates. 
 

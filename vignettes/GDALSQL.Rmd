@@ -19,7 +19,8 @@ library(lazysf)
 ```
 
 
-GDAL is a complex tool and there are many intricacies to using SQL with it. 
+GDAL is a complex tool and there are many intricacies to using SQL with it. We recommend using [gdalraster](https://CRAN.R-project.org/package=gdalraster) instead, it has control over
+SQL dialect and sophisticated support for working with GDAL ready data. 
 
 We haven't explored this comprehensively so [feedback is very welcome](https://github.com/hypertidy/lazysf/issues).
 
