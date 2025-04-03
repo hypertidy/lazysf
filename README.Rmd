@@ -53,14 +53,14 @@ We make no claims about performance or convenience, it will be affected by your 
 
 Performance can be excellent, and may be very competitive compared to reading an entire data source layer into memory. Really good drivers include ESRI Shapefile, Geopackage, PostgreSQL/PostGIS, MapInfo File, ESRI FileGDB, but there are dozens to choose from. 
 
-A query on a CSV, GeoJSON, or KML file (local or remote) is entirely subject to the performance of the matching [GDAL driver](https://gdal.org/drivers/vector/index.html).
+A query on a CSV, GeoJSON, or KML file (local or remote) is entirely subject to the performance of the matching [GDAL driver](https://gdal.org/en/stable/drivers/vector/index.html).
 
 * big text files will be slow, they aren't a format suitable for database-like access
 * geometry is not automatic for real database formats, and will depend on the SQL used
 * geometry *is* automatic for non-DB formats
 * non-DB formats without a geometry column name will be called `_ogr_geometry_`, other non-DB formats like
 ESRI's geodatabase have other names like `SHAPE`
-* non-DB formats have access to special variable names and functions, listed on the [OGRSQL page](https://gdal.org/user/ogr_sql_dialect.html). 
+* non-DB formats have access to special variable names and functions, listed on the [OGRSQL page](https://gdal.org/en/stable/user/ogr_sql_dialect.html). 
 
 Real DBs don't have these special OGRSQL features, but they do have their own special syntax which for the most part can be sent straight through. 
 
@@ -137,7 +137,7 @@ lazysf(geojson)
 Also works on PostgreSQL and many others as per GDAL vector driver support.   
 
 
-To create a connection string for [GDAL for PostgreSQL](https://gdal.org/drivers/vector/pg.html) use something like
+To create a connection string for [GDAL for PostgreSQL](https://gdal.org/en/stable/drivers/vector/pg.html) use something like
 
 ```R
 DSN <- glue::glue("PG:host='{host}' dbname='{dbname}' user='{user}' password='{password}'")
@@ -161,8 +161,6 @@ lazysf(glue::glue("SQLite:{gpkgfile}"))
 
 That's not very spatial, but we can dig in to find out what else is there. 
 
-
-See https://twitter.com/mdsumner/status/1306937694467940353?s=20 for more (but a SQLite in GDAL returns character not binary geom ... so WIP)
 
 
   

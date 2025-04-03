@@ -26,16 +26,15 @@ We haven't explored this comprehensively so [feedback is very welcome](https://g
 
 ## OGRSQL 
 
-https://gdal.org/user/ogr_sql_dialect.html
+https://gdal.org/en/stable/user/ogr_sql_dialect.html
 
-Unfortunate label. 
 
 ## Real databases and file databases
 
 
 PG, GPKG etc
 
-https://gdal.org/user/sql_sqlite_dialect.html
+https://gdal.org/en/stable/user/sql_sqlite_dialect.html
 
 ## Virtual SQL
 
