@@ -100,7 +100,7 @@ Note that this kind of query works on a "real database", so consider relating yo
 ```{r real-gpkg}
 library(lazysf)
 library(dplyr)
-f <- system.file("gpkg/nc.gpkg", package = "sf", mustWork = TRUE)
+f <- system.file("extdata/north-carolina-counties.gpkg", package = "lazysf", mustWork = TRUE)
 #lazysf(f) %>% group_by(BIR74) %>% slice_min(PERIMETER) %>% show_query()
 
 

@@ -2,84 +2,82 @@
 #'
 #' A lazy data frame for GDAL drawings ('vector data sources'). lazysf is DBI
 #' compatible and designed to work with dplyr. It should work with any data source
-#' (file, url, connection string) readable by the sf package function `sf_read`.
+#' (file, url, connection string) readable by GDAL via the gdalraster package.
 #'
 #' Lazy means that the usual behaviour of reading the entirety of a data source
 #' into memory is avoided. Printing the output results in a preview query being
 #' run and displayed (the top few rows of data).
 #'
-#' The output of `lazysf()` is a 'tbl_SFSQLConnection` that extends `tbl_dbi` and
-#' may be used with functions and workflows in the normal DBI way, see [SFSQL()] for
+#' The output of `lazysf()` is a 'tbl_GDALVectorConnection` that extends `tbl_dbi` and
+#' may be used with functions and workflows in the normal DBI way, see [GDALSQL()] for
 #' the lazysf DBI support.
 #'
-#' The kind of q uery that may be run will depend on the type of format, see the
+#' The kind of query that may be run will depend on the type of format, see the
 #' list on the GDAL vector drivers page. For some details see the
 #' [GDALSQL vignette](https://hypertidy.github.io/lazysf/articles/GDALSQL.html).
 #'
-#' When dplyr is attached the lazy data frame can be used with the usual verbs
+#' When dplyr is attached the lazy data frame can be used with the usual
 #' verbs (filter, select, distinct, mutate, transmute, arrange, left_join, pull,
 #' collect etc.). To see the result as a SQL query rather than a data frame
 #' preview use `dplyr::show_query()`.
 #'
-#' To obtain an in memory data frame use an explict `collect()` or `st_as_sf()`.
-#' A call to `collect()` is triggered by `st_as_sf()` and will add the sf class
-#' to the output. A result may not contain a geometry column, and so cannot be
-#' convert to an sf data frame. Using `collect()` on its own returns an
-#' unclassed data.frame and may include a classed `sfc` geometry column.
+#' To obtain an in memory data frame use an explicit `collect()`.
+#' If the sf package is installed, `st_as_sf()` will collect and convert to an
+#' sf data frame. A result may not contain a geometry column, in which case
+#' `st_as_sf()` will fail.
 #'
 #' As well as `collect()` it's also possible to use `tibble::as_tibble()` or
 #' `as.data.frame()` or `pull()` which all force computation and retrieve the
 #' result.
 #'
-#' @inheritParams sf::read_sf
 #' @param x the data source name (file path, url, or database connection string
-#'   - analogous to [sf::read_sf()] 'dsn')
+#'   - analogous to a GDAL dsn) or a `GDALVectorConnection`
+#' @param layer layer name; defaults to the first layer
 #' @param ... ignored
 #' @param query SQL query to pass in directly
-#' @return a 'tbl_SFSQLConnection', extending 'tbl_lazy' (something that works
+#' @return a 'tbl_GDALVectorConnection', extending 'tbl_lazy' (something that works
 #'   with dplyr verbs, and only shows a preview until you commit the result via
 #'   [collect()]) see Details
 #' @export
 #'
 #' @examples
-#' # online sources can work
-#' geojson <- file.path("https://raw.githubusercontent.com/SymbolixAU",
-#'                      "geojsonsf/master/inst/examples/geo_melbourne.geojson")
-#' \donttest{
-#' lazysf(geojson)
-#' }
-#'
-#' ## normal file stuff
-#' ## (Geopackage is an actual database so with SELECT we must be explicit re geom-column)
-#' f <- system.file("gpkg/nc.gpkg", package = "sf", mustWork = TRUE)
+#' ## a multi-layer file
+#' f <- system.file("extdata/multi.gpkg", package = "lazysf", mustWork = TRUE)
 #' lazysf(f)
-#' lazysf(f, query = "SELECT AREA, FIPS, geom FROM \"nc.gpkg\" WHERE AREA < 0.1")
-#' lazysf(f, layer = "nc.gpkg") %>% dplyr::select(AREA, FIPS, geom) %>% dplyr::filter(AREA < 0.1)
+#'
+#' \donttest{
+#' ## Geopackage (an actual database, so with SELECT we must be explicit re geom-column)
+#' nc <- system.file("extdata/north-carolina-counties.gpkg", package = "lazysf", mustWork = TRUE)
+#' lazysf(nc)
+#' lazysf(nc, query = "SELECT AREA, FIPS, geom FROM \"nc.gpkg\" WHERE AREA < 0.1")
+#' lazysf(nc, layer = "nc.gpkg") |> dplyr::select(AREA, FIPS, geom) |> dplyr::filter(AREA < 0.1)
 #'
 #' ## the famous ESRI Shapefile (not an actual database)
-#' ## so if we SELECT we must be ex
-#' shp <- lazysf(system.file("shape/nc.shp", package = "sf", mustWork = TRUE))
+#' shdb <- system.file("extdata/north-carolina-counties.shp", package = "lazysf", mustWork = TRUE)
+#' shp <- lazysf(shdb))
 #' library(dplyr)
-#' shp %>%
-#'  filter(NAME %LIKE% 'A%') %>%
-#'  mutate(abc = 1.3) %>%
-#'  select(abc, NAME, `_ogr_geometry_`) %>%
-#'  arrange(desc(NAME))  #%>% show_query()
-#'
-#'  ## a multi-layer file
-#'  system.file("extdata/multi.gpkg", package = "lazysf", mustWork = TRUE)
+#' shp |>
+#'  filter(NAME %LIKE% 'A%') |>
+#'  mutate(abc = 1.3) |>
+#'  select(abc, NAME, `_ogr_geometry_`) |>
+#'  arrange(desc(NAME))
+#' }
 lazysf <- function(x, layer, ...) {
   UseMethod("lazysf")
 }
+#' @param geom_format geometry output format, passed to [dbConnect()]
+#' @param dialect SQL dialect, passed to [dbConnect()]
 #' @name lazysf
 #' @export
-lazysf.character <- function(x, layer, ..., query = NA) {
-  db <- dbConnect(SFSQL(), x)
+lazysf.character <- function(x, layer, ..., query = NA,
+                             geom_format = getOption("lazysf.geom_format", "WKB"),
+                             dialect = getOption("lazysf.dialect", "")) {
+  db <- dbConnect(GDALSQL(), x, geom_format = geom_format, dialect = dialect)
   lazysf(db, layer, ..., query = query)
 }
 #' @name lazysf
 #' @export
-lazysf.SFSQLConnection <- function(x, layer, ..., query = NA) {
+lazysf.GDALVectorConnection <- function(x, layer, ..., query = NA) {
   if (!is.na(query)) {
     if (!missing(layer)) message("'layer' argument ignored, using 'query'")
     return(dplyr::tbl(x, dbplyr::sql(query)))
@@ -91,37 +89,48 @@ lazysf.SFSQLConnection <- function(x, layer, ..., query = NA) {
   dplyr::tbl(x, layer)
 }
 
+
 #' Force computation of a GDAL query
 #'
 #' Convert lazysf to an in memory data frame or sf object
 #'
 #' `collect()` retrieves data into a local table, preserving grouping and ordering.
 #'
-#' `st_as_sf()` retrieves data into a local sf data frame (will succeed only if there is a geometry column of class `sfc`)
+#' `st_as_sf()` retrieves data into a local sf data frame. Requires the sf
+#' package to be installed, and will succeed only if the result contains a
+#' geometry column (WKB raw vectors). The method is registered when sf is loaded.
 #'
 #' @param x output of [lazysf()]
 #' @param ... passed to [collect()]
-#' @name st_as_sf
-#' @return a data frame from `collect()`, sf data frame from `st_as_sf()` (only if it contains an `sfc` geometry column)
+#' @name collect
+#' @return a data frame from `collect()`, sf data frame from `st_as_sf()`
+#'   (only if it contains geometry)
 #' @seealso lazysf
-#' @importFrom sf st_as_sf
 #' @importFrom dplyr collect
-#' @export
-#' @export st_as_sf
 #' @export collect
-#' @aliases collect
 #' @examples
-#' f <- system.file("gpkg/nc.gpkg", package = "sf", mustWork = TRUE)
-#' lsf <- lazysf(f) %>% dplyr::select(AREA, FIPS, geom) %>% dplyr::filter(AREA < 0.1)
-#' st_as_sf(lsf)
+#' f <- system.file("extdata/multi.gpkg", package = "lazysf", mustWork = TRUE)
+#' lsf <- lazysf(f)
+#' dplyr::collect(lsf)
 #'
-#'
-st_as_sf.tbl_SFSQLConnection <- function(x, ...) {
-  sf::st_as_sf(dplyr::collect(x, ...))
-}
-
-
-#' @name st_as_sf
-#' @usage collect(x, ...)
 "collect"
+
+## registered conditionally in .onLoad when sf is available
+st_as_sf.tbl_GDALVectorConnection <- function(x, ...) {
+  if (!requireNamespace("sf", quietly = TRUE)) {
+    stop("Package 'sf' is required to convert to sf. ",
+         "Install with: install.packages('sf')", call. = FALSE)
+  }
+  d <- dplyr::collect(x, ...)
+  ## find WKB geometry columns (list columns of raw vectors)
+  is_wkb <- vapply(d, function(col) {
+    is.list(col) && length(col) > 0 && is.raw(col[[1L]])
+  }, logical(1))
+  if (!any(is_wkb)) {
+    stop("No WKB geometry column found in result", call. = FALSE)
+  }
+  geom_col <- names(which(is_wkb))[1L]
+  d[[geom_col]] <- sf::st_as_sfc(d[[geom_col]])
+  sf::st_as_sf(d)
+}
 

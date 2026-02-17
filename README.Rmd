@@ -103,7 +103,7 @@ This is a basic example.
 
 ```{R basic}
 library(lazysf)
-f <- system.file("gpkg/nc.gpkg", package = "sf", mustWork = TRUE)
+f <- system.file("extdata/north-carolina-counties.gpkg", package = "lazysf", mustWork = TRUE)
 
 ## specify only the data source
 lazysf(f)
@@ -118,7 +118,8 @@ lazysf(f, layer = "nc.gpkg") %>%
 
 
 ## above was a real database (Geopackage), now with an actual shapefile
-shp <- lazysf(system.file("shape/nc.shp", package = "sf", mustWork = TRUE))
+shdb <- system.file("extdata/north-carolina-counties.shp", package = "lazysf", mustWork = TRUE)
+shp <- lazysf(shdb)
 library(dplyr)
 shp %>%
  filter(NAME %LIKE% 'A%') %>%
@@ -158,7 +159,7 @@ have used the driver-prefix to make GDAL choose its SQLite driver rather than th
 
 ```{r Geopackage-SQLite}
 library(lazysf)
-gpkgfile <- system.file("gpkg/nc.gpkg", package = "sf", mustWork = TRUE)
+gpkgfile <- system.file("extdata/north-carolina-counties.gpkg", package = "lazysf", mustWork = TRUE)
 lazysf(glue::glue("SQLite:{gpkgfile}"))
 ```
 

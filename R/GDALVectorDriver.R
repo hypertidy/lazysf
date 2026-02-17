@@ -1,7 +1,11 @@
 
-#' Class SFSQLDriver.
+#' @import DBI
+#' @import methods
+NULL
+
+#' Class GDALVectorDriver
 #'
-#' SFSQLDriver objects are created by [SFSQL()] and used to select the correct
+#' GDALVectorDriver objects are created by [GDALSQL()] and used to select the correct
 #' method in [DBI::dbConnect()].
 #' They are a superclass of the [DBI::DBIDriver-class] class, and used purely for dispatch.
 #'
@@ -10,17 +14,14 @@
 #'
 #' @keywords internal
 #' @export
-setClass("SFSQLDriver", contains = "DBIDriver")
+setClass("GDALVectorDriver", contains = "DBIDriver")
 
-
-
-#' @rdname SFSQLDriver-class
+#' @rdname GDALVectorDriver-class
 #' @export
-setMethod("dbDataType", "SFSQLDriver", function(dbObj, obj, ...) {
+setMethod("dbDataType", "GDALVectorDriver", function(dbObj, obj, ...) {
   ## see "type of the fields" http://www.gdal.org/ogr_sql.html
   if (is.factor(obj)) return("character")
   if (is.data.frame(obj)) return(callNextMethod(dbObj, obj))
-
   switch(typeof(obj),
          logical = "boolean",
          character = "character",
@@ -31,37 +32,27 @@ setMethod("dbDataType", "SFSQLDriver", function(dbObj, obj, ...) {
          blob = "character",
          stop("Unsupported type", call. = FALSE)
   )
-}
+})
 
-
-)
-
-#' @rdname SFSQLDriver-class
+#' @rdname GDALVectorDriver-class
 #' @export
-setMethod("dbIsValid", "SFSQLDriver", function(dbObj, ...) {
+setMethod("dbIsValid", "GDALVectorDriver", function(dbObj, ...) {
   TRUE
 })
 
-
-#' @rdname SFSQLDriver-class
+#' @rdname GDALVectorDriver-class
 #' @export
-setMethod("dbUnloadDriver", "SFSQLDriver", function(drv, ...) {
- TRUE
+setMethod("dbUnloadDriver", "GDALVectorDriver", function(drv, ...) {
+  TRUE
 })
 
-
-#' @rdname SFSQLDriver-class
+#' @rdname GDALVectorDriver-class
 #' @export
-setMethod("dbGetInfo", "SFSQLDriver",
+setMethod("dbGetInfo", "GDALVectorDriver",
           function(dbObj, ...) {
-            vers <- sf::sf_extSoftVersion()
-            list(name = "SFSQLDriver",
+            vers <- gdalraster::gdal_version()
+            list(name = "GDALVectorDriver",
                  note = "virtual SQL driver for GDAL",
-                 driver.version = vers["GDAL"],
+                 driver.version = vers[1L],
                  client.version = utils::packageVersion("lazysf"))
           })
-
-
-
-
-

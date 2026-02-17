@@ -216,6 +216,7 @@ lazysf(f, layer = "nc.gpkg") %>%
 
 
 ## above was a real database (Geopackage), now with an actual shapefile
+s
 shp <- lazysf(system.file("shape/nc.shp", package = "sf", mustWork = TRUE))
 library(dplyr)
 shp %>%
