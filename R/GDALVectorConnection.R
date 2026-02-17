@@ -40,7 +40,7 @@ setMethod("show", "GDALVectorConnection", function(object) {
     dsn <- paste0(strsplit(dsn, "\\s")[[1L]][1L], "...")
   }
   cat("      DSN: ", dsn, "\n", sep = "")
-  cat("  dialect: ", if (nzchar(object@dialect)) object@dialect else "(default)", "\n", sep = "")
+  cat("  dialect: ", if (nzchar(object@dialect)) object@dialect else "(GDAL default)", "\n", sep = "")
   cat(" geometry: ", object@geom_format, "\n", sep = "")
   tables <- tryCatch(DBI::dbListTables(object), error = function(e) "(unavailable)")
   cat("   tables: ", paste(tables, collapse = ", "), "\n", sep = "")
@@ -133,11 +133,3 @@ setMethod("dbExistsTable", c(conn = "GDALVectorConnection"),
           function(conn, name, ...) {
             name %in% dbListTables(conn, ...)
           })
-
-#' @importFrom dbplyr db_connection_describe
-#' @export
-db_connection_describe.GDALVectorConnection <- function(con, ...) {
-  dsn <- con@DSN
-  if (nchar(dsn) > 60) dsn <- paste0(substr(dsn, 1, 57), "...")
-  paste0("GDAL [", dsn, "]")
-}

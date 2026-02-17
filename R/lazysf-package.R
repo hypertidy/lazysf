@@ -10,7 +10,7 @@
 #' In addition it will print the number of rows actually read.
 #'
 #' Default geometry format can be set with `options(lazysf.geom_format = "WKB")`.
-#' Default SQL dialect can be set with `options(lazysf.dialect = "")`.
+#' Default SQL dialect can be set with `options(lazysf.dialect = "SQLITE")`.
 #' @name lazysf-package
 NULL
 

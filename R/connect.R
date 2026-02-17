@@ -29,8 +29,9 @@ GDALSQL <- function() {
 #' @param readonly open in readonly mode (`TRUE` is the only option currently)
 #' @param geom_format geometry output format: `"WKB"` (default), `"WKT"`,
 #'   `"NONE"`, or `"BBOX"`
-#' @param dialect SQL dialect: `""` (default, let GDAL choose), `"OGRSQL"`,
-#'   or `"SQLITE"`
+#' @param dialect SQL dialect: `"SQLITE"` (default), `"OGRSQL"`,
+#'   `"INDIRECT_SQLITE"`, or `""` (let GDAL choose). SQLITE is recommended
+#'   as it supports subqueries (required for dbplyr) and spatial SQL functions.
 #' @param ... ignored
 #' @export
 #' @examples
@@ -40,7 +41,7 @@ GDALSQL <- function() {
 setMethod("dbConnect", "GDALVectorDriver",
           function(drv, DSN = "", readonly = TRUE,
                    geom_format = getOption("lazysf.geom_format", "WKB"),
-                   dialect = getOption("lazysf.dialect", ""),
+                   dialect = getOption("lazysf.dialect", "SQLITE"),
                    ...) {
             if (nchar(DSN) < 1) {
               stop("DSN must be a valid data source name ",

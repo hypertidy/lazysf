@@ -54,7 +54,7 @@
 #'
 #' ## the famous ESRI Shapefile (not an actual database)
 #' shdb <- system.file("extdata/north-carolina-counties.shp", package = "lazysf", mustWork = TRUE)
-#' shp <- lazysf(shdb))
+#' shp <- lazysf(shdb)
 #' library(dplyr)
 #' shp |>
 #'  filter(NAME %LIKE% 'A%') |>
@@ -71,7 +71,7 @@ lazysf <- function(x, layer, ...) {
 #' @export
 lazysf.character <- function(x, layer, ..., query = NA,
                              geom_format = getOption("lazysf.geom_format", "WKB"),
-                             dialect = getOption("lazysf.dialect", "")) {
+                             dialect = getOption("lazysf.dialect", "SQLITE")) {
   db <- dbConnect(GDALSQL(), x, geom_format = geom_format, dialect = dialect)
   lazysf(db, layer, ..., query = query)
 }

@@ -19,7 +19,9 @@
   via `options(lazysf.geom_format = ...)`.
 
 * New `dialect` argument to `dbConnect()` controls SQL dialect:
-  `""` (let GDAL choose, the default), `"OGRSQL"`, or `"SQLITE"`.
+  `"SQLITE"` (the default), `"OGRSQL"`, `"INDIRECT_SQLITE"`, or `""` (let GDAL
+  choose). SQLITE is the default because it supports subqueries (required for
+  dbplyr verb chaining) and spatial SQL functions like `ST_Area()`.
   Configurable globally via `options(lazysf.dialect = ...)`.
 
 * `lazysf()` now passes `...` through to `dbConnect()`, so `geom_format` and
