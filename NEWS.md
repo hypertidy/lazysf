@@ -1,3 +1,7 @@
+# lazysf 0.3.0
+
+* Aligned to dbplyr 2.0. 
+
 # lazysf 0.2.0
 
 * Fixed doc links thanks to CRAN. 

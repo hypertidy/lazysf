@@ -1,6 +1,6 @@
 Package: lazysf
 Title: Delayed Read for 'GDAL' Vector Data Sources
-Version: 0.2.0
+Version: 0.3.0
 Authors@R: 
     person(given = "Michael",
            family = "Sumner",
@@ -14,13 +14,13 @@ Description: Lazy read for drawings. A 'dplyr' back end for data sources support
 License: GPL-3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports: 
     sf (>= 0.7-0),
     methods,
     DBI,
     tibble,
-    dbplyr,
+    dbplyr (>= 2.0.0),
     magrittr, 
     dplyr
 URL: https://github.com/hypertidy/lazysf, https://hypertidy.github.io/lazysf/
@@ -34,6 +34,7 @@ Collate:
     'SFSQLDriver.R'
     'SFSQLResult.R'
     'connect.R'
+    'dbplyr.R'
     'lazysf-package.R'
     'lazysf.R'
     'utils-pipe.R'
