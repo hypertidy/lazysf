@@ -10,9 +10,14 @@
 #' @export
 sql_query_fields.GDALVectorConnection <- function(con, sql, ...) {
   ## Generate LIMIT 0 instead of the default WHERE (0 = 1).
-  ## The sql argument is already formatted by dbplyr —
-  ## either a quoted table name or a wrapped subquery.
-  paste0("SELECT * FROM ", sql, " LIMIT 0")
+  ## sql is either a quoted table name (e.g. `"nc"`) or a SQL statement.
+  ## Subqueries must be wrapped in parentheses with an alias.
+  sql_chr <- as.character(sql)
+  if (grepl("^\\s*SELECT\\s", sql_chr, ignore.case = TRUE)) {
+    paste0("SELECT * FROM (", sql_chr, ") AS _q LIMIT 0")
+  } else {
+    paste0("SELECT * FROM ", sql_chr, " LIMIT 0")
+  }
 }
 
 ## Build an empty data frame from OGR layer definition.

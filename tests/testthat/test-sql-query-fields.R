@@ -9,6 +9,16 @@ test_that("sql_query_fields generates LIMIT 0 SQL", {
   expect_match(sql, "nc")
 })
 
+test_that("sql_query_fields wraps subqueries in parentheses", {
+  skip_if_no_sqlite()
+  con <- DBI::dbConnect(lazysf::GDALSQL(), nc_gpkg())
+  on.exit(DBI::dbDisconnect(con))
+  subquery <- dbplyr::sql("SELECT AREA, NAME FROM nc WHERE AREA < 0.1")
+  sql <- dbplyr::sql_query_fields(con, subquery)
+  expect_match(sql, "^SELECT \\* FROM \\(")
+  expect_match(sql, "LIMIT 0$")
+})
+
 test_that("field discovery returns correct column names", {
   skip_if_no_sqlite()
   lf <- lazysf(nc_gpkg())
