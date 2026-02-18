@@ -45,5 +45,3 @@ Collate:
     'sql-query-fields.R'
     'sql-translation.R'
     'zzz.R'
-URL: https://github.com/hypertidy/lazysf, https://hypertidy.github.io/lazysf/
-BugReports: https://github.com/hypertidy/lazysf/issues
