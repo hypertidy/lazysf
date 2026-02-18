@@ -1,4 +1,4 @@
-#' @include GDALVectorResult.R GDALVectorDriver.R
+#' @include GDALVectorResult.R
 #' @importClassesFrom DBI DBIConnection
 #' @importMethodsFrom DBI dbSendQuery dbReadTable dbListTables dbListFields dbExistsTable dbGetInfo dbIsValid dbDisconnect
 NULL
@@ -71,20 +71,20 @@ setMethod("dbSendQuery", "GDALVectorConnection",
           function(conn, statement, ...) {
             sql <- as.character(statement)
 
-            ## dbplyr sends WHERE (0 = 1) for field/type discovery.
-            ## Instead of rewriting the SQL, we open the layer directly
-            ## and return an empty data frame with the correct schema.
-            if (grepl("WHERE \\(0 = 1\\)", sql)) {
+            ## dbplyr field/type discovery: intercept and use OGR metadata
+            ## instead of executing SQL.  sql_query_fields() generates
+            ## "SELECT * FROM <tbl> LIMIT 0"; older dbplyr used
+            ## "WHERE (0 = 1)".  For named tables we can read the schema
+            ## from $getLayerDefn() — no SQL execution at all.
+            if (grepl("LIMIT 0\\s*$", sql) ||
+                grepl("WHERE \\(0 = 1\\)", sql)) {
               tbl_name <- .extract_table_name(sql)
               if (!is.null(tbl_name)) {
                 lyr <- new(GDALVector, conn@DSN, tbl_name, TRUE)
                 lyr$returnGeomAs <- conn@geom_format
                 lyr$quiet <- TRUE
-                geom_info <- .geom_info(lyr)
-                layer_data <- lyr$fetch(0)
+                layer_data <- .schema_from_defn(lyr, conn@geom_format)
                 lyr$close()
-                layer_data <- .mark_geometry(layer_data,
-                                             conn@geom_format, geom_info)
                 if (getOption("lazysf.query.debug", FALSE)) {
                   message(sprintf(
                     "-------------\nlazysf debug ....\n%s\n%s",
@@ -93,7 +93,7 @@ setMethod("dbSendQuery", "GDALVectorConnection",
                 return(new("GDALVectorResult", layer_data = layer_data))
               }
               ## subquery case: fall through to normal execution
-              ## (SQLITE dialect handles WHERE (0 = 1) natively)
+              ## (SQLITE dialect handles WHERE (0 = 1) and LIMIT 0)
             }
 
             ## GDALVector constructor: dsn, layer, read_only, open_options,

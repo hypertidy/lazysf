@@ -1,6 +1,6 @@
 Package: lazysf
 Title: Delayed Read for 'GDAL' Vector Data Sources
-Version: 0.3.0.9005
+Version: 0.3.0.9006
 Authors@R: 
     person(given = "Michael",
            family = "Sumner",
@@ -42,4 +42,5 @@ Collate:
     'lazysf-package.R'
     'lazysf.R'
     'sql-translation.R'
+    'sql-query-fields.R'
     'zzz.R'
