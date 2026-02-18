@@ -2,15 +2,14 @@
 
 ## Breaking changes
 
-* The backend now uses gdalraster instead of sf for all GDAL access. sf moves
-  from Imports to Suggests and is only needed for `st_as_sf()`.
+* The backend now uses gdalraster for all GDAL access. sf moves
+from Imports to Suggests and is only used for `st_as_sf()`.
 
 * DBI class names renamed: `SFSQLConnection` → `GDALVectorConnection`,
   `SFSQLDriver` → `GDALVectorDriver`, `SFSQLResult` → `GDALVectorResult`.
   The driver constructor is now `GDALSQL()` (was `SFSQL()`).
 
-* The magrittr pipe (`%>%`) is no longer re-exported. Use R's native pipe (`|>`)
-  or load magrittr yourself.
+* The magrittr pipe (`%>%`) is no longer re-exported. Use R's native pipe (`|>`).
 
 ## New features
 
