@@ -1,4 +1,4 @@
-#' @include GDALVectorResult.R
+#' @include GDALVectorResult.R GDALVectorDriver.R
 #' @importClassesFrom DBI DBIConnection
 #' @importMethodsFrom DBI dbSendQuery dbReadTable dbListTables dbListFields dbExistsTable dbGetInfo dbIsValid dbDisconnect
 NULL

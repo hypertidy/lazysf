@@ -31,9 +31,9 @@ Suggests:
     rmarkdown
 VignetteBuilder: knitr
 Collate: 
+    'GDALVectorDriver.R'
     'GDALVectorResult.R'
     'GDALVectorConnection.R'
-    'GDALVectorDriver.R'
     'connect.R'
     'dbplyr.R'
     'lazysf-package.R'

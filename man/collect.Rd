@@ -27,7 +27,8 @@ Convert lazysf to an in memory data frame or sf object
 
 \code{st_as_sf()} retrieves data into a local sf data frame. Requires the sf
 package to be installed, and will succeed only if the result contains a
-geometry column (WKB raw vectors). The method is registered when sf is loaded.
+geometry column (WKB or WKT via \code{geom_format}). The method is registered
+when sf is loaded.
 }
 \examples{
 f <- system.file("extdata/multi.gpkg", package = "lazysf", mustWork = TRUE)

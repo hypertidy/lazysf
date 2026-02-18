@@ -22,7 +22,7 @@ connection string, or URL}
 \item{readonly}{open in readonly mode (\code{TRUE} is the only option currently)}
 
 \item{geom_format}{geometry output format: \code{"WKB"} (default), \code{"WKT"},
-\code{"NONE"}, or \code{"BBOX"}}
+\code{"NONE"}, or \code{"BBOX"} (alias \code{"RCT"}). Case-insensitive.}
 
 \item{dialect}{SQL dialect: \code{"SQLITE"} (default), \code{"OGRSQL"},
 \code{"INDIRECT_SQLITE"}, or \code{""} (let GDAL choose). SQLITE is recommended
