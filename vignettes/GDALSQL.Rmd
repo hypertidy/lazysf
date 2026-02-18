@@ -1,8 +1,8 @@
 ---
-title: "GDAL SQL"
+title: "GDAL SQL with lazysf"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{GDAL SQL}
+  %\VignetteIndexEntry{GDAL SQL with lazysf}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,111 +16,217 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(lazysf)
-```
-
-
-GDAL is a complex tool and there are many intricacies to using SQL with it. We recommend using [gdalraster](https://CRAN.R-project.org/package=gdalraster) instead, it has control over
-SQL dialect and sophisticated support for working with GDAL ready data. 
-
-We haven't explored this comprehensively so [feedback is very welcome](https://github.com/hypertidy/lazysf/issues).
-
-
-## OGRSQL 
-
-https://gdal.org/en/stable/user/ogr_sql_dialect.html
-
-
-## Real databases and file databases
-
-
-PG, GPKG etc
-
-https://gdal.org/en/stable/user/sql_sqlite_dialect.html
-
-## Virtual SQL
-
-shapefile, OpenFileGDB etc. 
-
-ESRI "Geodatabases", known as 'OpenFileGDB' to GDAL *are not real databases*. Amazing!  Sadly this means we cannot perform subquerys, which occurs with some contructs. 
-
-For example, this is fine - filter where on variables and then count the number of rows. There is only one 'SELECT ...' statement. 
-
-```R
-## here f is a file path to the directory containing list_2d_building_polys_hobart from TheLIST opendata
-lazysf(f) %>% filter(SHAPE_Area < 15) %>% tally() %>% show_query()
-<SQL>
-SELECT COUNT(*) AS "n"
-FROM "list_2d_building_polys_hobart"
-WHERE ("SHAPE_Area" < 15.0)
-
-## we predicted this woud work, even on our not-a-database geodatabase
-lazysf(f) %>% filter(SHAPE_Area < 15) %>% tally() %>% collect()
-# A tibble: 1 x 1
-      n
-  <int>
-1    56
-```
-
-However, if we do something more complex like a GROUP BY and then `slice_min()` we cannot run the query. 
-
-```R
-lazysf(f) %>% group_by(BUILD_TY) %>% slice_min(SHAPE_Area) %>% show_query()
-<SQL>
-SELECT "BUILD_ID", "BUILD_TY", "BUILD_NAME", "BLD_PUR", "MEAN_HGT", "UFI", "CREATED_ON", "LIST_GUID", "NOM_REG_NO", "SHAPE_Length", "SHAPE_Area", "SHAPE"
-FROM (SELECT "BUILD_ID", "BUILD_TY", "BUILD_NAME", "BLD_PUR", "MEAN_HGT", "UFI", "CREATED_ON", "LIST_GUID", "NOM_REG_NO", "SHAPE_Length", "SHAPE_Area", "SHAPE", RANK() OVER (PARTITION BY "BUILD_TY" ORDER BY "SHAPE_Area") AS "q01"
-FROM "list_2d_building_polys_hobart") "q01"
-WHERE ("q01" <= 1)
-
-
-lazysf(f) %>% group_by(BUILD_TY) %>% slice_min(SHAPE_Area)
-Error in CPL_read_ogr(dsn, layer, query, as.character(options), quiet,  : 
-  Query execution failed, cannot open layer.
-In addition: Warning message:
-In CPL_read_ogr(dsn, layer, query, as.character(options), quiet,  :
-
-```
-
-Even a simpler version `slice_min()` without grouping fails because it would be generating a subquery to do the work (this might change, but for now consider if you can re-imagine your query as something that will not require nested statements, or write it yourself.)
-
-```R
-lazysf(f) %>% slice_min(SHAPE_Area) %>% show_query()
-<SQL>
-SELECT "BUILD_ID", "BUILD_TY", "BUILD_NAME", "BLD_PUR", "MEAN_HGT", "UFI", "CREATED_ON", "LIST_GUID", "NOM_REG_NO", "SHAPE_Length", "SHAPE_Area", "SHAPE"
-FROM (SELECT "BUILD_ID", "BUILD_TY", "BUILD_NAME", "BLD_PUR", "MEAN_HGT", "UFI", "CREATED_ON", "LIST_GUID", "NOM_REG_NO", "SHAPE_Length", "SHAPE_Area", "SHAPE", RANK() OVER (ORDER BY "SHAPE_Area") AS "q01"
-FROM "list_2d_building_polys_hobart") "q01"
-WHERE ("q01" <= 1)
-```
-
-At worst, we can GROUP_BY and filter in the database and then sub select. 
-
-Note that this kind of query works on a "real database", so consider relating your experiences to your friendly local data provider. 
-
-
-
-```{r real-gpkg}
-library(lazysf)
 library(dplyr)
-f <- system.file("extdata/nc.gpkg", package = "lazysf", mustWork = TRUE)
-lazysf(f) %>% group_by(BIR74) %>% slice_min(PERIMETER) %>% show_query()
-
-
-lazysf(f) %>% group_by(BIR74) %>% slice_min(PERIMETER) %>% 
-  select(NAME, PERIMETER, geom) %>% collect() |> sf::st_as_sf()
 ```
 
-Other things are less obvious, why doesn't this work? The tally fails but filter/collect is fine
+## Overview
 
-```R
-lazysf("C:/temp/temp.xlsx") %>% group_by(a) %>% tally() %>% show_query()
-<SQL>
-SELECT "a", COUNT(*) AS "n"
-FROM "Encoding Time"
-GROUP BY "a"
+lazysf translates dplyr verbs into SQL and executes them via GDAL. The SQL
+dialect determines what's possible — and lazysf defaults to SQLITE, which is
+the most capable option.
 
+GDAL provides two SQL dialects for querying vector data:
 
-lazysf("C:/temp/temp.xlsx") %>% filter(d < 675868) %>% group_by(a) %>% collect()
-# A tibble: 31 x 6
-# Groups:   a [1]
-   a               
-....
+1. **SQLITE**: A full SQLite engine embedded in GDAL. Supports subqueries,
+   `GROUP BY`, `ORDER BY`, `CAST`, and spatial SQL functions. Available for
+   *any* format — GDAL runs SQLite in-process even for Shapefiles.
+2. **OGRSQL**: GDAL's native SQL engine. Simpler, format-specific features
+   like `%LIKE%`, but no subquery support.
+
+## SQLITE dialect (default)
+
+The SQLITE dialect is what makes lazysf work well with dbplyr. Most dplyr
+verbs generate subqueries, and only SQLITE handles those correctly.
+
+```{r sqlite-basics}
+f <- system.file("extdata/nc.gpkg", package = "lazysf", mustWork = TRUE)
+lf <- lazysf(f)
+
+## filter + select + arrange
+lf |>
+  filter(AREA < 0.1) |>
+  select(NAME, AREA, geom) |>
+  arrange(AREA) |>
+  collect()
+```
+
+Aggregation works:
+
+```{r sqlite-agg}
+lf |>
+  group_by(SID74) |>
+  summarise(n = n(), mean_area = mean(AREA, na.rm = TRUE)) |>
+  arrange(desc(n)) |>
+  head(5) |>
+  collect()
+```
+
+## Spatial SQL functions
+
+lazysf provides SQL translations for spatial functions. These translate R-style
+`st_*()` names to their SQL equivalents (e.g. `st_area()` → `ST_Area()`).
+
+### GDAL-native functions (no SpatiaLite needed)
+
+These work on any system with GDAL's SQLITE dialect:
+
+```{r gdal-native, eval = FALSE}
+## Measurements and accessors
+lf |>
+  mutate(
+    area = st_area(geom),
+    srid = st_srid(geom)
+  ) |>
+  head(5) |>
+  collect()
+```
+
+Functions available without SpatiaLite include `st_area()`, `st_srid()`,
+`st_minx()`, `st_maxx()`, `st_miny()`, `st_maxy()`.
+
+### SpatiaLite functions (need SpatiaLite-enabled GDAL)
+
+With SpatiaLite linked, the full set of spatial SQL becomes available:
+
+```{r spatialite, eval = FALSE}
+## Spatial predicates
+lf |>
+  filter(st_intersects(geom, st_geomfromtext("POLYGON((-80 35, -79 35, -79 36, -80 36, -80 35))"))) |>
+  collect()
+
+## Geometry operations
+lf |>
+  mutate(
+    wkt = st_astext(geom),
+    centroid = st_centroid(geom),
+    buffered = st_buffer(geom, 0.01)
+  ) |>
+  collect()
+
+## Coordinate transformation
+lf |>
+  mutate(geom_3857 = st_transform(geom, 3857)) |>
+  collect()
+```
+
+To check if SpatiaLite is available in your GDAL build:
+
+```{r check-spatialite, eval = FALSE}
+con <- dbConnect(GDALSQL(), f)
+tryCatch(
+  DBI::dbGetQuery(con, "SELECT spatialite_version()"),
+  error = function(e) message("SpatiaLite not available")
+)
+```
+
+## OGRSQL dialect
+
+OGRSQL is simpler but has format-specific features. Set it explicitly:
+
+```{r ogrsql, eval = FALSE}
+lf_ogr <- lazysf(f, dialect = "OGRSQL")
+
+## Basic filter/select work
+lf_ogr |>
+  filter(AREA < 0.1) |>
+  select(NAME, AREA) |>
+  collect()
+```
+
+OGRSQL limitations with dbplyr:
+
+- **No subqueries**: Operations like `rename()`, `transmute()`, or chained
+  verbs that dbplyr wraps in subqueries will fail.
+- **No `GROUP BY` with subqueries**: Simple aggregations may work, complex
+  ones won't.
+
+Use OGRSQL when you need format-specific features or are working with a data
+source where SQLITE dialect isn't available.
+
+## Direct SQL
+
+You can pass raw SQL directly:
+
+```{r direct-sql}
+lazysf(f, query = "SELECT NAME, AREA, geom FROM nc WHERE AREA < 0.1 ORDER BY AREA") |>
+  collect()
+```
+
+## GDAL quirks
+
+A few things to know when working with GDAL's SQL engine:
+
+**FID is sticky.** GDAL always includes the feature ID in results, like sf's
+sticky geometry column. Your SQL might select two columns but you'll get three
+back.
+
+**Table-qualified wildcards.** When dbplyr generates `SELECT "nc".*`, GDAL
+returns column names prefixed with the table name (`nc.AREA`, `nc.NAME`).
+lazysf strips these prefixes automatically.
+
+**No window functions.** `RANK()`, `ROW_NUMBER()`, `DENSE_RANK()` etc. are
+not available. This means `slice_min()`, `slice_max()`, and `slice_head()`
+won't work. Use `arrange() |> head()` instead.
+
+```{r no-window, eval = FALSE}
+## This won't work:
+lf |> slice_min(AREA, n = 5)
+
+## Do this instead:
+lf |> arrange(AREA) |> head(5) |> collect()
+```
+
+## Arrow stream interface
+
+For large datasets, the Arrow C stream interface provides columnar data
+transfer from GDAL, which can be significantly faster than the default
+row-based `fetch()`:
+
+```{r arrow, eval = FALSE}
+lf <- lazysf(f, use_arrow = TRUE)
+d <- lf |> collect()
+```
+
+This uses `GDALVector$getArrowStream()` via nanoarrow. Data moves from GDAL to
+R in batches of up to 65,536 features without going through the OGRFeature
+abstraction. Requires GDAL >= 3.6 and the nanoarrow package.
+
+The Arrow path produces identical results to the default path — same column
+names, same geometry handling, same wk type marking.
+
+## Geometry formats
+
+lazysf can return geometry in several formats:
+
+```{r geom-formats, eval = FALSE}
+## WKB (default) — compact binary, good for sf conversion
+lazysf(f, geom_format = "WKB")
+
+## WKT — human-readable text
+lazysf(f, geom_format = "WKT")
+
+## BBOX — bounding box per feature (fast, no full geometry)
+lazysf(f, geom_format = "BBOX")
+
+## NONE — no geometry at all (fastest for attribute-only queries)
+lazysf(f, geom_format = "NONE")
+```
+
+All geometry columns are marked with wk types (`wk::wkb`, `wk::wkt`,
+`wk::rct`) so they interoperate with the wk ecosystem and convert cleanly to
+sf via `sf::st_as_sf()`.
+
+## Global options
+
+lazysf respects these options for defaults:
+
+- `lazysf.dialect`: default SQL dialect (default: `"SQLITE"`)
+- `lazysf.geom_format`: default geometry format (default: `"WKB"`)
+- `lazysf.use_arrow`: default Arrow stream setting (default: `FALSE`)
+- `lazysf.query.debug`: if `TRUE`, print SQL and row counts for every query
+
+```{r debug, eval = FALSE}
+options(lazysf.query.debug = TRUE)
+lazysf(f) |> filter(AREA < 0.1) |> collect()
+## prints: SQL and row counts for each query dbplyr issues
 ```
