@@ -95,10 +95,13 @@ test_that("OGRSQL dialect omits spatial translations", {
   expect_no_match(sql_chr, "ST_Area", fixed = TRUE)
 })
 
-## -- SpatiaLite execution tests (skipped without SpatiaLite) ---------------
+## -- Spatial SQL execution tests -----------------------------------------------
+## GDAL registers its own ST_* functions into the SQLite dialect.
+## Some work without SpatiaLite (ST_Area, ST_SRID, ST_MinX etc.),
+## others need the SpatiaLite extension (ST_AsText, ST_Intersects, ST_Buffer).
 
-test_that("ST_Area executes with SpatiaLite", {
-  skip_if_no_spatialite()
+test_that("ST_Area executes via GDAL SQLite dialect", {
+  skip_if_no_sqlite()
   lf <- lazysf(nc_gpkg())
   d <- lf |>
     dplyr::mutate(computed_area = st_area(geom)) |>
@@ -108,7 +111,21 @@ test_that("ST_Area executes with SpatiaLite", {
   expect_true(is.numeric(d$computed_area))
 })
 
-test_that("ST_AsText executes with SpatiaLite", {
+test_that("ST_Area + ST_SRID chained operations execute", {
+  skip_if_no_sqlite()
+  lf <- lazysf(nc_gpkg())
+  d <- lf |>
+    dplyr::filter(st_area(geom) > 0) |>
+    dplyr::mutate(srid = st_srid(geom)) |>
+    utils::head(3) |>
+    dplyr::collect()
+  expect_true("srid" %in% names(d))
+  expect_equal(nrow(d), 3)
+})
+
+## -- SpatiaLite-only execution tests ------------------------------------------
+
+test_that("ST_AsText requires SpatiaLite", {
   skip_if_no_spatialite()
   lf <- lazysf(nc_gpkg())
   d <- lf |>
@@ -119,23 +136,11 @@ test_that("ST_AsText executes with SpatiaLite", {
   expect_match(d$wkt, "POLYGON|MULTIPOLYGON")
 })
 
-test_that("ST_Intersects filter executes with SpatiaLite", {
+test_that("ST_Intersects filter requires SpatiaLite", {
   skip_if_no_spatialite()
   lf <- lazysf(nc_gpkg())
   d <- lf |>
     dplyr::filter(st_intersects(geom, geom)) |>
     dplyr::collect()
   expect_gt(nrow(d), 0)
-})
-
-test_that("spatial chained operations execute with SpatiaLite", {
-  skip_if_no_spatialite()
-  lf <- lazysf(nc_gpkg())
-  d <- lf |>
-    dplyr::filter(st_area(geom) > 0) |>
-    dplyr::mutate(srid = st_srid(geom)) |>
-    utils::head(3) |>
-    dplyr::collect()
-  expect_true("srid" %in% names(d))
-  expect_equal(nrow(d), 3)
 })
