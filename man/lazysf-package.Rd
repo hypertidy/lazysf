@@ -14,7 +14,7 @@ will cause the generated SQL statement to be printed before every call.
 In addition it will print the number of rows actually read.
 
 Default geometry format can be set with \code{options(lazysf.geom_format = "WKB")}.
-Default SQL dialect can be set with \code{options(lazysf.dialect = "")}.
+Default SQL dialect can be set with \code{options(lazysf.dialect = "SQLITE")}.
 }
 
 \seealso{

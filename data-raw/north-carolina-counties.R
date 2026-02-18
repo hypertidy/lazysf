@@ -2,9 +2,6 @@
 ncfile <- system.file("shape/nc.shp", package = "sf", mustWork = TRUE)
 gpkgfile <- system.file("gpkg/nc.gpkg", package = "sf", mustWork = TRUE)
 
-system(sprintf("ogr2ogr -nln north-carolina-counties %s %s nc.gpkg", file.path("inst/extdata", "north-carolina-counties.gpkg"), gpkgfile))
+system(sprintf("ogr2ogr -nln nc %s %s nc.gpkg", file.path("inst/extdata", "nc.gpkg"), gpkgfile))
+system(sprintf("ogr2ogr -nln nc %s %s nc", file.path("inst/extdata", "nc.shp"), ncfile))
 
-v <- new(gdalraster::GDALVector, ncfile)
-f <- v$getFileList()
-v$close()
-file.copy(f,  file.path("inst/extdata", gsub("nc", "north-carolina-counties", basename(f))))

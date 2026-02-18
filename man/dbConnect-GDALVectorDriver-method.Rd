@@ -9,7 +9,7 @@
   DSN = "",
   readonly = TRUE,
   geom_format = getOption("lazysf.geom_format", "WKB"),
-  dialect = getOption("lazysf.dialect", ""),
+  dialect = getOption("lazysf.dialect", "SQLITE"),
   ...
 )
 }
@@ -24,8 +24,9 @@ connection string, or URL}
 \item{geom_format}{geometry output format: \code{"WKB"} (default), \code{"WKT"},
 \code{"NONE"}, or \code{"BBOX"}}
 
-\item{dialect}{SQL dialect: \code{""} (default, let GDAL choose), \code{"OGRSQL"},
-or \code{"SQLITE"}}
+\item{dialect}{SQL dialect: \code{"SQLITE"} (default), \code{"OGRSQL"},
+\code{"INDIRECT_SQLITE"}, or \code{""} (let GDAL choose). SQLITE is recommended
+as it supports subqueries (required for dbplyr) and spatial SQL functions.}
 
 \item{...}{ignored}
 }

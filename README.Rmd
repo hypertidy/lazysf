@@ -103,22 +103,22 @@ This is a basic example.
 
 ```{R basic}
 library(lazysf)
-f <- system.file("extdata/north-carolina-counties.gpkg", package = "lazysf", mustWork = TRUE)
+f <- system.file("extdata/nc.gpkg", package = "lazysf", mustWork = TRUE)
 
 ## specify only the data source
 lazysf(f)
 
 ## specify the data source and a query to run
-lazysf(f, query = "SELECT AREA, FIPS, geom FROM \"nc.gpkg\" WHERE AREA < 0.1")
+lazysf(f, query = "SELECT AREA, FIPS, geom FROM nc WHERE AREA < 0.1")
 
 ## specify the data source and the table/layer to access
-lazysf(f, layer = "nc.gpkg") %>% 
+lazysf(f, layer = "nc") %>% 
   dplyr::select(AREA, FIPS, geom) %>% 
   dplyr::filter(AREA < 0.1)
 
 
 ## above was a real database (Geopackage), now with an actual shapefile
-shdb <- system.file("extdata/north-carolina-counties.shp", package = "lazysf", mustWork = TRUE)
+shdb <- system.file("extdata/nc.shp", package = "lazysf", mustWork = TRUE)
 shp <- lazysf(shdb)
 library(dplyr)
 shp %>%
@@ -151,19 +151,6 @@ dbConnect(SFSQL(), DSN)
 
 but the same can be done with generic DBI and (for example) the [Rpostgres package](https://rpostgres.r-dbi.org/). With `SFSQL()` we just know that it's executed by GDAL (via sf). 
 
-
-## Some drivers are related
-
-Note that GDAL drivers can be confusing, and it can be important to see the behaviours GDAL will provide by default. Here see that we can read from a Geopackage file but not as it was intended. We
-have used the driver-prefix to make GDAL choose its SQLite driver rather than the Geopackage driver. 
-
-```{r Geopackage-SQLite}
-library(lazysf)
-gpkgfile <- system.file("extdata/north-carolina-counties.gpkg", package = "lazysf", mustWork = TRUE)
-lazysf(glue::glue("SQLite:{gpkgfile}"))
-```
-
-That's not very spatial, but we can dig in to find out what else is there. 
 
 
 

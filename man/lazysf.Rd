@@ -14,7 +14,7 @@ lazysf(x, layer, ...)
   ...,
   query = NA,
   geom_format = getOption("lazysf.geom_format", "WKB"),
-  dialect = getOption("lazysf.dialect", "")
+  dialect = getOption("lazysf.dialect", "SQLITE")
 )
 
 \method{lazysf}{GDALVectorConnection}(x, layer, ..., query = NA)
@@ -79,14 +79,14 @@ lazysf(f)
 
 \donttest{
 ## Geopackage (an actual database, so with SELECT we must be explicit re geom-column)
-nc <- system.file("extdata/north-carolina-counties.gpkg", package = "lazysf", mustWork = TRUE)
+nc <- system.file("extdata/nc.gpkg", package = "lazysf", mustWork = TRUE)
 lazysf(nc)
-lazysf(nc, query = "SELECT AREA, FIPS, geom FROM \"nc.gpkg\" WHERE AREA < 0.1")
-lazysf(nc, layer = "nc.gpkg") |> dplyr::select(AREA, FIPS, geom) |> dplyr::filter(AREA < 0.1)
+lazysf(nc, query = "SELECT AREA, FIPS, geom FROM nc WHERE AREA < 0.1")
+lazysf(nc, layer = "nc") |> dplyr::select(AREA, FIPS, geom) |> dplyr::filter(AREA < 0.1)
 
 ## the famous ESRI Shapefile (not an actual database)
-shdb <- system.file("extdata/north-carolina-counties.shp", package = "lazysf", mustWork = TRUE)
-shp <- lazysf(shdb))
+shdb <- system.file("extdata/nc.shp", package = "lazysf", mustWork = TRUE)
+shp <- lazysf(shdb)
 library(dplyr)
 shp |>
  filter(NAME \%LIKE\% 'A\%') |>
