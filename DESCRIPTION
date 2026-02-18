@@ -1,6 +1,6 @@
 Package: lazysf
 Title: Delayed Read for 'GDAL' Vector Data Sources
-Version: 0.3.0.9008S
+Version: 0.3.0.9008
 Authors@R: 
     person(given = "Michael",
            family = "Sumner",
