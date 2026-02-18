@@ -54,6 +54,23 @@
 * `st_as_sf()` method is now conditionally registered when sf is loaded,
   with automatic geometry conversion.
 
+* New `sql_translation()` method provides SpatiaLite function translations
+  for the SQLITE dialect. R functions like `st_area()`, `st_intersects()`,
+  `st_buffer()`, `st_transform()` etc. translate to their SpatiaLite SQL
+  equivalents, enabling idiomatic dplyr pipelines with spatial operations:
+  `lazysf("countries.gpkg") |> filter(st_area(geom) > 1e6)`.
+  OGRSQL dialect falls back to base SQLite translations only.
+
+* Added `sql_escape_logical()` (0/1 for SQLite) and
+  `supports_window_clause()` methods.
+
+## Known issues
+
+* GDAL's GDALVector initialization emits "SpatiaLite is not available"
+  warnings on systems without SpatiaLite linked. These are harmless C++
+  diagnostics that can't be suppressed from R. A quiet option is tracked
+  upstream in gdalraster (TODO: file issue).
+
 ## Dependencies
 
 * gdalraster (>= 2.0.0) replaces sf in Imports.

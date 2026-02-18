@@ -41,4 +41,5 @@ Collate:
     'helper.R'
     'lazysf-package.R'
     'lazysf.R'
+    'sql-translation.R'
     'zzz.R'
