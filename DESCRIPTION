@@ -1,6 +1,6 @@
 Package: lazysf
 Title: Delayed Read for 'GDAL' Vector Data Sources
-Version: 0.3.0.9003
+Version: 0.3.0.9004
 Authors@R: 
     person(given = "Michael",
            family = "Sumner",
@@ -21,7 +21,8 @@ Imports:
     DBI,
     tibble,
     dbplyr (>= 2.0.0),
-    dplyr
+    dplyr,
+    wk
 URL: https://github.com/hypertidy/lazysf, https://hypertidy.github.io/lazysf/
 BugReports: https://github.com/hypertidy/lazysf/issues
 Suggests: 

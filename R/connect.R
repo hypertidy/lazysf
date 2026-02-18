@@ -28,7 +28,7 @@ GDALSQL <- function() {
 #'   connection string, or URL
 #' @param readonly open in readonly mode (`TRUE` is the only option currently)
 #' @param geom_format geometry output format: `"WKB"` (default), `"WKT"`,
-#'   `"NONE"`, or `"BBOX"`
+#'   `"NONE"`, or `"BBOX"` (alias `"RCT"`). Case-insensitive.
 #' @param dialect SQL dialect: `"SQLITE"` (default), `"OGRSQL"`,
 #'   `"INDIRECT_SQLITE"`, or `""` (let GDAL choose). SQLITE is recommended
 #'   as it supports subqueries (required for dbplyr) and spatial SQL functions.
@@ -47,6 +47,8 @@ setMethod("dbConnect", "GDALVectorDriver",
               stop("DSN must be a valid data source name ",
                    "(file, connection string, url, ...)")
             }
+            geom_format <- toupper(geom_format)
+            if (geom_format == "RCT") geom_format <- "BBOX"
             geom_format <- match.arg(geom_format,
                                      c("WKB", "WKT", "NONE", "BBOX"))
             new("GDALVectorConnection",

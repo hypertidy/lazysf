@@ -36,12 +36,24 @@
 * New `dbListFields()` method uses `$getLayerDefn()` for schema introspection
   without executing SQL.
 
+* Geometry columns are now automatically marked with wk types on
+  materialization: `wk::wkb()` for WKB, `wk::wkt()` for WKT, and
+  `wk::rct()` for BBOX. CRS from the layer's spatial reference is
+  attached to all geometry vectors. These print nicely in tibbles and
+  feed directly into sf, geos, or any wk-aware package.
+
+* `db_connection_describe()` now shows geom_format in the header:
+  `GDAL <SQLITE> WKB [/path/to/file.gpkg]`.
+
+* `st_as_sf()` now works with both WKB and WKT geometry formats.
+
 * `st_as_sf()` method is now conditionally registered when sf is loaded,
-  with automatic WKB-to-sfc geometry conversion.
+  with automatic geometry conversion.
 
 ## Dependencies
 
 * gdalraster (>= 2.0.0) replaces sf in Imports.
+* wk added to Imports for geometry type marking.
 * sf moves to Suggests (only required for `st_as_sf()`).
 * dbplyr (>= 2.0.0) now required (2nd edition backend API).
 * magrittr removed from dependencies.

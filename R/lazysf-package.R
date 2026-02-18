@@ -19,4 +19,5 @@ NULL
 #' @import DBI
 #' @import methods
 #' @importFrom tibble tibble
+#' @importFrom wk wkb wkt rct
 NULL

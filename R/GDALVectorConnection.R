@@ -80,8 +80,11 @@ setMethod("dbSendQuery", "GDALVectorConnection",
                 lyr <- new(GDALVector, conn@DSN, tbl_name, TRUE)
                 lyr$returnGeomAs <- conn@geom_format
                 lyr$quiet <- TRUE
+                geom_info <- .geom_info(lyr)
                 layer_data <- lyr$fetch(0)
                 lyr$close()
+                layer_data <- .mark_geometry(layer_data,
+                                             conn@geom_format, geom_info)
                 if (getOption("lazysf.query.debug", FALSE)) {
                   message(sprintf(
                     "-------------\nlazysf debug ....\n%s\n%s",
@@ -99,6 +102,7 @@ setMethod("dbSendQuery", "GDALVectorConnection",
                        character(0), "", conn@dialect)
             lyr$returnGeomAs <- conn@geom_format
             lyr$quiet <- TRUE
+            geom_info <- .geom_info(lyr)
 
             layer_data <- tryCatch(
               lyr$fetch(-1),
@@ -117,6 +121,8 @@ setMethod("dbSendQuery", "GDALVectorConnection",
               }
             )
             lyr$close()
+            layer_data <- .mark_geometry(layer_data,
+                                         conn@geom_format, geom_info)
 
             if (getOption("lazysf.query.debug", FALSE)) {
               message(sprintf(
@@ -126,6 +132,45 @@ setMethod("dbSendQuery", "GDALVectorConnection",
 
             new("GDALVectorResult", layer_data = layer_data)
           })
+
+## Get geometry column name and CRS from an open GDALVector layer.
+.geom_info <- function(lyr) {
+  nm <- lyr$getGeometryColumn()
+  if (!nzchar(nm)) nm <- lyr$defaultGeomColName
+  crs <- lyr$getSpatialRef()
+  if (!nzchar(crs)) crs <- NULL
+  list(col = nm, crs = crs)
+}
+
+## Apply wk type marking to geometry columns after fetch.
+## WKB      -> wk::wkb(crs = ...)
+## WKT      -> wk::wkt(crs = ...)
+## BBOX     -> wk::rct(crs = ...)
+## NONE     -> no-op
+.mark_geometry <- function(df, geom_format, geom_info) {
+  geom_col <- geom_info$col
+  crs <- geom_info$crs
+  if (geom_format == "NONE" || !geom_col %in% names(df)) return(df)
+  col <- df[[geom_col]]
+  if (geom_format %in% c("WKB", "WKB_ISO")) {
+    df[[geom_col]] <- wk::wkb(col, crs = crs)
+  } else if (geom_format %in% c("WKT", "WKT_ISO")) {
+    df[[geom_col]] <- wk::wkt(col, crs = crs)
+  } else if (geom_format == "BBOX") {
+    df[[geom_col]] <- .bbox_as_rct(col, crs = crs)
+  }
+  df
+}
+
+## Convert GDAL BBOX list (list of numeric(4)) to wk::rct.
+.bbox_as_rct <- function(x, crs = NULL) {
+  if (length(x) == 0L) {
+    return(wk::rct(crs = crs))
+  }
+  vals <- do.call(rbind, x)
+  wk::rct(xmin = vals[, 1L], ymin = vals[, 2L],
+           xmax = vals[, 3L], ymax = vals[, 4L], crs = crs)
+}
 
 ## Extract a simple table name from dbplyr field-discovery SQL.
 ## Returns NULL for subqueries (first FROM followed by parenthesis).

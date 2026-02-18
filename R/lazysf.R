@@ -98,7 +98,8 @@ lazysf.GDALVectorConnection <- function(x, layer, ..., query = NA) {
 #'
 #' `st_as_sf()` retrieves data into a local sf data frame. Requires the sf
 #' package to be installed, and will succeed only if the result contains a
-#' geometry column (WKB raw vectors). The method is registered when sf is loaded.
+#' geometry column (WKB or WKT via `geom_format`). The method is registered
+#' when sf is loaded.
 #'
 #' @param x output of [lazysf()]
 #' @param ... passed to [collect()]
@@ -122,14 +123,15 @@ st_as_sf.tbl_GDALVectorConnection <- function(x, ...) {
          "Install with: install.packages('sf')", call. = FALSE)
   }
   d <- dplyr::collect(x, ...)
-  ## find WKB geometry columns (list columns of raw vectors)
-  is_wkb <- vapply(d, function(col) {
-    is.list(col) && length(col) > 0 && is.raw(col[[1L]])
+  ## find geometry columns by wk type (wk::wkb, wk::wkt, or wk::rct)
+  is_geom <- vapply(d, function(col) {
+    inherits(col, "wk_wkb") || inherits(col, "wk_wkt") || inherits(col, "wk_rct")
   }, logical(1))
-  if (!any(is_wkb)) {
-    stop("No WKB geometry column found in result", call. = FALSE)
+  if (!any(is_geom)) {
+    stop("No geometry column found in result. ",
+         "Is geom_format set to 'NONE'?", call. = FALSE)
   }
-  geom_col <- names(which(is_wkb))[1L]
+  geom_col <- names(which(is_geom))[1L]
   d[[geom_col]] <- sf::st_as_sfc(d[[geom_col]])
   sf::st_as_sf(d)
 }
