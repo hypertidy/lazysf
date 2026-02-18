@@ -9,6 +9,7 @@
 \alias{dbSendQuery,GDALVectorConnection-method}
 \alias{dbReadTable,GDALVectorConnection,character-method}
 \alias{dbListTables,GDALVectorConnection-method}
+\alias{dbListFields,GDALVectorConnection,character-method}
 \alias{dbExistsTable,GDALVectorConnection,ANY-method}
 \alias{dbDisconnect,GDALVectorConnection-method}
 \title{Class GDALVectorConnection (and methods)}
@@ -25,6 +26,8 @@
 
 \S4method{dbListTables}{GDALVectorConnection}(conn, ...)
 
+\S4method{dbListFields}{GDALVectorConnection,character}(conn, name, ...)
+
 \S4method{dbExistsTable}{GDALVectorConnection,ANY}(conn, name, ...)
 
 \S4method{dbDisconnect}{GDALVectorConnection}(conn, ...)
@@ -38,7 +41,7 @@ The "Usage" section lists the class methods overridden by \pkg{lazysf}.
 \seealso{
 The corresponding generic functions
 \code{\link[DBI:dbSendQuery]{DBI::dbSendQuery()}}, \code{\link[DBI:dbDisconnect]{DBI::dbDisconnect()}},
-\code{\link[DBI:dbReadTable]{DBI::dbReadTable()}},
+\code{\link[DBI:dbReadTable]{DBI::dbReadTable()}}, \code{\link[DBI:dbListFields]{DBI::dbListFields()}},
 \code{\link[DBI:dbExistsTable]{DBI::dbExistsTable()}}, \code{\link[DBI:dbListTables]{DBI::dbListTables()}}.
 }
 \keyword{internal}

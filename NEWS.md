@@ -1,4 +1,4 @@
-# lazysf 0.4.0
+# lazysf (dev)
 
 ## Breaking changes
 
@@ -28,6 +28,13 @@
   `dialect` can be set directly: `lazysf(dsn, geom_format = "WKT")`.
 
 * Added `db_connection_describe()` method for better printing in dbplyr.
+
+* Field/type discovery now uses direct layer access (`$fetch(0)`) instead of
+  rewriting SQL. This eliminates the `WHERE (0 = 1)` → `LIMIT 0` hack and
+  works reliably with all SQL dialects.
+
+* New `dbListFields()` method uses `$getLayerDefn()` for schema introspection
+  without executing SQL.
 
 * `st_as_sf()` method is now conditionally registered when sf is loaded,
   with automatic WKB-to-sfc geometry conversion.

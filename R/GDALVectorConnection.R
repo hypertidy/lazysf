@@ -1,6 +1,6 @@
 #' @include GDALVectorResult.R
 #' @importClassesFrom DBI DBIConnection
-#' @importMethodsFrom DBI dbSendQuery dbReadTable dbListTables dbExistsTable dbGetInfo dbIsValid dbDisconnect
+#' @importMethodsFrom DBI dbSendQuery dbReadTable dbListTables dbListFields dbExistsTable dbGetInfo dbIsValid dbDisconnect
 NULL
 
 #' @importFrom gdalraster GDALVector ogr_ds_layer_names
@@ -16,7 +16,7 @@ NULL
 #' @seealso
 #' The corresponding generic functions
 #' [DBI::dbSendQuery()], [DBI::dbDisconnect()],
-#' [DBI::dbReadTable()],
+#' [DBI::dbReadTable()], [DBI::dbListFields()],
 #' [DBI::dbExistsTable()], [DBI::dbListTables()].
 #'
 #' @keywords internal
@@ -71,10 +71,26 @@ setMethod("dbSendQuery", "GDALVectorConnection",
           function(conn, statement, ...) {
             sql <- as.character(statement)
 
-            ## dbplyr generates WHERE (0 = 1) for field discovery
-            ## but OGRSQL on non-database sources doesn't handle it
-            if (grepl("AS.*q\\b", sql) && grepl("WHERE \\(0 = 1\\)", sql)) {
-              sql <- gsub("WHERE \\(0 = 1\\)", "LIMIT 0", sql)
+            ## dbplyr sends WHERE (0 = 1) for field/type discovery.
+            ## Instead of rewriting the SQL, we open the layer directly
+            ## and return an empty data frame with the correct schema.
+            if (grepl("WHERE \\(0 = 1\\)", sql)) {
+              tbl_name <- .extract_table_name(sql)
+              if (!is.null(tbl_name)) {
+                lyr <- new(GDALVector, conn@DSN, tbl_name, TRUE)
+                lyr$returnGeomAs <- conn@geom_format
+                lyr$quiet <- TRUE
+                layer_data <- lyr$fetch(0)
+                lyr$close()
+                if (getOption("lazysf.query.debug", FALSE)) {
+                  message(sprintf(
+                    "-------------\nlazysf debug ....\n%s\n%s",
+                    "schema discovery via getLayerDefn for:", tbl_name))
+                }
+                return(new("GDALVectorResult", layer_data = layer_data))
+              }
+              ## subquery case: fall through to normal execution
+              ## (SQLITE dialect handles WHERE (0 = 1) natively)
             }
 
             ## GDALVector constructor: dsn, layer, read_only, open_options,
@@ -111,6 +127,24 @@ setMethod("dbSendQuery", "GDALVectorConnection",
             new("GDALVectorResult", layer_data = layer_data)
           })
 
+## Extract a simple table name from dbplyr field-discovery SQL.
+## Returns NULL for subqueries (first FROM followed by parenthesis).
+## Handles: FROM "quoted_name", FROM `backtick`, FROM bare_name
+.extract_table_name <- function(sql) {
+  from_match <- regexpr("FROM\\s+", sql, ignore.case = TRUE)
+  if (from_match < 0L) return(NULL)
+  after_from <- substring(sql, from_match + attr(from_match, "match.length"))
+  ## subquery: first FROM is followed by (
+  if (grepl("^\\s*\\(", after_from)) return(NULL)
+  m <- regmatches(after_from, regexec('^"([^"]+)"', after_from))[[1L]]
+  if (length(m) >= 2L) return(m[2L])
+  m <- regmatches(after_from, regexec("^`([^`]+)`", after_from))[[1L]]
+  if (length(m) >= 2L) return(m[2L])
+  m <- regmatches(after_from, regexec("^([A-Za-z_][A-Za-z0-9_.]*)", after_from))[[1L]]
+  if (length(m) >= 2L) return(m[2L])
+  NULL
+}
+
 
 #' @rdname GDALVectorConnection-class
 #' @export
@@ -125,6 +159,16 @@ setMethod("dbReadTable", c(conn = "GDALVectorConnection", name = "character"),
 setMethod("dbListTables", c(conn = "GDALVectorConnection"),
           function(conn, ...) {
             ogr_ds_layer_names(conn@DSN)
+          })
+
+#' @rdname GDALVectorConnection-class
+#' @export
+setMethod("dbListFields", c(conn = "GDALVectorConnection", name = "character"),
+          function(conn, name, ...) {
+            lyr <- new(GDALVector, conn@DSN, name, TRUE)
+            defn <- lyr$getLayerDefn()
+            lyr$close()
+            names(defn)
           })
 
 #' @rdname GDALVectorConnection-class
