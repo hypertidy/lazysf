@@ -97,7 +97,10 @@ setMethod("dbSendQuery", "GDALVectorConnection",
             }
 
             ## GDALVector constructor: dsn, layer, read_only, open_options,
-            ## spatial_filter, dialect
+            ## spatial_filter, dialect.
+            ## Collapse to single line — GDALVector can't handle newlines
+            ## in SQL, and dbplyr generates multiline SQL.
+            sql <- gsub("\\s+", " ", sql)
             lyr <- new(GDALVector, conn@DSN, sql, TRUE,
                        character(0), "", conn@dialect)
             lyr$returnGeomAs <- conn@geom_format
@@ -121,8 +124,16 @@ setMethod("dbSendQuery", "GDALVectorConnection",
               }
             )
             lyr$close()
+            ## GDAL prefixes column names when SQL uses table-qualified
+            ## wildcards (e.g. SELECT "nc".* → nc.AREA, nc.NAME).
+            ## Strip the prefix so names match what dbplyr expects.
+            names(layer_data) <- sub("^[^.]+\\.", "", names(layer_data))
             layer_data <- .mark_geometry(layer_data,
                                          conn@geom_format, geom_info)
+            ## Strip OGRFeatureSet class — its print method tries to
+            ## re-process geometry that .mark_geometry() already converted
+            ## to wk types. Plain data.frame is what dbplyr expects.
+            class(layer_data) <- "data.frame"
 
             if (getOption("lazysf.query.debug", FALSE)) {
               message(sprintf(
@@ -169,7 +180,7 @@ setMethod("dbSendQuery", "GDALVectorConnection",
   }
   vals <- do.call(rbind, x)
   wk::rct(xmin = vals[, 1L], ymin = vals[, 2L],
-           xmax = vals[, 3L], ymax = vals[, 4L], crs = crs)
+          xmax = vals[, 3L], ymax = vals[, 4L], crs = crs)
 }
 
 ## Extract a simple table name from dbplyr field-discovery SQL.
