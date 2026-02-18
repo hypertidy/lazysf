@@ -45,6 +45,10 @@
 * `db_connection_describe()` now shows geom_format in the header:
   `GDAL <SQLITE> WKB [/path/to/file.gpkg]`.
 
+* Future-proofed for upcoming dbplyr `sql_dialect()` generic. When the
+  next version of dbplyr ships with the new dialect system, lazysf will
+  automatically provide SQLite translation without any code changes.
+
 * `st_as_sf()` now works with both WKB and WKT geometry formats.
 
 * `st_as_sf()` method is now conditionally registered when sf is loaded,

@@ -9,6 +9,12 @@
     register_s3_method("sf", "st_as_sf", "tbl_GDALVectorConnection")
   }
 
+  ## future-proof: register sql_dialect method for upcoming dbplyr
+  ## (only registers if dbplyr actually exports the generic)
+  if (exists("sql_dialect", envir = asNamespace("dbplyr"))) {
+    register_s3_method("dbplyr", "sql_dialect", "GDALVectorConnection")
+  }
+
   invisible()
 }
 
