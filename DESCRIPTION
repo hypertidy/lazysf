@@ -34,16 +34,14 @@ Suggests:
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Collate: 
-    'GDALVectorDriver.R'
     'GDALVectorResult.R'
     'GDALVectorConnection.R'
+    'GDALVectorDriver.R'
     'connect.R'
     'dbplyr.R'
+    'helper.R'
     'lazysf-package.R'
     'lazysf.R'
-    'helper.R'
     'sql-query-fields.R'
     'sql-translation.R'
     'zzz.R'
-URL: https://github.com/hypertidy/lazysf, https://hypertidy.github.io/lazysf/
-BugReports: https://github.com/hypertidy/lazysf/issues
