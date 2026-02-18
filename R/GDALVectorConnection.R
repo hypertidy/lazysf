@@ -27,7 +27,8 @@ setClass("GDALVectorConnection",
            DSN = "character",
            readonly = "logical",
            geom_format = "character",
-           dialect = "character")
+           dialect = "character",
+           use_arrow = "logical")
 )
 
 
@@ -42,6 +43,7 @@ setMethod("show", "GDALVectorConnection", function(object) {
   cat("      DSN: ", dsn, "\n", sep = "")
   cat("  dialect: ", if (nzchar(object@dialect)) object@dialect else "(GDAL default)", "\n", sep = "")
   cat(" geometry: ", object@geom_format, "\n", sep = "")
+  cat("    arrow: ", if (object@use_arrow) "on" else "off", "\n", sep = "")
   tables <- tryCatch(DBI::dbListTables(object), error = function(e) "(unavailable)")
   cat("   tables: ", paste(tables, collapse = ", "), "\n", sep = "")
 })
@@ -103,37 +105,41 @@ setMethod("dbSendQuery", "GDALVectorConnection",
             sql <- gsub("\\s+", " ", sql)
             lyr <- new(GDALVector, conn@DSN, sql, TRUE,
                        character(0), "", conn@dialect)
-            lyr$returnGeomAs <- conn@geom_format
             lyr$quiet <- TRUE
             geom_info <- .geom_info(lyr)
 
-            layer_data <- tryCatch(
-              lyr$fetch(-1),
-              error = function(e) {
-                lyr$close()
-                if (length(gregexpr("SELECT", statement,
-                                    ignore.case = TRUE)[[1]]) > 1) {
-                  stop(sprintf(
-                    paste0("executing SQL failed: \n%s\n\n",
-                           "perhaps driver in use does not support sub-queries?"),
-                    statement), call. = FALSE)
-                } else {
-                  stop(sprintf("executing SQL failed: \n%s",
-                               conditionMessage(e)), call. = FALSE)
+            if (conn@use_arrow) {
+              layer_data <- .fetch_arrow(lyr, conn@geom_format, geom_info)
+            } else {
+              lyr$returnGeomAs <- conn@geom_format
+              layer_data <- tryCatch(
+                lyr$fetch(-1),
+                error = function(e) {
+                  lyr$close()
+                  if (length(gregexpr("SELECT", statement,
+                                      ignore.case = TRUE)[[1]]) > 1) {
+                    stop(sprintf(
+                      paste0("executing SQL failed: \n%s\n\n",
+                             "perhaps driver in use does not support sub-queries?"),
+                      statement), call. = FALSE)
+                  } else {
+                    stop(sprintf("executing SQL failed: \n%s",
+                                 conditionMessage(e)), call. = FALSE)
+                  }
                 }
-              }
-            )
-            lyr$close()
-            ## GDAL prefixes column names when SQL uses table-qualified
-            ## wildcards (e.g. SELECT "nc".* → nc.AREA, nc.NAME).
-            ## Strip the prefix so names match what dbplyr expects.
-            names(layer_data) <- sub("^[^.]+\\.", "", names(layer_data))
-            layer_data <- .mark_geometry(layer_data,
-                                         conn@geom_format, geom_info)
-            ## Strip OGRFeatureSet class — its print method tries to
-            ## re-process geometry that .mark_geometry() already converted
-            ## to wk types. Plain data.frame is what dbplyr expects.
-            class(layer_data) <- "data.frame"
+              )
+              lyr$close()
+              ## GDAL prefixes column names when SQL uses table-qualified
+              ## wildcards (e.g. SELECT "nc".* → nc.AREA, nc.NAME).
+              ## Strip the prefix so names match what dbplyr expects.
+              names(layer_data) <- sub("^[^.]+\\.", "", names(layer_data))
+              layer_data <- .mark_geometry(layer_data,
+                                           conn@geom_format, geom_info)
+              ## Strip OGRFeatureSet class — its print method tries to
+              ## re-process geometry that .mark_geometry() already converted
+              ## to wk types. Plain data.frame is what dbplyr expects.
+              class(layer_data) <- "data.frame"
+            }
 
             if (getOption("lazysf.query.debug", FALSE)) {
               message(sprintf(
@@ -151,6 +157,48 @@ setMethod("dbSendQuery", "GDALVectorConnection",
   crs <- lyr$getSpatialRef()
   if (!nzchar(crs)) crs <- NULL
   list(col = nm, crs = crs)
+}
+
+## Fetch via GDAL's Arrow C stream interface (GDAL >= 3.6).
+## Returns a plain data.frame with wk-typed geometry, matching
+## the contract of the row-based fetch() path.
+.fetch_arrow <- function(lyr, geom_format, geom_info) {
+  ## Arrow stream always returns geometry as WKB (OGC encoding).
+  ## We handle format conversion on the R side afterward.
+  stream <- lyr$getArrowStream()
+  df <- as.data.frame(stream)
+  fid_col <- lyr$getFIDColumn()
+  lyr$close()
+
+  ## Strip table-qualified column prefixes (same as fetch path)
+  names(df) <- sub("^[^.]+\\.", "", names(df))
+
+  ## Arrow returns the native FID column name (e.g. "fid" in GeoPackage).
+  ## fetch() always returns uppercase "FID". Match that.
+  if (nzchar(fid_col) && fid_col %in% names(df)) {
+    names(df)[names(df) == fid_col] <- toupper(fid_col)
+  }
+
+  geom_col <- geom_info$col
+  crs <- geom_info$crs
+
+  if (geom_format == "NONE") {
+    ## Drop geometry column
+    df[[geom_col]] <- NULL
+  } else if (geom_col %in% names(df)) {
+    ## Arrow stream delivers geometry as blob (list of raw vectors).
+    ## Convert to requested format.
+    col <- df[[geom_col]]
+    if (geom_format %in% c("WKB", "WKB_ISO")) {
+      df[[geom_col]] <- wk::wkb(col, crs = crs)
+    } else if (geom_format %in% c("WKT", "WKT_ISO")) {
+      df[[geom_col]] <- wk::as_wkt(wk::wkb(col, crs = crs))
+    } else if (geom_format == "BBOX") {
+      df[[geom_col]] <- wk::wk_envelope(wk::wkb(col, crs = crs))
+    }
+  }
+
+  df
 }
 
 ## Apply wk type marking to geometry columns after fetch.

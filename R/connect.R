@@ -32,6 +32,9 @@ GDALSQL <- function() {
 #' @param dialect SQL dialect: `"SQLITE"` (default), `"OGRSQL"`,
 #'   `"INDIRECT_SQLITE"`, or `""` (let GDAL choose). SQLITE is recommended
 #'   as it supports subqueries (required for dbplyr) and spatial SQL functions.
+#' @param use_arrow logical; if `TRUE`, use GDAL's Arrow C stream interface
+#'   for reading features (GDAL >= 3.6). Columnar transfer via nanoarrow,
+#'   typically much faster for larger datasets. Default `FALSE`.
 #' @param ... ignored
 #' @export
 #' @examples
@@ -42,6 +45,7 @@ setMethod("dbConnect", "GDALVectorDriver",
           function(drv, DSN = "", readonly = TRUE,
                    geom_format = getOption("lazysf.geom_format", "WKB"),
                    dialect = getOption("lazysf.dialect", "SQLITE"),
+                   use_arrow = getOption("lazysf.use_arrow", FALSE),
                    ...) {
             if (nchar(DSN) < 1) {
               stop("DSN must be a valid data source name ",
@@ -54,7 +58,8 @@ setMethod("dbConnect", "GDALVectorDriver",
             new("GDALVectorConnection",
                 DSN = DSN, readonly = readonly,
                 geom_format = geom_format,
-                dialect = dialect, ...)
+                dialect = dialect,
+                use_arrow = isTRUE(use_arrow), ...)
           })
 
 

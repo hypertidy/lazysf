@@ -67,12 +67,16 @@ lazysf <- function(x, layer, ...) {
 }
 #' @param geom_format geometry output format, passed to [dbConnect()]
 #' @param dialect SQL dialect, passed to [dbConnect()]
+#' @param use_arrow logical; if `TRUE`, use GDAL's Arrow C stream interface
+#'   for reading features. Passed to [dbConnect()].
 #' @name lazysf
 #' @export
 lazysf.character <- function(x, layer, ..., query = NA,
                              geom_format = getOption("lazysf.geom_format", "WKB"),
-                             dialect = getOption("lazysf.dialect", "SQLITE")) {
-  db <- dbConnect(GDALSQL(), x, geom_format = geom_format, dialect = dialect)
+                             dialect = getOption("lazysf.dialect", "SQLITE"),
+                             use_arrow = getOption("lazysf.use_arrow", FALSE)) {
+  db <- dbConnect(GDALSQL(), x, geom_format = geom_format,
+                  dialect = dialect, use_arrow = use_arrow)
   lazysf(db, layer, ..., query = query)
 }
 #' @name lazysf
