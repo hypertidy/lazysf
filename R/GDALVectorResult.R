@@ -1,4 +1,3 @@
-#' @importClassesFrom DBI DBIResult
 NULL
 
 

@@ -1,3 +1,7 @@
+skip_if_no_sqlite <- function() {
+  testthat::skip_if_not(has_sqlite_dialect(), "SQLITE dialect not available")
+}
+
 test_that("default dialect is SQLITE", {
   skip_if_no_sqlite()
   con <- DBI::dbConnect(GDALSQL(), nc_gpkg())

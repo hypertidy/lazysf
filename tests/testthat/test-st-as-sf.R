@@ -1,3 +1,7 @@
+skip_if_no_sqlite <- function() {
+  testthat::skip_if_not(has_sqlite_dialect(), "SQLITE dialect not available")
+}
+
 test_that("st_as_sf converts WKB result to sf", {
   skip_if_no_sqlite()
   skip_if_not_installed("sf")

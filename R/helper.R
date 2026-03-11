@@ -20,10 +20,6 @@ has_sqlite_dialect <- function() {
   }, error = function(e) FALSE)
 }
 
-skip_if_no_sqlite <- function() {
-  testthat::skip_if_not(has_sqlite_dialect(), "SQLITE dialect not available")
-}
-
 ## Does this GDAL build have SpatiaLite functions?
 ## Use DBI::dbGetQuery directly to avoid dbplyr subquery wrapping
 ## which generates noisy warnings during field discovery.

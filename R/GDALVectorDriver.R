@@ -1,7 +1,6 @@
 
 #' @import DBI
 #' @import methods
-#' @importMethodsFrom DBI dbDataType
 NULL
 
 #' Class GDALVectorDriver

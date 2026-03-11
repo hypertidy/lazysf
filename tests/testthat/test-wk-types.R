@@ -1,3 +1,6 @@
+skip_if_no_sqlite <- function() {
+  testthat::skip_if_not(has_sqlite_dialect(), "SQLITE dialect not available")
+}
 test_that("WKB column has CRS attached", {
   skip_if_no_sqlite()
   d <- dplyr::collect(lazysf(nc_gpkg(), geom_format = "WKB"))

@@ -1,3 +1,7 @@
+skip_if_no_sqlite <- function() {
+  testthat::skip_if_not(has_sqlite_dialect(), "SQLITE dialect not available")
+}
+
 ## Tests for sql_query_fields and schema discovery via getLayerDefn
 
 test_that("sql_query_fields generates LIMIT 0 SQL", {

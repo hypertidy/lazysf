@@ -23,6 +23,9 @@ skip_if_no_arrow_stream <- function() {
                         "GDALVector$getArrowStream() not available")
 }
 
+skip_if_no_sqlite <- function() {
+  testthat::skip_if_not(has_sqlite_dialect(), "SQLITE dialect not available")
+}
 ## -- Arrow vs fetch: same results ---------------------------------------------
 
 test_that("Arrow and fetch paths return same column names", {

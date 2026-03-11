@@ -1,3 +1,7 @@
+skip_if_no_sqlite <- function() {
+  testthat::skip_if_not(has_sqlite_dialect(), "SQLITE dialect not available")
+}
+
 ## Tests for SQL translation
 ##
 ## SQL *generation* tests (show_query/sql_render) work without SpatiaLite —

@@ -1,6 +1,4 @@
 #' @include GDALVectorResult.R
-#' @importClassesFrom DBI DBIConnection
-#' @importMethodsFrom DBI dbSendQuery dbReadTable dbListTables dbListFields dbExistsTable dbGetInfo dbIsValid dbDisconnect
 NULL
 
 #' @importFrom gdalraster GDALVector ogr_ds_layer_names

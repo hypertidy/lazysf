@@ -1,3 +1,7 @@
+skip_if_no_sqlite <- function() {
+  testthat::skip_if_not(has_sqlite_dialect(), "SQLITE dialect not available")
+}
+
 test_that("lazysf() creates a lazy tbl", {
   skip_if_no_sqlite()
   lsf <- lazysf(nc_gpkg())
