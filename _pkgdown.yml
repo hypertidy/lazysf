@@ -1,59 +1,42 @@
+url: https://hypertidy.github.io/lazysf/
+
+template:
+  bootstrap: 5
+
 development:
   mode: auto
 
 reference:
 
-- title: lazysf
+- title: Lazy tables from GDAL vector sources
+  desc: >
+    Create a lazy table from any GDAL-readable vector data source and pull
+    results into memory with collect(). Standard dplyr verbs are translated
+    to SQL and executed by GDAL.
   contents:
-  - '`lazysf`'
-  - '`st_as_sf`'
-  - '`collect`'
-  - '`lazysf-package`'
+  - lazysf
+  - collect
+  - lazysf-package
 
-- title: DBI methods
+- title: DBI interface
+  desc: >
+    Connect directly with DBI for finer control over dialect, geometry
+    format, and the Arrow stream interface.
   contents:
-  - starts_with("db")
+  - GDALSQL
+  - dbConnect,GDALVectorDriver-method
 
-- title: SFSQL connection to GDAL sources
+- title: DBI classes and methods
+  desc: >
+    S4 classes for the GDAL vector driver, connection, and result, with
+    their DBI methods (dbListTables, dbListFields, dbSendQuery, dbFetch,
+    and friends).
   contents:
-  - '`SFSQL`'
-  - '`SFSQLDriver-class`'
-  - '`SFSQLConnection-class`'
-  - '`SFSQLResult-class`'
-
-
+  - GDALVectorDriver-class
+  - GDALVectorConnection-class
+  - GDALVectorResult-class
 
 articles:
-- title: All vignettes
-  desc: ~
-  contents: '`GDALSQL`'
-
-navbar:
-  structure:
-    left:
-    - home
-    - intro
-    - reference
-    - articles
-    - tutorials
-    - news
-    right: github
-  components:
-    home:
-      icon: fas fa-home fa-lg
-      href: index.html
-    reference:
-      text: Reference
-      href: reference/index.html
-    news:
-      text: Changelog
-      href: news/index.html
-    github:
-      icon: fab fa-github fa-lg
-      href: https://github.com/hypertidy/lazysf/
-    articles:
-      text: Articles
-      menu:
-      - text: GDALSQL
-        href: articles/GDALSQL.html
-
+- title: Articles
+  contents:
+  - GDALSQL
