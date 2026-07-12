@@ -28,9 +28,7 @@ library(dplyr)
 f <- system.file("extdata/nc.gpkg", package = "lazysf", mustWork = TRUE)
 lf <- lazysf(f)
 lf
-#> Warning in new_CppObject_xp(fields$.module, fields$.pointer, ...): SpatiaLite
-#> is not available
-#> # Source:   table<"nc"> [?? x 16]
+#> # A query:  ?? x 16
 #> # Database: GDAL <SQLITE> WKB [/perm_storage/home/mdsumner/R/x86_64-pc-linux-g...]
 #>        FID  AREA PERIMETER CNTY_ CNTY_ID NAME  FIPS  FIPSNO CRESS_ID BIR74 SID74
 #>    <int64> <dbl>     <dbl> <dbl>   <dbl> <chr> <chr>  <dbl>    <int> <dbl> <dbl>
@@ -56,9 +54,7 @@ lf |>
   filter(AREA < 0.1) |>
   select(NAME, AREA, geom) |>
   arrange(AREA)
-#> Warning in new_CppObject_xp(fields$.module, fields$.pointer, ...): SpatiaLite
-#> is not available
-#> # Source:     SQL [?? x 3]
+#> # A query:    ?? x 3
 #> # Database:   GDAL <SQLITE> WKB [/perm_storage/home/mdsumner/R/x86_64-pc-linux-g...]
 #> # Ordered by: AREA
 #>        FID NAME         AREA geom                                               
@@ -98,8 +94,6 @@ d <- lf |>
   filter(AREA < 0.1) |>
   select(NAME, AREA, geom) |>
   collect()
-#> Warning in new_CppObject_xp(fields$.module, fields$.pointer, ...): SpatiaLite
-#> is not available
 d
 #> # A tibble: 34 × 4
 #>        FID NAME        AREA geom                                                
@@ -165,8 +159,6 @@ lazysf(f) |>
   group_by(SID74) |>
   summarise(n = n(), mean_area = mean(AREA, na.rm = TRUE)) |>
   collect()
-#> Warning in new_CppObject_xp(fields$.module, fields$.pointer, ...): SpatiaLite
-#> is not available
 #> # A tibble: 23 × 4
 #>        FID SID74     n mean_area
 #>    <int64> <dbl> <int>     <dbl>
@@ -200,7 +192,7 @@ For more control, use the DBI interface directly:
 con <- dbConnect(GDALSQL(), f)
 con
 #> <GDALVectorConnection>
-#>       DSN: /perm_storage/home/mdsumner/R/x86_64-pc-linux-gnu-library/4.5/lazysf/extdata/nc.gpkg
+#>       DSN: /perm_storage/home/mdsumner/R/x86_64-pc-linux-gnu-library/4.6/lazysf/extdata/nc.gpkg
 #>   dialect: SQLITE
 #>  geometry: WKB
 #>     arrow: off
@@ -235,8 +227,6 @@ lazysf(f, geom_format = "WKT") |>
   select(NAME, geom) |>
   head(3) |>
   collect()
-#> Warning in new_CppObject_xp(fields$.module, fields$.pointer, ...): SpatiaLite
-#> is not available
 #> # A tibble: 3 × 3
 #>       FID NAME      geom                                                        
 #>   <int64> <chr>     <wk_wkt>                                                    

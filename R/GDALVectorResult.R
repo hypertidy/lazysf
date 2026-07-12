@@ -12,7 +12,7 @@ NULL
 #' The corresponding generic functions
 #' [DBI::dbFetch()], [DBI::dbClearResult()], and
 #' [DBI::dbHasCompleted()].
-#'
+#' @import DBI
 #' @export
 #' @keywords internal
 setClass("GDALVectorResult",

@@ -21,10 +21,10 @@
 #' collect etc.). To see the result as a SQL query rather than a data frame
 #' preview use `dplyr::show_query()`.
 #'
-#' To obtain an in memory data frame use an explicit `collect()`.
-#' If the sf package is installed, `st_as_sf()` will collect and convert to an
-#' sf data frame. A result may not contain a geometry column, in which case
-#' `st_as_sf()` will fail.
+#' To obtain an in memory data frame use an explicit `collect()`. Geometry
+#' columns in the result are wk-typed vectors (`wk::wkb`, `wk::wkt`, or
+#' `wk::rct`) with CRS attached. To convert to an sf data frame, collect first
+#' then call `sf::st_as_sf()`: `lazysf(dsn) |> collect() |> sf::st_as_sf()`.
 #'
 #' As well as `collect()` it's also possible to use `tibble::as_tibble()` or
 #' `as.data.frame()` or `pull()` which all force computation and retrieve the
@@ -59,7 +59,7 @@
 #' shp |>
 #'  filter(NAME %LIKE% 'A%') |>
 #'  mutate(abc = 1.3) |>
-#'  select(abc, NAME, `_ogr_geometry_`) |>
+#'  select(abc, NAME) |>
 #'  arrange(desc(NAME))
 #' }
 lazysf <- function(x, layer, ...) {
@@ -94,49 +94,24 @@ lazysf.GDALVectorConnection <- function(x, layer, ..., query = NA) {
 }
 
 
-#' Force computation of a GDAL query
+#' Collect a lazy GDAL query into memory
 #'
-#' Convert lazysf to an in memory data frame or sf object
+#' Re-export of [dplyr::collect()]. Forces evaluation of a lazy
+#' `tbl_GDALVectorConnection` and returns the result as a local tibble.
+#' Geometry columns are returned as wk-typed vectors (`wk::wkb`, `wk::wkt`,
+#' or `wk::rct`) with CRS attached, and can be passed to
+#' `sf::st_as_sf()` for conversion.
 #'
-#' `collect()` retrieves data into a local table, preserving grouping and ordering.
-#'
-#' `st_as_sf()` retrieves data into a local sf data frame. Requires the sf
-#' package to be installed, and will succeed only if the result contains a
-#' geometry column (WKB or WKT via `geom_format`). The method is registered
-#' when sf is loaded.
-#'
-#' @param x output of [lazysf()]
-#' @param ... passed to [collect()]
+#' @param x A `tbl_GDALVectorConnection` created by [lazysf()].
+#' @param ... Additional arguments passed to [dplyr::collect()].
+#' @return A local tibble.
 #' @name collect
-#' @return a data frame from `collect()`, sf data frame from `st_as_sf()`
-#'   (only if it contains geometry)
-#' @seealso lazysf
+#' @seealso [lazysf()], [dplyr::collect()]
 #' @importFrom dplyr collect
 #' @export collect
 #' @examples
 #' f <- system.file("extdata/multi.gpkg", package = "lazysf", mustWork = TRUE)
 #' lsf <- lazysf(f)
 #' dplyr::collect(lsf)
-#'
-"collect"
-
-## registered conditionally in .onLoad when sf is available
-st_as_sf.tbl_GDALVectorConnection <- function(x, ...) {
-  if (!requireNamespace("sf", quietly = TRUE)) {
-    stop("Package 'sf' is required to convert to sf. ",
-         "Install with: install.packages('sf')", call. = FALSE)
-  }
-  d <- dplyr::collect(x, ...)
-  ## find geometry columns by wk type (wk::wkb, wk::wkt, or wk::rct)
-  is_geom <- vapply(d, function(col) {
-    inherits(col, "wk_wkb") || inherits(col, "wk_wkt") || inherits(col, "wk_rct")
-  }, logical(1))
-  if (!any(is_geom)) {
-    stop("No geometry column found in result. ",
-         "Is geom_format set to 'NONE'?", call. = FALSE)
-  }
-  geom_col <- names(which(is_geom))[1L]
-  d[[geom_col]] <- sf::st_as_sfc(d[[geom_col]])
-  sf::st_as_sf(d)
-}
+NULL
 

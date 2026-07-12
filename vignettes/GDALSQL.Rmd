@@ -199,7 +199,7 @@ names, same geometry handling, same wk type marking.
 lazysf can return geometry in several formats:
 
 ```{r geom-formats, eval = FALSE}
-## WKB (default) — compact binary, good for sf conversion
+## WKB (default) — compact binary, interoperable with sf and wk
 lazysf(f, geom_format = "WKB")
 
 ## WKT — human-readable text
@@ -213,8 +213,12 @@ lazysf(f, geom_format = "NONE")
 ```
 
 All geometry columns are marked with wk types (`wk::wkb`, `wk::wkt`,
-`wk::rct`) so they interoperate with the wk ecosystem and convert cleanly to
-sf via `sf::st_as_sf()`.
+`wk::rct`) so they interoperate with the wk ecosystem. To convert to an sf
+data frame, collect first then call `sf::st_as_sf()`:
+
+```r
+lazysf(f) |> collect() |> sf::st_as_sf()
+```
 
 ## Global options
 

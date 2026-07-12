@@ -1,15 +1,36 @@
-# lazysf (dev)
+# lazysf 0.4.0
 
 ## Breaking changes
 
-* The backend now uses gdalraster for all GDAL access. sf moves
-from Imports to Suggests and is only used for `st_as_sf()`.
+* The backend now uses gdalraster for all GDAL access. Geometry columns in collected results are wk-typed
+  (`wk::wkb`, `wk::wkt`, `wk::rct`). 
+
+* `st_as_sf()` is no longer registered for `tbl_GDALVectorConnection`. Use
+  `collect()` first, then `sf::st_as_sf()` on the resulting tibble.
 
 * DBI class names renamed: `SFSQLConnection` → `GDALVectorConnection`,
   `SFSQLDriver` → `GDALVectorDriver`, `SFSQLResult` → `GDALVectorResult`.
   The driver constructor is now `GDALSQL()` (was `SFSQL()`).
 
 * The magrittr pipe (`%>%`) is no longer re-exported. Use R's native pipe (`|>`).
+
+## Compatibility
+
+* Full compatibility with dbplyr >= 2.6.0. The new dbplyr dialect system
+  (`sql_dialect()`) caused several silent regressions with the previous
+  development code:
+  - `sql_translation()`, `sql_escape_logical()`, and `sql_query_fields()` now
+    dispatch on a custom dialect class (`sql_dialect_gdal_vector` /
+    `sql_dialect_gdal_sqlite`) rather than the connection class, matching how
+    dbplyr 2.6.0 dispatches these generics.
+  - Identifier quoting now uses double quotes (ANSI SQL) rather than backticks.
+    GDAL's embedded SQLite engine rejects backtick-quoted identifiers generated
+    by dbplyr 2.6.0's default SQLite dialect.
+  - `supports_window_clause()` was removed from dbplyr 2.6.0; it is now
+    conditionally registered only when the generic exists.
+  - Spatial SQL translations (SpatiaLite functions) are gated on dialect: SQLITE
+    connections get full spatial translations, OGRSQL connections get base
+    translations only.
 
 ## New features
 
@@ -70,8 +91,9 @@ from Imports to Suggests and is only used for `st_as_sf()`.
   larger datasets. Requires GDAL >= 3.6. Configurable globally via
   `options(lazysf.use_arrow = ...)`.
 
-* `st_as_sf()` method is conditionally registered when sf is loaded,
-  with automatic geometry conversion from wk types.
+* Geometry columns are automatically marked with wk types on
+  materialization. CRS is attached. This enables `sf::st_as_sf()` on the
+  collected tibble via sf's wk support without any lazysf-specific method.
 
 ## Bug fixes
 
@@ -114,7 +136,7 @@ from Imports to Suggests and is only used for `st_as_sf()`.
 
 * gdalraster (>= 2.0.0) replaces sf in Imports.
 * wk added to Imports for geometry type marking.
-* sf moves to Suggests (only required for `st_as_sf()`).
+* sf removed from dependencies (was previously in Imports, then Suggests).
 * nanoarrow added to Suggests (for Arrow stream interface).
 * dbplyr (>= 2.0.0) now required (2nd edition backend API).
 * magrittr removed from dependencies.

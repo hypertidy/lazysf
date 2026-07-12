@@ -20,6 +20,10 @@ sql_query_fields.GDALVectorConnection <- function(con, sql, ...) {
   }
 }
 
+## dialect-dispatched version for dbplyr >= 2.6.0
+#' @importFrom dbplyr sql_query_fields
+sql_query_fields.sql_dialect_gdal_vector <- sql_query_fields.GDALVectorConnection
+
 ## Build an empty data frame from OGR layer definition.
 ## Uses $getLayerDefn() — no SQL execution, no fetch, just OGR metadata.
 ## Maps OGR field types to R types so the schema matches what fetch() returns.

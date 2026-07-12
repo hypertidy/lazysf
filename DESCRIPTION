@@ -1,6 +1,6 @@
 Package: lazysf
 Title: Delayed Read for 'GDAL' Vector Data Sources
-Version: 0.3.0.9009
+Version: 0.4.0
 Authors@R: 
     person(given = "Michael",
            family = "Sumner",
@@ -14,7 +14,7 @@ Description: Lazy read for drawings. A 'dplyr' back end for data sources support
 License: GPL-3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
+RoxygenNote: 8.0.0
 Depends: R (>= 4.1.0)
 Imports: 
     gdalraster (>= 2.0.0),
@@ -28,7 +28,6 @@ URL: https://github.com/hypertidy/lazysf, https://hypertidy.github.io/lazysf/
 BugReports: https://github.com/hypertidy/lazysf/issues
 Suggests: 
     bit64,
-    sf,
     nanoarrow,
     testthat (>= 3.0.0),
     knitr,
@@ -41,9 +40,9 @@ Collate:
     'GDALVectorDriver.R'
     'connect.R'
     'dbplyr.R'
+    'helper.R'
     'lazysf-package.R'
     'lazysf.R'
     'sql-query-fields.R'
     'sql-translation.R'
-    'helper.R'
     'zzz.R'

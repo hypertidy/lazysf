@@ -1,3 +1,5 @@
-## lazysf 0.3.0
+## lazysf 0.4.0
 
-* Align to dbplyr >= 2.0.0, thanks!
+* Feature release. 
+
+Thanks!  

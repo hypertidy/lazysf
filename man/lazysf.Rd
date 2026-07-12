@@ -14,7 +14,8 @@ lazysf(x, layer, ...)
   ...,
   query = NA,
   geom_format = getOption("lazysf.geom_format", "WKB"),
-  dialect = getOption("lazysf.dialect", "SQLITE")
+  dialect = getOption("lazysf.dialect", "SQLITE"),
+  use_arrow = getOption("lazysf.use_arrow", FALSE)
 )
 
 \method{lazysf}{GDALVectorConnection}(x, layer, ..., query = NA)
@@ -31,9 +32,12 @@ lazysf(x, layer, ...)
 
 \item{query}{SQL query to pass in directly}
 
-\item{geom_format}{geometry output format, passed to \code{\link[DBI:dbConnect]{DBI::dbConnect()}}}
+\item{geom_format}{geometry output format, passed to \code{\link[DBI:dbConnect]{dbConnect()}}}
 
-\item{dialect}{SQL dialect, passed to \code{\link[DBI:dbConnect]{DBI::dbConnect()}}}
+\item{dialect}{SQL dialect, passed to \code{\link[DBI:dbConnect]{dbConnect()}}}
+
+\item{use_arrow}{logical; if \code{TRUE}, use GDAL's Arrow C stream interface
+for reading features. Passed to \code{\link[DBI:dbConnect]{dbConnect()}}.}
 }
 \value{
 a 'tbl_GDALVectorConnection', extending 'tbl_lazy' (something that works
@@ -63,10 +67,10 @@ verbs (filter, select, distinct, mutate, transmute, arrange, left_join, pull,
 collect etc.). To see the result as a SQL query rather than a data frame
 preview use \code{dplyr::show_query()}.
 
-To obtain an in memory data frame use an explicit \code{collect()}.
-If the sf package is installed, \code{st_as_sf()} will collect and convert to an
-sf data frame. A result may not contain a geometry column, in which case
-\code{st_as_sf()} will fail.
+To obtain an in memory data frame use an explicit \code{collect()}. Geometry
+columns in the result are wk-typed vectors (\code{wk::wkb}, \code{wk::wkt}, or
+\code{wk::rct}) with CRS attached. To convert to an sf data frame, collect first
+then call \code{sf::st_as_sf()}: \code{lazysf(dsn) |> collect() |> sf::st_as_sf()}.
 
 As well as \code{collect()} it's also possible to use \code{tibble::as_tibble()} or
 \code{as.data.frame()} or \code{pull()} which all force computation and retrieve the
@@ -91,7 +95,7 @@ library(dplyr)
 shp |>
  filter(NAME \%LIKE\% 'A\%') |>
  mutate(abc = 1.3) |>
- select(abc, NAME, `_ogr_geometry_`) |>
+ select(abc, NAME) |>
  arrange(desc(NAME))
 }
 }

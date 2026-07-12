@@ -10,6 +10,7 @@
   readonly = TRUE,
   geom_format = getOption("lazysf.geom_format", "WKB"),
   dialect = getOption("lazysf.dialect", "SQLITE"),
+  use_arrow = getOption("lazysf.use_arrow", FALSE),
   ...
 )
 }
@@ -27,6 +28,10 @@ connection string, or URL}
 \item{dialect}{SQL dialect: \code{"SQLITE"} (default), \code{"OGRSQL"},
 \code{"INDIRECT_SQLITE"}, or \code{""} (let GDAL choose). SQLITE is recommended
 as it supports subqueries (required for dbplyr) and spatial SQL functions.}
+
+\item{use_arrow}{logical; if \code{TRUE}, use GDAL's Arrow C stream interface
+for reading features (GDAL >= 3.6). Columnar transfer via nanoarrow,
+typically much faster for larger datasets. Default \code{FALSE}.}
 
 \item{...}{ignored}
 }

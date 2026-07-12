@@ -10,3 +10,5 @@
 ^cran-comments\.md$
 ^CRAN-RELEASE$
 ^CRAN-SUBMISSION$
+^\.positai$
+^\.claude$

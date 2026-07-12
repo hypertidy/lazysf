@@ -3,13 +3,13 @@
 \docType{class}
 \name{GDALVectorDriver-class}
 \alias{GDALVectorDriver-class}
-\alias{dbDataType,GDALVectorDriver,ANY-method}
+\alias{dbDataType,GDALVectorDriver-method}
 \alias{dbIsValid,GDALVectorDriver-method}
 \alias{dbUnloadDriver,GDALVectorDriver-method}
 \alias{dbGetInfo,GDALVectorDriver-method}
 \title{Class GDALVectorDriver}
 \usage{
-\S4method{dbDataType}{GDALVectorDriver,ANY}(dbObj, obj, ...)
+\S4method{dbDataType}{GDALVectorDriver}(dbObj, obj, ...)
 
 \S4method{dbIsValid}{GDALVectorDriver}(dbObj, ...)
 
@@ -24,6 +24,6 @@ They are a superclass of the \link[DBI:DBIDriver-class]{DBI::DBIDriver} class, a
 }
 \details{
 The "Usage" section lists the class methods overridden by \pkg{lazysf}.
-The \code{\link[DBI:dbDriver]{DBI::dbUnloadDriver()}} method is a null-op.
+The \code{\link[DBI:dbUnloadDriver]{DBI::dbUnloadDriver()}} method is a null-op.
 }
 \keyword{internal}

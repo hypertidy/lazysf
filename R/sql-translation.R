@@ -97,8 +97,93 @@ sql_translation.GDALVectorConnection <- function(con) {
   dbplyr::sql_variant(scalar_trans, agg_trans, win_trans)
 }
 
-#' @importFrom dbplyr supports_window_clause
+## sql_translation for the base GDALVector dialect (dbplyr >= 2.6.0).
+## Used for OGRSQL and other non-SQLITE dialects. Type casts only, no spatial.
+## (In dbplyr < 2.6.0, the connection method sql_translation.GDALVectorConnection
+##  is used instead — its dialect check gates the spatial translations.)
+#' @importFrom dbplyr sql_translation
 #' @export
+sql_translation.sql_dialect_gdal_vector <- function(con) {
+  scalar_trans <- dbplyr::sql_translator(.parent = dbplyr::base_scalar,
+                                         as.numeric  = dbplyr::sql_cast("REAL"),
+                                         as.double   = dbplyr::sql_cast("REAL"),
+                                         as.integer  = dbplyr::sql_cast("INTEGER"),
+                                         as.character = dbplyr::sql_cast("TEXT")
+  )
+  agg_trans <- dbplyr::sql_translator(.parent = dbplyr::base_agg)
+  win_trans  <- dbplyr::sql_translator(.parent = dbplyr::base_no_win)
+  dbplyr::sql_variant(scalar_trans, agg_trans, win_trans)
+}
+
+## sql_translation for the SQLITE GDALVector dialect (dbplyr >= 2.6.0).
+## Subclass of sql_dialect_gdal_vector, used for SQLITE connections.
+## Includes SpatiaLite spatial SQL translations.
+#' @importFrom dbplyr sql_translation
+#' @export
+sql_translation.sql_dialect_gdal_sqlite <- function(con) {
+  scalar_trans <- dbplyr::sql_translator(.parent = dbplyr::base_scalar,
+                                         as.numeric  = dbplyr::sql_cast("REAL"),
+                                         as.double   = dbplyr::sql_cast("REAL"),
+                                         as.integer  = dbplyr::sql_cast("INTEGER"),
+                                         as.character = dbplyr::sql_cast("TEXT"),
+                                         ## -- geometry constructors --
+                                         st_point        = dbplyr::sql_prefix("MakePoint", 2),
+                                         st_geomfromtext = dbplyr::sql_prefix("GeomFromText"),
+                                         st_geomfromwkb  = dbplyr::sql_prefix("GeomFromWKB"),
+                                         ## -- spatial predicates --
+                                         st_intersects  = dbplyr::sql_prefix("ST_Intersects", 2),
+                                         st_within      = dbplyr::sql_prefix("ST_Within", 2),
+                                         st_contains    = dbplyr::sql_prefix("ST_Contains", 2),
+                                         st_touches     = dbplyr::sql_prefix("ST_Touches", 2),
+                                         st_crosses     = dbplyr::sql_prefix("ST_Crosses", 2),
+                                         st_overlaps    = dbplyr::sql_prefix("ST_Overlaps", 2),
+                                         st_disjoint    = dbplyr::sql_prefix("ST_Disjoint", 2),
+                                         st_equals      = dbplyr::sql_prefix("ST_Equals", 2),
+                                         st_covers      = dbplyr::sql_prefix("ST_Covers", 2),
+                                         st_coveredby   = dbplyr::sql_prefix("ST_CoveredBy", 2),
+                                         ## -- measurements --
+                                         st_area        = dbplyr::sql_prefix("ST_Area", 1),
+                                         st_length      = dbplyr::sql_prefix("ST_Length", 1),
+                                         st_perimeter   = dbplyr::sql_prefix("ST_Perimeter", 1),
+                                         st_distance    = dbplyr::sql_prefix("ST_Distance", 2),
+                                         ## -- geometry operations --
+                                         st_buffer      = dbplyr::sql_prefix("ST_Buffer", 2),
+                                         st_centroid    = dbplyr::sql_prefix("ST_Centroid", 1),
+                                         st_union       = dbplyr::sql_prefix("ST_Union", 2),
+                                         st_intersection = dbplyr::sql_prefix("ST_Intersection", 2),
+                                         st_difference  = dbplyr::sql_prefix("ST_Difference", 2),
+                                         st_convexhull  = dbplyr::sql_prefix("ST_ConvexHull", 1),
+                                         st_simplify    = dbplyr::sql_prefix("ST_Simplify", 2),
+                                         st_envelope    = dbplyr::sql_prefix("ST_Envelope", 1),
+                                         st_boundary    = dbplyr::sql_prefix("ST_Boundary", 1),
+                                         ## -- accessors --
+                                         st_x           = dbplyr::sql_prefix("ST_X", 1),
+                                         st_y           = dbplyr::sql_prefix("ST_Y", 1),
+                                         st_srid        = dbplyr::sql_prefix("ST_SRID", 1),
+                                         st_geometrytype = dbplyr::sql_prefix("ST_GeometryType", 1),
+                                         st_numgeometries = dbplyr::sql_prefix("ST_NumGeometries", 1),
+                                         st_numpoints   = dbplyr::sql_prefix("ST_NumPoints", 1),
+                                         st_isvalid     = dbplyr::sql_prefix("ST_IsValid", 1),
+                                         st_isempty     = dbplyr::sql_prefix("ST_IsEmpty", 1),
+                                         st_issimple    = dbplyr::sql_prefix("ST_IsSimple", 1),
+                                         st_astext      = dbplyr::sql_prefix("ST_AsText", 1),
+                                         st_asbinary    = dbplyr::sql_prefix("ST_AsBinary", 1),
+                                         ## -- coordinate transforms --
+                                         st_transform   = dbplyr::sql_prefix("ST_Transform", 2)
+  )
+  agg_trans <- dbplyr::sql_translator(.parent = dbplyr::base_agg,
+                                      st_collect = dbplyr::sql_aggregate("ST_Collect"),
+                                      st_extent  = dbplyr::sql_aggregate("ST_Extent")
+  )
+  win_trans <- dbplyr::sql_translator(.parent = dbplyr::base_no_win,
+                                      st_collect = dbplyr::sql_not_supported("st_collect"),
+                                      st_extent  = dbplyr::sql_not_supported("st_extent")
+  )
+  dbplyr::sql_variant(scalar_trans, agg_trans, win_trans)
+}
+
+## Registered conditionally in .onLoad when dbplyr exports supports_window_clause
+## (available in dbplyr < 2.6.0; replaced by the sql_dialect system in 2.6.0+).
 supports_window_clause.GDALVectorConnection <- function(con) {
   TRUE
 }
@@ -111,3 +196,7 @@ sql_escape_logical.GDALVectorConnection <- function(con, x) {
   y[is.na(x)] <- "NULL"
   y
 }
+
+## dialect-dispatched version for dbplyr >= 2.6.0
+#' @importFrom dbplyr sql_escape_logical
+sql_escape_logical.sql_dialect_gdal_vector <- sql_escape_logical.GDALVectorConnection

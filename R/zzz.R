@@ -4,15 +4,15 @@
     options(lazysf.query.debug = FALSE)
   }
 
-  ## register st_as_sf method if sf is available
-  if (requireNamespace("sf", quietly = TRUE)) {
-    register_s3_method("sf", "st_as_sf", "tbl_GDALVectorConnection")
-  }
-
-  ## future-proof: register sql_dialect method for upcoming dbplyr
-  ## (only registers if dbplyr actually exports the generic)
+  ## register sql_dialect method when available (dbplyr >= 2.6.0)
   if (exists("sql_dialect", envir = asNamespace("dbplyr"))) {
     register_s3_method("dbplyr", "sql_dialect", "GDALVectorConnection")
+  }
+
+  ## register supports_window_clause when available (dbplyr < 2.6.0;
+  ## removed in 2.6.0 in favour of sql_dialect system)
+  if (exists("supports_window_clause", envir = asNamespace("dbplyr"))) {
+    register_s3_method("dbplyr", "supports_window_clause", "GDALVectorConnection")
   }
 
   invisible()
