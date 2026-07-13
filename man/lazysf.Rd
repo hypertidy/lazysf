@@ -69,8 +69,7 @@ preview use \code{dplyr::show_query()}.
 
 To obtain an in memory data frame use an explicit \code{collect()}. Geometry
 columns in the result are wk-typed vectors (\code{wk::wkb}, \code{wk::wkt}, or
-\code{wk::rct}) with CRS attached. To convert to an sf data frame, collect first
-then call \code{sf::st_as_sf()}: \code{lazysf(dsn) |> collect() |> sf::st_as_sf()}.
+\code{wk::rct}) with CRS attached.
 
 As well as \code{collect()} it's also possible to use \code{tibble::as_tibble()} or
 \code{as.data.frame()} or \code{pull()} which all force computation and retrieve the

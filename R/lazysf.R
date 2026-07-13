@@ -23,8 +23,7 @@
 #'
 #' To obtain an in memory data frame use an explicit `collect()`. Geometry
 #' columns in the result are wk-typed vectors (`wk::wkb`, `wk::wkt`, or
-#' `wk::rct`) with CRS attached. To convert to an sf data frame, collect first
-#' then call `sf::st_as_sf()`: `lazysf(dsn) |> collect() |> sf::st_as_sf()`.
+#' `wk::rct`) with CRS attached.
 #'
 #' As well as `collect()` it's also possible to use `tibble::as_tibble()` or
 #' `as.data.frame()` or `pull()` which all force computation and retrieve the
@@ -94,24 +93,26 @@ lazysf.GDALVectorConnection <- function(x, layer, ..., query = NA) {
 }
 
 
+#' @importFrom dplyr collect
+#' @export
+dplyr::collect
+
 #' Collect a lazy GDAL query into memory
 #'
-#' Re-export of [dplyr::collect()]. Forces evaluation of a lazy
-#' `tbl_GDALVectorConnection` and returns the result as a local tibble.
-#' Geometry columns are returned as wk-typed vectors (`wk::wkb`, `wk::wkt`,
-#' or `wk::rct`) with CRS attached, and can be passed to
-#' `sf::st_as_sf()` for conversion.
+#' Forces evaluation of a lazy `tbl_GDALVectorConnection` and returns the
+#' result as a local tibble. Geometry columns are returned as wk-typed
+#' vectors (`wk::wkb`, `wk::wkt`, or `wk::rct`).
 #'
 #' @param x A `tbl_GDALVectorConnection` created by [lazysf()].
 #' @param ... Additional arguments passed to [dplyr::collect()].
 #' @return A local tibble.
-#' @name collect
 #' @seealso [lazysf()], [dplyr::collect()]
-#' @importFrom dplyr collect
-#' @export collect
+#' @export
 #' @examples
 #' f <- system.file("extdata/multi.gpkg", package = "lazysf", mustWork = TRUE)
 #' lsf <- lazysf(f)
 #' dplyr::collect(lsf)
-NULL
+collect.tbl_GDALVectorConnection <- function(x, ...) {
+  NextMethod()
+}
 

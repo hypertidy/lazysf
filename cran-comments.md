@@ -1,5 +1,5 @@
 ## lazysf 0.4.0
 
-* Feature release. 
+lazysf second submission, fixed missing usage in collect.Rd. 
 
 Thanks!  
