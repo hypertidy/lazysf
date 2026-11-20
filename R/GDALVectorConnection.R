@@ -26,8 +26,72 @@ setClass("GDALVectorConnection",
            readonly = "logical",
            geom_format = "character",
            dialect = "character",
-           use_arrow = "logical")
+           use_arrow = "logical",
+           cache = "environment")
 )
+
+## Per-connection metadata cache. Layer names, schema and field names come
+## from one open GDALVector per layer, kept for the life of the connection,
+## instead of reopening the dataset for each lookup (costly for remote
+## sources). Queries still open their own dataset: gdalraster ties an SQL
+## result layer to the dataset it opens.
+.conn_layer <- function(conn, name = "") {
+  cache <- conn@cache
+  if (!nzchar(name) && !is.null(cache$default_layer)) {
+    name <- cache$default_layer
+  }
+  if (is.null(cache$layers)) cache$layers <- new.env(parent = emptyenv())
+  lyr <- if (nzchar(name)) cache$layers[[name]]
+  if (is.null(lyr) || !lyr$isOpen()) {
+    lyr <- new(GDALVector, conn@DSN, name, TRUE)
+    lyr$quiet <- TRUE
+    if (!nzchar(name)) {
+      name <- lyr$getName()
+      cache$default_layer <- name
+    }
+    assign(name, lyr, envir = cache$layers)
+  }
+  lyr
+}
+
+.conn_clear_cache <- function(conn) {
+  cache <- conn@cache
+  if (!is.null(cache$layers)) {
+    for (lyr in mget(ls(cache$layers, all.names = TRUE), envir = cache$layers)) {
+      lyr$close()
+    }
+  }
+  rm(list = ls(cache, all.names = TRUE), envir = cache)
+  invisible(NULL)
+}
+
+## Read all features in batches. fetch(-1) first asks GDAL for a forced
+## feature count, which re-runs the whole query on SQL result layers (and
+## on layers with an attribute filter), doubling the read.
+.fetch_all <- function(lyr, batch = 10000L) {
+  ## gdalraster's fetch(n) errors on a short last page when geometry is
+  ## BBOX (it copies the list column as character), so BBOX keeps fetch(-1).
+  if (identical(toupper(lyr$returnGeomAs), "BBOX")) return(lyr$fetch(-1))
+  first <- lyr$fetch(batch)
+  if (nrow(first) < batch) return(first)
+  out <- list(first)
+  repeat {
+    b <- lyr$fetch(batch)
+    if (nrow(b) > 0L) out[[length(out) + 1L]] <- b
+    if (nrow(b) < batch) break
+  }
+  .rbind_features(out)
+}
+
+## Row-bind fetch() batches column by column; c() keeps integer64, Date,
+## POSIXct and list (geometry) columns intact.
+.rbind_features <- function(x) {
+  nms <- names(x[[1L]])
+  cols <- lapply(nms, function(nm) do.call(c, lapply(x, .subset2, nm)))
+  names(cols) <- nms
+  n <- sum(vapply(x, nrow, integer(1L)))
+  structure(cols, class = "data.frame", row.names = c(NA_integer_, -n))
+}
 
 
 #' @rdname GDALVectorConnection-class
@@ -80,11 +144,8 @@ setMethod("dbSendQuery", "GDALVectorConnection",
                 grepl("WHERE \\(0 = 1\\)", sql)) {
               tbl_name <- .extract_table_name(sql)
               if (!is.null(tbl_name)) {
-                lyr <- new(GDALVector, conn@DSN, tbl_name, TRUE)
-                lyr$returnGeomAs <- conn@geom_format
-                lyr$quiet <- TRUE
-                layer_data <- .schema_from_defn(lyr, conn@geom_format)
-                lyr$close()
+                layer_data <- .schema_from_defn(.conn_layer(conn, tbl_name),
+                                                conn@geom_format)
                 if (getOption("lazysf.query.debug", FALSE)) {
                   message(sprintf(
                     "-------------\nlazysf debug ....\n%s\n%s",
@@ -111,7 +172,7 @@ setMethod("dbSendQuery", "GDALVectorConnection",
             } else {
               lyr$returnGeomAs <- conn@geom_format
               layer_data <- tryCatch(
-                lyr$fetch(-1),
+                .fetch_all(lyr),
                 error = function(e) {
                   lyr$close()
                   if (length(gregexpr("SELECT", statement,
@@ -260,17 +321,17 @@ setMethod("dbReadTable", c(conn = "GDALVectorConnection", name = "character"),
 #' @export
 setMethod("dbListTables", c(conn = "GDALVectorConnection"),
           function(conn, ...) {
-            ogr_ds_layer_names(conn@DSN)
+            if (is.null(conn@cache$tables)) {
+              conn@cache$tables <- ogr_ds_layer_names(conn@DSN)
+            }
+            conn@cache$tables
           })
 
 #' @rdname GDALVectorConnection-class
 #' @export
 setMethod("dbListFields", c(conn = "GDALVectorConnection", name = "character"),
           function(conn, name, ...) {
-            lyr <- new(GDALVector, conn@DSN, name, TRUE)
-            defn <- lyr$getLayerDefn()
-            lyr$close()
-            names(defn)
+            names(.conn_layer(conn, name)$getLayerDefn())
           })
 
 #' @rdname GDALVectorConnection-class

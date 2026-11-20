@@ -85,7 +85,10 @@ lazysf.GDALVectorConnection <- function(x, layer, ..., query = NA) {
     if (!missing(layer)) message("'layer' argument ignored, using 'query'")
     return(dplyr::tbl(x, dbplyr::sql(query)))
   }
-  if (missing(layer) || is.numeric(layer)) {
+  if (missing(layer)) {
+    ## first layer, from the connection's cached handle (no extra open)
+    layer <- .conn_layer(x)$getName()
+  } else if (is.numeric(layer)) {
     layers <- dbListTables(x)
     layer <- layers[1L]
   }
