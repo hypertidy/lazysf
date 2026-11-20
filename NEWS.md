@@ -1,3 +1,17 @@
+# lazysf (development version)
+
+* `collect()` no longer reads the source twice. Features are now fetched in
+  batches; gdalraster's `fetch(-1)` forces a feature count first, which
+  re-runs the whole query on SQL result layers. A top-10 query on a 488 MB
+  remote GeoParquet went from 977 MB downloaded to 489 MB. `geom_format = "BBOX"`
+  still uses `fetch(-1)` until a gdalraster bug with short last pages is fixed.
+
+* Connections now cache metadata. One open handle per layer serves the
+  default layer name, schema discovery and `dbListFields()`, and
+  `dbListTables()` is cached, instead of reopening the dataset for each
+  lookup. `dbDisconnect()` closes the cached handles. Each query still opens
+  the dataset once.
+
 # lazysf 0.4.0
 
 ## Breaking changes

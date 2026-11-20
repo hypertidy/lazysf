@@ -59,7 +59,8 @@ setMethod("dbConnect", "GDALVectorDriver",
                 DSN = DSN, readonly = readonly,
                 geom_format = geom_format,
                 dialect = dialect,
-                use_arrow = isTRUE(use_arrow), ...)
+                use_arrow = isTRUE(use_arrow),
+                cache = new.env(parent = emptyenv()), ...)
           })
 
 
@@ -67,6 +68,7 @@ setMethod("dbConnect", "GDALVectorDriver",
 #' @export
 setMethod("dbDisconnect", "GDALVectorConnection",
           function(conn, ...) {
+            .conn_clear_cache(conn)
             conn@DSN <- ""
             conn
           })
